@@ -1,0 +1,2407 @@
+{
+  "total_users": 1040,
+  "cards_opened": {
+    "members": 8490,
+    "skills": 26748
+  },
+  "global": {
+    "roulette_opened": 84500,
+    "roulette_prizes": {
+      "JOPA": 1874,
+      "+10": 2224,
+      "skills_bonus": 905,
+      "members_bonus": 232,
+      "POCELUI": 18,
+      "nothing": 79247
+    }
+  },
+  "daily": {
+    "2025-08-24": {
+      "roulette_opened": 0,
+      "roulette_prizes": {
+        "JOPA": 0,
+        "+10": 0,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 0
+      }
+    },
+    "2025-08-25": {
+      "roulette_opened": 618,
+      "roulette_prizes": {
+        "JOPA": 10,
+        "+10": 18,
+        "skills_bonus": 5,
+        "members_bonus": 1,
+        "POCELUI": 1,
+        "nothing": 583
+      }
+    },
+    "2024-08-26": {
+      "roulette_opened": 278,
+      "roulette_prizes": {
+        "JOPA": 6,
+        "+10": 10,
+        "skills_bonus": 1,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 259
+      }
+    },
+    "2025-08-26": {
+      "roulette_opened": 111,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 4,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 105
+      }
+    },
+    "2025-08-27": {
+      "roulette_opened": 301,
+      "roulette_prizes": {
+        "JOPA": 7,
+        "+10": 10,
+        "skills_bonus": 5,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 278
+      }
+    },
+    "2025-08-28": {
+      "roulette_opened": 617,
+      "roulette_prizes": {
+        "JOPA": 12,
+        "+10": 15,
+        "skills_bonus": 6,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 583
+      }
+    },
+    "2025-08-29": {
+      "roulette_opened": 898,
+      "roulette_prizes": {
+        "JOPA": 13,
+        "+10": 32,
+        "skills_bonus": 8,
+        "members_bonus": 3,
+        "POCELUI": 0,
+        "nothing": 842
+      }
+    },
+    "2025-08-30": {
+      "roulette_opened": 2184,
+      "roulette_prizes": {
+        "JOPA": 48,
+        "+10": 58,
+        "skills_bonus": 16,
+        "members_bonus": 5,
+        "POCELUI": 1,
+        "nothing": 2056
+      }
+    },
+    "2025-08-31": {
+      "roulette_opened": 1864,
+      "roulette_prizes": {
+        "JOPA": 40,
+        "+10": 45,
+        "skills_bonus": 18,
+        "members_bonus": 2,
+        "POCELUI": 1,
+        "nothing": 1758
+      }
+    },
+    "2025-09-01": {
+      "roulette_opened": 1530,
+      "roulette_prizes": {
+        "JOPA": 42,
+        "+10": 42,
+        "skills_bonus": 15,
+        "members_bonus": 8,
+        "POCELUI": 0,
+        "nothing": 1423
+      }
+    },
+    "2025-09-02": {
+      "roulette_opened": 1805,
+      "roulette_prizes": {
+        "JOPA": 42,
+        "+10": 39,
+        "skills_bonus": 16,
+        "members_bonus": 3,
+        "POCELUI": 1,
+        "nothing": 1704
+      }
+    },
+    "2025-09-03": {
+      "roulette_opened": 1688,
+      "roulette_prizes": {
+        "JOPA": 34,
+        "+10": 39,
+        "skills_bonus": 14,
+        "members_bonus": 4,
+        "POCELUI": 0,
+        "nothing": 1597
+      }
+    },
+    "2025-09-04": {
+      "roulette_opened": 1292,
+      "roulette_prizes": {
+        "JOPA": 29,
+        "+10": 33,
+        "skills_bonus": 17,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 1212
+      }
+    },
+    "2025-09-05": {
+      "roulette_opened": 1109,
+      "roulette_prizes": {
+        "JOPA": 29,
+        "+10": 27,
+        "skills_bonus": 14,
+        "members_bonus": 4,
+        "POCELUI": 0,
+        "nothing": 1035
+      }
+    },
+    "2025-09-06": {
+      "roulette_opened": 1333,
+      "roulette_prizes": {
+        "JOPA": 37,
+        "+10": 33,
+        "skills_bonus": 16,
+        "members_bonus": 5,
+        "POCELUI": 0,
+        "nothing": 1242
+      }
+    },
+    "2025-09-07": {
+      "roulette_opened": 1120,
+      "roulette_prizes": {
+        "JOPA": 25,
+        "+10": 23,
+        "skills_bonus": 17,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 1055
+      }
+    },
+    "2025-09-08": {
+      "roulette_opened": 1122,
+      "roulette_prizes": {
+        "JOPA": 18,
+        "+10": 30,
+        "skills_bonus": 14,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 1058
+      }
+    },
+    "2025-09-09": {
+      "roulette_opened": 1012,
+      "roulette_prizes": {
+        "JOPA": 32,
+        "+10": 20,
+        "skills_bonus": 3,
+        "members_bonus": 4,
+        "POCELUI": 0,
+        "nothing": 953
+      }
+    },
+    "2025-09-10": {
+      "roulette_opened": 1156,
+      "roulette_prizes": {
+        "JOPA": 30,
+        "+10": 24,
+        "skills_bonus": 11,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 1089
+      }
+    },
+    "2025-09-11": {
+      "roulette_opened": 824,
+      "roulette_prizes": {
+        "JOPA": 20,
+        "+10": 14,
+        "skills_bonus": 13,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 775
+      }
+    },
+    "2025-09-12": {
+      "roulette_opened": 1026,
+      "roulette_prizes": {
+        "JOPA": 29,
+        "+10": 33,
+        "skills_bonus": 14,
+        "members_bonus": 6,
+        "POCELUI": 0,
+        "nothing": 944
+      }
+    },
+    "2025-09-13": {
+      "roulette_opened": 998,
+      "roulette_prizes": {
+        "JOPA": 22,
+        "+10": 23,
+        "skills_bonus": 14,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 938
+      }
+    },
+    "2025-09-14": {
+      "roulette_opened": 1233,
+      "roulette_prizes": {
+        "JOPA": 25,
+        "+10": 43,
+        "skills_bonus": 11,
+        "members_bonus": 2,
+        "POCELUI": 1,
+        "nothing": 1151
+      }
+    },
+    "2025-09-15": {
+      "roulette_opened": 1203,
+      "roulette_prizes": {
+        "JOPA": 24,
+        "+10": 40,
+        "skills_bonus": 18,
+        "members_bonus": 5,
+        "POCELUI": 3,
+        "nothing": 1113
+      }
+    },
+    "2025-09-16": {
+      "roulette_opened": 1209,
+      "roulette_prizes": {
+        "JOPA": 24,
+        "+10": 34,
+        "skills_bonus": 12,
+        "members_bonus": 5,
+        "POCELUI": 0,
+        "nothing": 1134
+      }
+    },
+    "2025-09-17": {
+      "roulette_opened": 1083,
+      "roulette_prizes": {
+        "JOPA": 30,
+        "+10": 23,
+        "skills_bonus": 14,
+        "members_bonus": 3,
+        "POCELUI": 1,
+        "nothing": 1012
+      }
+    },
+    "2025-09-18": {
+      "roulette_opened": 1425,
+      "roulette_prizes": {
+        "JOPA": 29,
+        "+10": 36,
+        "skills_bonus": 18,
+        "members_bonus": 5,
+        "POCELUI": 0,
+        "nothing": 1337
+      }
+    },
+    "2025-09-19": {
+      "roulette_opened": 1111,
+      "roulette_prizes": {
+        "JOPA": 24,
+        "+10": 32,
+        "skills_bonus": 16,
+        "members_bonus": 2,
+        "POCELUI": 1,
+        "nothing": 1036
+      }
+    },
+    "2025-09-20": {
+      "roulette_opened": 913,
+      "roulette_prizes": {
+        "JOPA": 21,
+        "+10": 27,
+        "skills_bonus": 7,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 856
+      }
+    },
+    "2025-09-21": {
+      "roulette_opened": 846,
+      "roulette_prizes": {
+        "JOPA": 17,
+        "+10": 18,
+        "skills_bonus": 10,
+        "members_bonus": 3,
+        "POCELUI": 0,
+        "nothing": 798
+      }
+    },
+    "2025-09-22": {
+      "roulette_opened": 1025,
+      "roulette_prizes": {
+        "JOPA": 29,
+        "+10": 27,
+        "skills_bonus": 9,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 958
+      }
+    },
+    "2025-09-23": {
+      "roulette_opened": 956,
+      "roulette_prizes": {
+        "JOPA": 25,
+        "+10": 28,
+        "skills_bonus": 11,
+        "members_bonus": 3,
+        "POCELUI": 0,
+        "nothing": 889
+      }
+    },
+    "2025-09-24": {
+      "roulette_opened": 1015,
+      "roulette_prizes": {
+        "JOPA": 21,
+        "+10": 30,
+        "skills_bonus": 10,
+        "members_bonus": 2,
+        "POCELUI": 1,
+        "nothing": 951
+      }
+    },
+    "2025-09-25": {
+      "roulette_opened": 798,
+      "roulette_prizes": {
+        "JOPA": 19,
+        "+10": 20,
+        "skills_bonus": 7,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 752
+      }
+    },
+    "2025-09-26": {
+      "roulette_opened": 937,
+      "roulette_prizes": {
+        "JOPA": 27,
+        "+10": 26,
+        "skills_bonus": 10,
+        "members_bonus": 5,
+        "POCELUI": 0,
+        "nothing": 869
+      }
+    },
+    "2025-09-27": {
+      "roulette_opened": 1001,
+      "roulette_prizes": {
+        "JOPA": 22,
+        "+10": 31,
+        "skills_bonus": 15,
+        "members_bonus": 3,
+        "POCELUI": 0,
+        "nothing": 930
+      }
+    },
+    "2025-09-28": {
+      "roulette_opened": 867,
+      "roulette_prizes": {
+        "JOPA": 19,
+        "+10": 22,
+        "skills_bonus": 7,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 817
+      }
+    },
+    "2025-09-29": {
+      "roulette_opened": 819,
+      "roulette_prizes": {
+        "JOPA": 13,
+        "+10": 16,
+        "skills_bonus": 6,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 782
+      }
+    },
+    "2025-09-30": {
+      "roulette_opened": 802,
+      "roulette_prizes": {
+        "JOPA": 17,
+        "+10": 22,
+        "skills_bonus": 9,
+        "members_bonus": 4,
+        "POCELUI": 0,
+        "nothing": 750
+      }
+    },
+    "2025-10-01": {
+      "roulette_opened": 493,
+      "roulette_prizes": {
+        "JOPA": 12,
+        "+10": 9,
+        "skills_bonus": 9,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 462
+      }
+    },
+    "2025-10-02": {
+      "roulette_opened": 703,
+      "roulette_prizes": {
+        "JOPA": 17,
+        "+10": 19,
+        "skills_bonus": 11,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 655
+      }
+    },
+    "2025-10-03": {
+      "roulette_opened": 788,
+      "roulette_prizes": {
+        "JOPA": 14,
+        "+10": 15,
+        "skills_bonus": 11,
+        "members_bonus": 4,
+        "POCELUI": 0,
+        "nothing": 744
+      }
+    },
+    "2025-10-04": {
+      "roulette_opened": 663,
+      "roulette_prizes": {
+        "JOPA": 14,
+        "+10": 11,
+        "skills_bonus": 12,
+        "members_bonus": 7,
+        "POCELUI": 0,
+        "nothing": 619
+      }
+    },
+    "2025-10-05": {
+      "roulette_opened": 869,
+      "roulette_prizes": {
+        "JOPA": 22,
+        "+10": 19,
+        "skills_bonus": 7,
+        "members_bonus": 4,
+        "POCELUI": 0,
+        "nothing": 817
+      }
+    },
+    "2025-10-06": {
+      "roulette_opened": 828,
+      "roulette_prizes": {
+        "JOPA": 20,
+        "+10": 29,
+        "skills_bonus": 5,
+        "members_bonus": 3,
+        "POCELUI": 0,
+        "nothing": 771
+      }
+    },
+    "2025-10-07": {
+      "roulette_opened": 694,
+      "roulette_prizes": {
+        "JOPA": 20,
+        "+10": 21,
+        "skills_bonus": 4,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 649
+      }
+    },
+    "2025-10-08": {
+      "roulette_opened": 593,
+      "roulette_prizes": {
+        "JOPA": 13,
+        "+10": 15,
+        "skills_bonus": 10,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 554
+      }
+    },
+    "2025-10-09": {
+      "roulette_opened": 917,
+      "roulette_prizes": {
+        "JOPA": 19,
+        "+10": 32,
+        "skills_bonus": 10,
+        "members_bonus": 5,
+        "POCELUI": 0,
+        "nothing": 851
+      }
+    },
+    "2025-10-10": {
+      "roulette_opened": 645,
+      "roulette_prizes": {
+        "JOPA": 15,
+        "+10": 15,
+        "skills_bonus": 6,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 607
+      }
+    },
+    "2025-10-11": {
+      "roulette_opened": 510,
+      "roulette_prizes": {
+        "JOPA": 9,
+        "+10": 10,
+        "skills_bonus": 8,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 482
+      }
+    },
+    "2025-10-12": {
+      "roulette_opened": 637,
+      "roulette_prizes": {
+        "JOPA": 12,
+        "+10": 14,
+        "skills_bonus": 8,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 602
+      }
+    },
+    "2025-10-13": {
+      "roulette_opened": 448,
+      "roulette_prizes": {
+        "JOPA": 15,
+        "+10": 6,
+        "skills_bonus": 9,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 416
+      }
+    },
+    "2025-10-14": {
+      "roulette_opened": 943,
+      "roulette_prizes": {
+        "JOPA": 13,
+        "+10": 29,
+        "skills_bonus": 11,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 888
+      }
+    },
+    "2025-10-15": {
+      "roulette_opened": 712,
+      "roulette_prizes": {
+        "JOPA": 18,
+        "+10": 12,
+        "skills_bonus": 8,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 674
+      }
+    },
+    "2025-10-16": {
+      "roulette_opened": 580,
+      "roulette_prizes": {
+        "JOPA": 14,
+        "+10": 9,
+        "skills_bonus": 6,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 549
+      }
+    },
+    "2025-10-17": {
+      "roulette_opened": 540,
+      "roulette_prizes": {
+        "JOPA": 12,
+        "+10": 11,
+        "skills_bonus": 4,
+        "members_bonus": 1,
+        "POCELUI": 1,
+        "nothing": 511
+      }
+    },
+    "2025-10-18": {
+      "roulette_opened": 536,
+      "roulette_prizes": {
+        "JOPA": 10,
+        "+10": 12,
+        "skills_bonus": 6,
+        "members_bonus": 3,
+        "POCELUI": 0,
+        "nothing": 505
+      }
+    },
+    "2025-10-19": {
+      "roulette_opened": 557,
+      "roulette_prizes": {
+        "JOPA": 10,
+        "+10": 13,
+        "skills_bonus": 5,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 528
+      }
+    },
+    "2025-10-20": {
+      "roulette_opened": 750,
+      "roulette_prizes": {
+        "JOPA": 16,
+        "+10": 28,
+        "skills_bonus": 15,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 691
+      }
+    },
+    "2025-10-21": {
+      "roulette_opened": 665,
+      "roulette_prizes": {
+        "JOPA": 13,
+        "+10": 17,
+        "skills_bonus": 7,
+        "members_bonus": 3,
+        "POCELUI": 0,
+        "nothing": 625
+      }
+    },
+    "2025-10-22": {
+      "roulette_opened": 400,
+      "roulette_prizes": {
+        "JOPA": 9,
+        "+10": 12,
+        "skills_bonus": 2,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 376
+      }
+    },
+    "2025-10-23": {
+      "roulette_opened": 178,
+      "roulette_prizes": {
+        "JOPA": 9,
+        "+10": 6,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 162
+      }
+    },
+    "2025-10-24": {
+      "roulette_opened": 142,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 3,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 133
+      }
+    },
+    "2025-10-25": {
+      "roulette_opened": 41,
+      "roulette_prizes": {
+        "JOPA": 0,
+        "+10": 0,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 40
+      }
+    },
+    "2025-10-26": {
+      "roulette_opened": 367,
+      "roulette_prizes": {
+        "JOPA": 9,
+        "+10": 9,
+        "skills_bonus": 7,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 342
+      }
+    },
+    "2025-10-27": {
+      "roulette_opened": 489,
+      "roulette_prizes": {
+        "JOPA": 16,
+        "+10": 12,
+        "skills_bonus": 6,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 454
+      }
+    },
+    "2025-10-28": {
+      "roulette_opened": 477,
+      "roulette_prizes": {
+        "JOPA": 12,
+        "+10": 11,
+        "skills_bonus": 4,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 449
+      }
+    },
+    "2025-10-29": {
+      "roulette_opened": 425,
+      "roulette_prizes": {
+        "JOPA": 15,
+        "+10": 10,
+        "skills_bonus": 1,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 397
+      }
+    },
+    "2025-10-30": {
+      "roulette_opened": 274,
+      "roulette_prizes": {
+        "JOPA": 9,
+        "+10": 9,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 255
+      }
+    },
+    "2025-10-31": {
+      "roulette_opened": 413,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 12,
+        "skills_bonus": 5,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 392
+      }
+    },
+    "2025-11-01": {
+      "roulette_opened": 444,
+      "roulette_prizes": {
+        "JOPA": 9,
+        "+10": 16,
+        "skills_bonus": 3,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 414
+      }
+    },
+    "2025-11-02": {
+      "roulette_opened": 393,
+      "roulette_prizes": {
+        "JOPA": 7,
+        "+10": 10,
+        "skills_bonus": 1,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 373
+      }
+    },
+    "2025-11-03": {
+      "roulette_opened": 323,
+      "roulette_prizes": {
+        "JOPA": 8,
+        "+10": 13,
+        "skills_bonus": 6,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 294
+      }
+    },
+    "2025-11-04": {
+      "roulette_opened": 431,
+      "roulette_prizes": {
+        "JOPA": 12,
+        "+10": 12,
+        "skills_bonus": 4,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 403
+      }
+    },
+    "2025-11-05": {
+      "roulette_opened": 534,
+      "roulette_prizes": {
+        "JOPA": 12,
+        "+10": 20,
+        "skills_bonus": 1,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 500
+      }
+    },
+    "2025-11-06": {
+      "roulette_opened": 348,
+      "roulette_prizes": {
+        "JOPA": 6,
+        "+10": 6,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 335
+      }
+    },
+    "2025-11-07": {
+      "roulette_opened": 477,
+      "roulette_prizes": {
+        "JOPA": 8,
+        "+10": 20,
+        "skills_bonus": 4,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 443
+      }
+    },
+    "2025-11-08": {
+      "roulette_opened": 368,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 11,
+        "skills_bonus": 3,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 348
+      }
+    },
+    "2025-11-09": {
+      "roulette_opened": 291,
+      "roulette_prizes": {
+        "JOPA": 7,
+        "+10": 9,
+        "skills_bonus": 4,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 271
+      }
+    },
+    "2025-11-10": {
+      "roulette_opened": 502,
+      "roulette_prizes": {
+        "JOPA": 7,
+        "+10": 23,
+        "skills_bonus": 4,
+        "members_bonus": 4,
+        "POCELUI": 0,
+        "nothing": 464
+      }
+    },
+    "2025-11-11": {
+      "roulette_opened": 309,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 8,
+        "skills_bonus": 4,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 291
+      }
+    },
+    "2025-11-12": {
+      "roulette_opened": 375,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 9,
+        "skills_bonus": 3,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 359
+      }
+    },
+    "2025-11-13": {
+      "roulette_opened": 357,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 14,
+        "skills_bonus": 2,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 336
+      }
+    },
+    "2025-11-14": {
+      "roulette_opened": 170,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 4,
+        "skills_bonus": 5,
+        "members_bonus": 1,
+        "POCELUI": 1,
+        "nothing": 156
+      }
+    },
+    "2025-11-15": {
+      "roulette_opened": 168,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 5,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 159
+      }
+    },
+    "2025-11-16": {
+      "roulette_opened": 311,
+      "roulette_prizes": {
+        "JOPA": 11,
+        "+10": 9,
+        "skills_bonus": 5,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 286
+      }
+    },
+    "2025-11-17": {
+      "roulette_opened": 321,
+      "roulette_prizes": {
+        "JOPA": 11,
+        "+10": 6,
+        "skills_bonus": 4,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 300
+      }
+    },
+    "2025-11-18": {
+      "roulette_opened": 167,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 7,
+        "skills_bonus": 3,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 152
+      }
+    },
+    "2025-11-19": {
+      "roulette_opened": 272,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 7,
+        "skills_bonus": 2,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 258
+      }
+    },
+    "2025-11-20": {
+      "roulette_opened": 151,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 3,
+        "skills_bonus": 4,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 139
+      }
+    },
+    "2025-11-21": {
+      "roulette_opened": 149,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 3,
+        "skills_bonus": 2,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 138
+      }
+    },
+    "2025-11-22": {
+      "roulette_opened": 215,
+      "roulette_prizes": {
+        "JOPA": 6,
+        "+10": 6,
+        "skills_bonus": 2,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 199
+      }
+    },
+    "2025-11-23": {
+      "roulette_opened": 276,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 13,
+        "skills_bonus": 3,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 255
+      }
+    },
+    "2025-11-24": {
+      "roulette_opened": 149,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 6,
+        "skills_bonus": 5,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 134
+      }
+    },
+    "2025-11-25": {
+      "roulette_opened": 233,
+      "roulette_prizes": {
+        "JOPA": 7,
+        "+10": 6,
+        "skills_bonus": 3,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 217
+      }
+    },
+    "2025-11-26": {
+      "roulette_opened": 136,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 2,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 132
+      }
+    },
+    "2025-11-27": {
+      "roulette_opened": 118,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 4,
+        "skills_bonus": 2,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 110
+      }
+    },
+    "2025-11-28": {
+      "roulette_opened": 192,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 7,
+        "skills_bonus": 2,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 177
+      }
+    },
+    "2025-11-29": {
+      "roulette_opened": 268,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 8,
+        "skills_bonus": 3,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 252
+      }
+    },
+    "2025-11-30": {
+      "roulette_opened": 371,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 10,
+        "skills_bonus": 4,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 351
+      }
+    },
+    "2025-12-01": {
+      "roulette_opened": 281,
+      "roulette_prizes": {
+        "JOPA": 10,
+        "+10": 6,
+        "skills_bonus": 3,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 261
+      }
+    },
+    "2025-12-02": {
+      "roulette_opened": 489,
+      "roulette_prizes": {
+        "JOPA": 10,
+        "+10": 11,
+        "skills_bonus": 3,
+        "members_bonus": 3,
+        "POCELUI": 0,
+        "nothing": 462
+      }
+    },
+    "2025-12-03": {
+      "roulette_opened": 281,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 5,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 271
+      }
+    },
+    "2025-12-04": {
+      "roulette_opened": 121,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 0,
+        "skills_bonus": 3,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 114
+      }
+    },
+    "2025-12-05": {
+      "roulette_opened": 149,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 5,
+        "skills_bonus": 3,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 135
+      }
+    },
+    "2025-12-06": {
+      "roulette_opened": 62,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 0,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 59
+      }
+    },
+    "2025-12-07": {
+      "roulette_opened": 90,
+      "roulette_prizes": {
+        "JOPA": 0,
+        "+10": 3,
+        "skills_bonus": 1,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 84
+      }
+    },
+    "2025-12-08": {
+      "roulette_opened": 181,
+      "roulette_prizes": {
+        "JOPA": 7,
+        "+10": 4,
+        "skills_bonus": 3,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 167
+      }
+    },
+    "2025-12-09": {
+      "roulette_opened": 309,
+      "roulette_prizes": {
+        "JOPA": 8,
+        "+10": 7,
+        "skills_bonus": 3,
+        "members_bonus": 1,
+        "POCELUI": 1,
+        "nothing": 289
+      }
+    },
+    "2025-12-10": {
+      "roulette_opened": 270,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 7,
+        "skills_bonus": 6,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 252
+      }
+    },
+    "2025-12-11": {
+      "roulette_opened": 179,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 9,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 168
+      }
+    },
+    "2025-12-12": {
+      "roulette_opened": 60,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 0,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 57
+      }
+    },
+    "2025-12-13": {
+      "roulette_opened": 43,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 0,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 42
+      }
+    },
+    "2025-12-14": {
+      "roulette_opened": 78,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 2,
+        "skills_bonus": 0,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 71
+      }
+    },
+    "2025-12-15": {
+      "roulette_opened": 64,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 0,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 63
+      }
+    },
+    "2025-12-16": {
+      "roulette_opened": 60,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 0,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 58
+      }
+    },
+    "2025-12-17": {
+      "roulette_opened": 96,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 2,
+        "skills_bonus": 1,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 87
+      }
+    },
+    "2025-12-18": {
+      "roulette_opened": 150,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 5,
+        "skills_bonus": 3,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 137
+      }
+    },
+    "2025-12-19": {
+      "roulette_opened": 112,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 1,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 108
+      }
+    },
+    "2025-12-20": {
+      "roulette_opened": 100,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 1,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 96
+      }
+    },
+    "2025-12-21": {
+      "roulette_opened": 247,
+      "roulette_prizes": {
+        "JOPA": 6,
+        "+10": 5,
+        "skills_bonus": 4,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 232
+      }
+    },
+    "2025-12-22": {
+      "roulette_opened": 237,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 8,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 226
+      }
+    },
+    "2025-12-23": {
+      "roulette_opened": 124,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 7,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 112
+      }
+    },
+    "2025-12-24": {
+      "roulette_opened": 132,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 2,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 127
+      }
+    },
+    "2025-12-25": {
+      "roulette_opened": 115,
+      "roulette_prizes": {
+        "JOPA": 0,
+        "+10": 2,
+        "skills_bonus": 1,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 111
+      }
+    },
+    "2025-12-26": {
+      "roulette_opened": 193,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 9,
+        "skills_bonus": 5,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 178
+      }
+    },
+    "2025-12-27": {
+      "roulette_opened": 90,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 1,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 84
+      }
+    },
+    "2025-12-28": {
+      "roulette_opened": 226,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 6,
+        "skills_bonus": 4,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 214
+      }
+    },
+    "2025-12-29": {
+      "roulette_opened": 212,
+      "roulette_prizes": {
+        "JOPA": 6,
+        "+10": 8,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 196
+      }
+    },
+    "2025-12-30": {
+      "roulette_opened": 227,
+      "roulette_prizes": {
+        "JOPA": 8,
+        "+10": 8,
+        "skills_bonus": 2,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 207
+      }
+    },
+    "2025-12-31": {
+      "roulette_opened": 132,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 5,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 122
+      }
+    },
+    "2026-01-01": {
+      "roulette_opened": 122,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 3,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 116
+      }
+    },
+    "2026-01-02": {
+      "roulette_opened": 178,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 5,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 169
+      }
+    },
+    "2026-01-03": {
+      "roulette_opened": 187,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 4,
+        "skills_bonus": 0,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 179
+      }
+    },
+    "2026-01-04": {
+      "roulette_opened": 326,
+      "roulette_prizes": {
+        "JOPA": 6,
+        "+10": 6,
+        "skills_bonus": 6,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 307
+      }
+    },
+    "2026-01-05": {
+      "roulette_opened": 335,
+      "roulette_prizes": {
+        "JOPA": 8,
+        "+10": 9,
+        "skills_bonus": 3,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 315
+      }
+    },
+    "2026-01-06": {
+      "roulette_opened": 151,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 0,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 145
+      }
+    },
+    "2026-01-07": {
+      "roulette_opened": 228,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 7,
+        "skills_bonus": 1,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 214
+      }
+    },
+    "2026-01-08": {
+      "roulette_opened": 221,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 5,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 211
+      }
+    },
+    "2026-01-09": {
+      "roulette_opened": 170,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 4,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 161
+      }
+    },
+    "2026-01-10": {
+      "roulette_opened": 126,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 3,
+        "skills_bonus": 1,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 119
+      }
+    },
+    "2026-01-11": {
+      "roulette_opened": 174,
+      "roulette_prizes": {
+        "JOPA": 0,
+        "+10": 5,
+        "skills_bonus": 3,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 166
+      }
+    },
+    "2026-01-12": {
+      "roulette_opened": 312,
+      "roulette_prizes": {
+        "JOPA": 11,
+        "+10": 5,
+        "skills_bonus": 1,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 294
+      }
+    },
+    "2026-01-13": {
+      "roulette_opened": 190,
+      "roulette_prizes": {
+        "JOPA": 6,
+        "+10": 4,
+        "skills_bonus": 2,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 177
+      }
+    },
+    "2026-01-14": {
+      "roulette_opened": 129,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 2,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 122
+      }
+    },
+    "2026-01-15": {
+      "roulette_opened": 194,
+      "roulette_prizes": {
+        "JOPA": 7,
+        "+10": 5,
+        "skills_bonus": 4,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 178
+      }
+    },
+    "2026-01-16": {
+      "roulette_opened": 214,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 11,
+        "skills_bonus": 2,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 197
+      }
+    },
+    "2026-01-17": {
+      "roulette_opened": 181,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 4,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 175
+      }
+    },
+    "2026-01-18": {
+      "roulette_opened": 136,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 1,
+        "skills_bonus": 2,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 128
+      }
+    },
+    "2026-01-19": {
+      "roulette_opened": 209,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 9,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 198
+      }
+    },
+    "2026-01-20": {
+      "roulette_opened": 166,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 6,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 157
+      }
+    },
+    "2026-01-21": {
+      "roulette_opened": 156,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 1,
+        "skills_bonus": 1,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 151
+      }
+    },
+    "2026-01-22": {
+      "roulette_opened": 147,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 2,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 144
+      }
+    },
+    "2026-01-23": {
+      "roulette_opened": 171,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 4,
+        "skills_bonus": 3,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 160
+      }
+    },
+    "2026-01-24": {
+      "roulette_opened": 217,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 5,
+        "skills_bonus": 5,
+        "members_bonus": 0,
+        "POCELUI": 1,
+        "nothing": 202
+      }
+    },
+    "2026-01-25": {
+      "roulette_opened": 204,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 3,
+        "skills_bonus": 4,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 194
+      }
+    },
+    "2026-01-26": {
+      "roulette_opened": 212,
+      "roulette_prizes": {
+        "JOPA": 6,
+        "+10": 8,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 197
+      }
+    },
+    "2026-01-27": {
+      "roulette_opened": 127,
+      "roulette_prizes": {
+        "JOPA": 0,
+        "+10": 4,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 1,
+        "nothing": 122
+      }
+    },
+    "2026-01-28": {
+      "roulette_opened": 206,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 6,
+        "skills_bonus": 2,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 192
+      }
+    },
+    "2026-01-29": {
+      "roulette_opened": 179,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 5,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 167
+      }
+    },
+    "2026-01-30": {
+      "roulette_opened": 142,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 3,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 135
+      }
+    },
+    "2026-01-31": {
+      "roulette_opened": 134,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 1,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 129
+      }
+    },
+    "2026-02-01": {
+      "roulette_opened": 246,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 4,
+        "skills_bonus": 4,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 234
+      }
+    },
+    "2026-02-02": {
+      "roulette_opened": 222,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 6,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 211
+      }
+    },
+    "2026-02-03": {
+      "roulette_opened": 177,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 5,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 170
+      }
+    },
+    "2026-02-04": {
+      "roulette_opened": 230,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 5,
+        "skills_bonus": 4,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 219
+      }
+    },
+    "2026-02-05": {
+      "roulette_opened": 234,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 6,
+        "skills_bonus": 3,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 220
+      }
+    },
+    "2026-02-06": {
+      "roulette_opened": 213,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 6,
+        "skills_bonus": 5,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 198
+      }
+    },
+    "2026-02-07": {
+      "roulette_opened": 113,
+      "roulette_prizes": {
+        "JOPA": 0,
+        "+10": 2,
+        "skills_bonus": 1,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 108
+      }
+    },
+    "2026-02-08": {
+      "roulette_opened": 252,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 8,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 237
+      }
+    },
+    "2026-02-09": {
+      "roulette_opened": 213,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 5,
+        "skills_bonus": 3,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 200
+      }
+    },
+    "2026-02-10": {
+      "roulette_opened": 208,
+      "roulette_prizes": {
+        "JOPA": 6,
+        "+10": 9,
+        "skills_bonus": 3,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 188
+      }
+    },
+    "2026-02-11": {
+      "roulette_opened": 160,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 2,
+        "skills_bonus": 1,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 152
+      }
+    },
+    "2026-02-12": {
+      "roulette_opened": 152,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 6,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 1,
+        "nothing": 141
+      }
+    },
+    "2026-02-13": {
+      "roulette_opened": 129,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 4,
+        "skills_bonus": 0,
+        "members_bonus": 1,
+        "POCELUI": 1,
+        "nothing": 122
+      }
+    },
+    "2026-02-14": {
+      "roulette_opened": 243,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 6,
+        "skills_bonus": 3,
+        "members_bonus": 3,
+        "POCELUI": 0,
+        "nothing": 227
+      }
+    },
+    "2026-02-15": {
+      "roulette_opened": 151,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 2,
+        "skills_bonus": 0,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 143
+      }
+    },
+    "2026-02-16": {
+      "roulette_opened": 197,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 6,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 185
+      }
+    },
+    "2026-02-17": {
+      "roulette_opened": 167,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 7,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 155
+      }
+    },
+    "2026-02-18": {
+      "roulette_opened": 14,
+      "roulette_prizes": {
+        "JOPA": 0,
+        "+10": 0,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 14
+      }
+    },
+    "2026-02-19": {
+      "roulette_opened": 94,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 4,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 84
+      }
+    },
+    "2026-02-20": {
+      "roulette_opened": 145,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 4,
+        "skills_bonus": 3,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 134
+      }
+    },
+    "2026-02-21": {
+      "roulette_opened": 133,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 4,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 124
+      }
+    },
+    "2026-02-22": {
+      "roulette_opened": 167,
+      "roulette_prizes": {
+        "JOPA": 0,
+        "+10": 5,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 160
+      }
+    },
+    "2026-02-23": {
+      "roulette_opened": 142,
+      "roulette_prizes": {
+        "JOPA": 7,
+        "+10": 6,
+        "skills_bonus": 0,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 128
+      }
+    },
+    "2026-02-24": {
+      "roulette_opened": 184,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 6,
+        "skills_bonus": 3,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 174
+      }
+    },
+    "2026-02-25": {
+      "roulette_opened": 139,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 4,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 128
+      }
+    },
+    "2026-02-26": {
+      "roulette_opened": 123,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 5,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 113
+      }
+    },
+    "2026-02-27": {
+      "roulette_opened": 80,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 3,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 73
+      }
+    },
+    "2026-02-28": {
+      "roulette_opened": 67,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 1,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 62
+      }
+    },
+    "2026-03-01": {
+      "roulette_opened": 150,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 7,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 138
+      }
+    },
+    "2026-03-02": {
+      "roulette_opened": 155,
+      "roulette_prizes": {
+        "JOPA": 6,
+        "+10": 6,
+        "skills_bonus": 1,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 141
+      }
+    },
+    "2026-03-03": {
+      "roulette_opened": 89,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 0,
+        "skills_bonus": 3,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 81
+      }
+    },
+    "2026-03-04": {
+      "roulette_opened": 126,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 4,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 117
+      }
+    },
+    "2026-03-05": {
+      "roulette_opened": 58,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 0,
+        "skills_bonus": 0,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 55
+      }
+    },
+    "2026-03-06": {
+      "roulette_opened": 70,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 2,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 67
+      }
+    },
+    "2026-03-07": {
+      "roulette_opened": 53,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 0,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 51
+      }
+    },
+    "2026-03-08": {
+      "roulette_opened": 81,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 2,
+        "skills_bonus": 3,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 75
+      }
+    },
+    "2026-03-09": {
+      "roulette_opened": 87,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 1,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 81
+      }
+    },
+    "2026-03-10": {
+      "roulette_opened": 145,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 4,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 137
+      }
+    },
+    "2026-03-11": {
+      "roulette_opened": 149,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 3,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 143
+      }
+    },
+    "2026-03-12": {
+      "roulette_opened": 146,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 4,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 139
+      }
+    },
+    "2026-03-13": {
+      "roulette_opened": 144,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 8,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 134
+      }
+    },
+    "2026-03-14": {
+      "roulette_opened": 37,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 0,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 34
+      }
+    },
+    "2026-03-15": {
+      "roulette_opened": 93,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 1,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 91
+      }
+    },
+    "2026-03-16": {
+      "roulette_opened": 84,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 0,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 82
+      }
+    },
+    "2026-03-17": {
+      "roulette_opened": 82,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 0,
+        "skills_bonus": 1,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 76
+      }
+    },
+    "2026-03-18": {
+      "roulette_opened": 95,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 4,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 90
+      }
+    },
+    "2026-03-19": {
+      "roulette_opened": 92,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 2,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 87
+      }
+    },
+    "2026-03-20": {
+      "roulette_opened": 66,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 1,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 61
+      }
+    },
+    "2026-03-21": {
+      "roulette_opened": 82,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 4,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 76
+      }
+    },
+    "2026-03-22": {
+      "roulette_opened": 16,
+      "roulette_prizes": {
+        "JOPA": 0,
+        "+10": 1,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 15
+      }
+    },
+    "2026-04-01": {
+      "roulette_opened": 74,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 2,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 69
+      }
+    },
+    "2026-04-02": {
+      "roulette_opened": 247,
+      "roulette_prizes": {
+        "JOPA": 8,
+        "+10": 7,
+        "skills_bonus": 1,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 230
+      }
+    },
+    "2026-04-03": {
+      "roulette_opened": 164,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 3,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 159
+      }
+    },
+    "2026-04-04": {
+      "roulette_opened": 121,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 4,
+        "skills_bonus": 0,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 113
+      }
+    },
+    "2026-04-05": {
+      "roulette_opened": 20,
+      "roulette_prizes": {
+        "JOPA": 0,
+        "+10": 0,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 20
+      }
+    }
+  }
+}

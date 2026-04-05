@@ -1,0 +1,39 @@
+Metadata-Version: 2.1
+Name: sio
+Version: 0.1.0
+Summary: SIO is short IO that even shorter that ShortIO
+Home-page: https://github.com/byshyk/sio
+Author: Yaraslau Byshyk
+Author-email: dev@shyk.by
+License: WTFPL
+Platform: UNKNOWN
+Description-Content-Type: text/markdown
+Requires-Dist: shortio (>=0.1.0)
+
+## SIO
+SIO provides shorter and less readable aliases for [ShortIO](https://github.com/byshyk/shortio).
+
+### Installation
+```bash
+pip install sio
+```
+
+### Usage
+```python
+from sio import *
+
+s = r('filename')
+w('filename', s)
+
+j = rjsn('filename.json')
+wjsn('filename.json', j)
+
+# Unfortunately pickle -> pckl according to shortening algorithm.
+p = rpckl('filename.pickle')
+wpckl('filename.pickle', p)
+
+y = ryml('filename.yaml')
+wyml('filename.yaml', y)
+```
+
+

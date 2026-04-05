@@ -1,0 +1,2 @@
+[console_scripts]
+socialscan = socialscan.__main__:main

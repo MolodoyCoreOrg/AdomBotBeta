@@ -1,0 +1,3966 @@
+{
+  "7701434457": {
+    "last_open": "2025-08-28T07:53:18.688466",
+    "can_open_after": "2025-08-28T19:00:00",
+    "check_enabled": true
+  },
+  "577394314": {
+    "last_open": "2025-12-04T02:07:15.532564",
+    "can_open_after": "2025-12-04T19:00:00",
+    "check_enabled": true
+  },
+  "300355335": {
+    "last_open": "2026-01-27T23:58:03.617548",
+    "can_open_after": "2026-01-28T19:00:00",
+    "check_enabled": true
+  },
+  "1037236826": {
+    "last_open": "2026-04-01T21:51:33.621645",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "1548106806": {
+    "last_open": "2026-04-01T19:03:24.349519",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "706524772": {
+    "last_open": "2025-11-16T19:01:31.165496",
+    "can_open_after": "2025-11-17T19:00:00",
+    "check_enabled": true
+  },
+  "1378956372": {
+    "last_open": "2025-08-18T20:34:49.649149",
+    "can_open_after": "2025-08-19T19:00:00",
+    "check_enabled": true
+  },
+  "1609404564": {
+    "last_open": "2026-04-03T19:00:50.887155",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "7129526897": {
+    "last_open": "2026-04-03T19:01:41.441131",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "1954918093": {
+    "last_open": "2025-11-05T22:30:36.208440",
+    "can_open_after": "2025-11-06T19:00:00",
+    "check_enabled": true
+  },
+  "391640677": {
+    "last_open": "2026-02-28T19:11:17.747496",
+    "can_open_after": "2026-03-01T19:00:00",
+    "check_enabled": true
+  },
+  "1129906619": {
+    "last_open": "2026-04-02T06:46:46.527721",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "504807865": {
+    "last_open": "2026-04-01T21:00:10.023013",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "1033747326": {
+    "last_open": "2025-12-04T19:00:56.976113",
+    "can_open_after": "2025-12-05T19:00:00",
+    "check_enabled": true
+  },
+  "5559872457": {
+    "last_open": "2026-04-01T22:04:09.070448",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "1114626593": {
+    "last_open": "2026-01-29T19:00:25.184833",
+    "can_open_after": "2026-01-30T19:00:00",
+    "check_enabled": false
+  },
+  "495815968": {
+    "last_open": "2026-04-02T19:00:17.504739",
+    "can_open_after": "2026-04-03T19:00:00",
+    "check_enabled": true
+  },
+  "1950939394": {
+    "last_open": "2026-04-01T15:37:17.676020",
+    "can_open_after": "2026-04-01T19:00:00",
+    "check_enabled": true
+  },
+  "7303871887": {
+    "last_open": "2025-08-18T20:36:00.977438",
+    "can_open_after": "2025-08-19T19:00:00",
+    "check_enabled": true
+  },
+  "593368260": {
+    "last_open": "2025-09-13T19:07:48.682323",
+    "can_open_after": "2025-09-14T19:00:00",
+    "check_enabled": true
+  },
+  "347632821": {
+    "last_open": "2026-04-01T19:00:22.235636",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "462179661": {
+    "last_open": "2025-11-23T19:49:17.852815",
+    "can_open_after": "2025-11-24T19:00:00",
+    "check_enabled": true
+  },
+  "957507736": {
+    "last_open": "2026-04-04T19:20:38.432547",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "7326806381": {
+    "last_open": "2026-01-13T22:37:44.922240",
+    "can_open_after": "2026-01-14T19:00:00",
+    "check_enabled": true
+  },
+  "8333402985": {
+    "last_open": "2025-11-05T21:16:55.840872",
+    "can_open_after": "2025-11-06T19:00:00",
+    "check_enabled": true
+  },
+  "7547787068": {
+    "last_open": "2026-01-30T19:04:34.228442",
+    "can_open_after": "2026-01-31T19:00:00",
+    "check_enabled": true
+  },
+  "5431780626": {
+    "last_open": "2026-02-02T19:01:46.654633",
+    "can_open_after": "2026-02-03T19:00:00",
+    "check_enabled": true
+  },
+  "657766201": {
+    "last_open": "2026-03-09T04:58:32.301719",
+    "can_open_after": "2026-03-09T19:00:00",
+    "check_enabled": true
+  },
+  "1489467578": {
+    "last_open": "2025-12-01T19:11:56.361815",
+    "can_open_after": "2025-12-02T19:00:00",
+    "check_enabled": true
+  },
+  "406217558": {
+    "last_open": "2025-11-17T20:14:25.791577",
+    "can_open_after": "2025-11-18T19:00:00",
+    "check_enabled": true
+  },
+  "729000391": {
+    "last_open": "2025-11-23T19:03:59.942477",
+    "can_open_after": "2025-11-24T19:00:00",
+    "check_enabled": true
+  },
+  "891533183": {
+    "last_open": "2026-02-15T19:02:14.156528",
+    "can_open_after": "2026-02-16T19:00:00",
+    "check_enabled": true
+  },
+  "711980654": {
+    "last_open": "2025-10-09T19:00:13.430516",
+    "can_open_after": "2025-10-10T19:00:00",
+    "check_enabled": true
+  },
+  "1715574213": {
+    "last_open": "2026-04-01T19:24:25.287381",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "5602276681": {
+    "last_open": "2026-02-17T20:41:18.435611",
+    "can_open_after": "2026-02-18T19:00:00",
+    "check_enabled": true
+  },
+  "733063148": {
+    "last_open": "2026-02-10T19:04:06.954704",
+    "can_open_after": "2026-02-11T19:00:00",
+    "check_enabled": true
+  },
+  "820288583": {
+    "last_open": "2025-08-18T19:00:33.350708",
+    "can_open_after": "2025-08-19T19:00:00",
+    "check_enabled": true
+  },
+  "1427235744": {
+    "last_open": "2025-12-13T10:38:49.319952",
+    "can_open_after": "2025-12-13T19:00:00",
+    "check_enabled": true
+  },
+  "820596671": {
+    "last_open": "2025-08-05T19:01:05.060635",
+    "can_open_after": "2025-08-06T19:00:00",
+    "check_enabled": true
+  },
+  "801875328": {
+    "last_open": "2025-08-10T21:17:40.118249",
+    "can_open_after": "2025-08-11T19:00:00",
+    "check_enabled": true
+  },
+  "1379751553": {
+    "last_open": "2026-02-24T19:03:07.986694",
+    "can_open_after": "2026-02-25T19:00:00",
+    "check_enabled": true
+  },
+  "1592394011": {
+    "last_open": "2025-08-09T11:53:51.928722",
+    "can_open_after": "2025-08-09T19:00:00",
+    "check_enabled": true
+  },
+  "580817667": {
+    "last_open": "2026-01-17T19:04:05.232717",
+    "can_open_after": "2026-01-18T19:00:00",
+    "check_enabled": true
+  },
+  "542140991": {
+    "last_open": "2025-09-21T19:17:23.548997",
+    "can_open_after": "2025-09-22T19:00:00",
+    "check_enabled": true
+  },
+  "6669038886": {
+    "last_open": "2025-07-31T13:59:25.532410",
+    "can_open_after": "",
+    "check_enabled": true
+  },
+  "710641955": {
+    "last_open": "2026-02-18T19:01:13.496159",
+    "can_open_after": "2026-02-19T19:00:00",
+    "check_enabled": true
+  },
+  "794200987": {
+    "last_open": "2026-01-09T19:12:31.395264",
+    "can_open_after": "2026-01-10T19:00:00",
+    "check_enabled": true
+  },
+  "5563171005": {
+    "last_open": "2026-01-04T00:47:26.519498",
+    "can_open_after": "2026-01-04T19:00:00",
+    "check_enabled": true
+  },
+  "865340916": {
+    "last_open": "2025-08-01T05:21:22.250444",
+    "can_open_after": "",
+    "check_enabled": true
+  },
+  "486944001": {
+    "last_open": "2025-08-09T05:11:31.950311",
+    "can_open_after": "2025-08-09T19:00:00",
+    "check_enabled": true
+  },
+  "5076920819": {
+    "last_open": "2026-04-01T19:05:15.735716",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "341563240": {
+    "last_open": "2025-12-15T19:00:47.670704",
+    "can_open_after": "2025-12-16T19:00:00",
+    "check_enabled": true
+  },
+  "1150196568": {
+    "last_open": "2026-04-01T19:16:13.990872",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "347736037": {
+    "last_open": "2025-11-13T20:07:02.690372",
+    "can_open_after": "2025-11-14T19:00:00",
+    "check_enabled": true
+  },
+  "1305753464": {
+    "last_open": "2025-11-19T19:12:04.781842",
+    "can_open_after": "2025-11-20T19:00:00",
+    "check_enabled": true
+  },
+  "964149822": {
+    "last_open": "2026-01-10T20:59:10.475904",
+    "can_open_after": "2026-01-11T19:00:00",
+    "check_enabled": true
+  },
+  "7247819630": {
+    "last_open": "2025-08-02T10:27:07.638487",
+    "can_open_after": "2025-08-02T19:00:00",
+    "check_enabled": true
+  },
+  "1314809566": {
+    "last_open": "2025-11-24T21:55:51.487813",
+    "can_open_after": "2025-11-25T19:00:00",
+    "check_enabled": true
+  },
+  "6406021221": {
+    "last_open": "2025-11-19T19:01:15.664225",
+    "can_open_after": "2025-11-20T19:00:00",
+    "check_enabled": true
+  },
+  "1241002321": {
+    "last_open": "2025-08-10T19:01:07.412761",
+    "can_open_after": "2025-08-11T19:00:00",
+    "check_enabled": true
+  },
+  "1496659997": {
+    "last_open": "2026-04-01T18:25:03.606054",
+    "can_open_after": "2026-04-01T19:00:00",
+    "check_enabled": true
+  },
+  "1075791703": {
+    "last_open": "2025-11-29T19:27:44.218043",
+    "can_open_after": "2025-11-30T19:00:00",
+    "check_enabled": true
+  },
+  "704919548": {
+    "last_open": "2025-11-02T22:44:46.739769",
+    "can_open_after": "2025-11-03T19:00:00",
+    "check_enabled": true
+  },
+  "1009571853": {
+    "last_open": "2025-08-11T22:16:49.339138",
+    "can_open_after": "2025-08-12T19:00:00",
+    "check_enabled": true
+  },
+  "5137692981": {
+    "last_open": "2025-08-01T18:32:11.244760",
+    "can_open_after": "2025-08-01T19:00:00",
+    "check_enabled": true
+  },
+  "5565727720": {
+    "last_open": "2026-04-02T07:33:17.878898",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "1228242647": {
+    "last_open": "2026-04-02T23:21:20.129643",
+    "can_open_after": "2026-04-03T19:00:00",
+    "check_enabled": true
+  },
+  "1525433804": {
+    "last_open": "2026-02-16T14:42:59.699121",
+    "can_open_after": "2026-02-16T19:00:00",
+    "check_enabled": true
+  },
+  "8128403130": {
+    "last_open": "2025-08-16T21:50:13.122261",
+    "can_open_after": "2025-08-17T19:00:00",
+    "check_enabled": true
+  },
+  "1651233971": {
+    "last_open": "2025-08-08T19:12:00.167789",
+    "can_open_after": "2025-08-09T19:00:00",
+    "check_enabled": true
+  },
+  "1710087096": {
+    "last_open": "2025-08-03T20:09:33.056436",
+    "can_open_after": "2025-08-04T19:00:00",
+    "check_enabled": true
+  },
+  "801155735": {
+    "last_open": "2025-11-20T19:29:00.702396",
+    "can_open_after": "2025-11-21T19:00:00",
+    "check_enabled": true
+  },
+  "1316012250": {
+    "last_open": "2025-11-15T20:02:19.366791",
+    "can_open_after": "2025-11-16T19:00:00",
+    "check_enabled": true
+  },
+  "1628880507": {
+    "last_open": "2026-01-12T19:00:36.655199",
+    "can_open_after": "2026-01-13T19:00:00",
+    "check_enabled": true
+  },
+  "816524945": {
+    "last_open": "2025-11-05T22:31:41.369830",
+    "can_open_after": "2025-11-06T19:00:00",
+    "check_enabled": true
+  },
+  "5504694776": {
+    "last_open": "2025-08-01T18:52:25.567699",
+    "can_open_after": "2025-08-01T19:00:00",
+    "check_enabled": true
+  },
+  "974675351": {
+    "last_open": "2025-08-07T19:52:29.122054",
+    "can_open_after": "2025-08-08T19:00:00",
+    "check_enabled": true
+  },
+  "920953659": {
+    "last_open": "2025-09-03T06:14:37.563449",
+    "can_open_after": "2025-09-03T19:00:00",
+    "check_enabled": true
+  },
+  "1757759720": {
+    "last_open": "2025-11-25T19:03:51.038929",
+    "can_open_after": "2025-11-26T19:00:00",
+    "check_enabled": true
+  },
+  "1721416529": {
+    "last_open": "2026-03-06T19:00:35.166379",
+    "can_open_after": "2026-03-07T19:00:00",
+    "check_enabled": true
+  },
+  "1383946068": {
+    "last_open": "2025-12-06T19:00:32.334559",
+    "can_open_after": "2025-12-07T19:00:00",
+    "check_enabled": true
+  },
+  "6782176544": {
+    "last_open": "2025-08-01",
+    "check_enabled": false
+  },
+  "1880052388": {
+    "last_open": "2025-08-04T13:23:00.637751",
+    "can_open_after": "2025-08-04T19:00:00",
+    "check_enabled": true
+  },
+  "1999464562": {
+    "last_open": "2026-02-24T20:15:50.683312",
+    "can_open_after": "2026-02-25T19:00:00",
+    "check_enabled": false
+  },
+  "890321694": {
+    "last_open": "2025-08-16T19:17:49.161558",
+    "can_open_after": "2025-08-17T19:00:00",
+    "check_enabled": true
+  },
+  "880705433": {
+    "last_open": "2025-08-01T19:26:07.352574",
+    "can_open_after": "2025-08-02T19:00:00",
+    "check_enabled": true
+  },
+  "6446031791": {
+    "last_open": "2025-08-08T22:02:22.671589",
+    "can_open_after": "2025-08-09T19:00:00",
+    "check_enabled": true
+  },
+  "5802409010": {
+    "last_open": "2025-11-13T19:00:41.600121",
+    "can_open_after": "2025-11-14T19:00:00",
+    "check_enabled": true
+  },
+  "1687814948": {
+    "last_open": "2025-11-29T20:15:37.164038",
+    "can_open_after": "2025-11-30T19:00:00",
+    "check_enabled": true
+  },
+  "1523250143": {
+    "last_open": "2025-11-11T19:00:38.516479",
+    "can_open_after": "2025-11-12T19:00:00",
+    "check_enabled": true
+  },
+  "883330886": {
+    "last_open": "2025-11-13T00:45:16.130923",
+    "can_open_after": "2025-11-13T19:00:00",
+    "check_enabled": true
+  },
+  "7482870405": {
+    "last_open": "2025-11-15T19:07:37.381549",
+    "can_open_after": "2025-11-16T19:00:00",
+    "check_enabled": true
+  },
+  "888194747": {
+    "last_open": "2025-08-01T19:45:30.078400",
+    "can_open_after": "2025-08-02T19:00:00",
+    "check_enabled": true
+  },
+  "319408309": {
+    "last_open": "2025-08-01T19:52:39.296728",
+    "can_open_after": "2025-08-02T19:00:00",
+    "check_enabled": true
+  },
+  "5437634253": {
+    "last_open": "2025-08-09T01:42:41.760697",
+    "can_open_after": "2025-08-09T19:00:00",
+    "check_enabled": true
+  },
+  "5096941245": {
+    "last_open": "2025-08-01T20:02:52.992011",
+    "can_open_after": "2025-08-02T19:00:00",
+    "check_enabled": true
+  },
+  "648216765": {
+    "last_open": "2025-11-06T00:46:28.453856",
+    "can_open_after": "2025-11-06T19:00:00",
+    "check_enabled": true
+  },
+  "670019780": {
+    "last_open": "2025-12-09T06:05:03.187834",
+    "can_open_after": "2025-12-09T19:00:00",
+    "check_enabled": true
+  },
+  "426595334": {
+    "last_open": "2025-08-01T20:29:47.571715",
+    "can_open_after": "2025-08-02T19:00:00",
+    "check_enabled": true
+  },
+  "6614814839": {
+    "last_open": "2026-04-04T17:25:29.671642",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "741228627": {
+    "last_open": "2025-09-24T19:31:53.938556",
+    "can_open_after": "2025-09-25T19:00:00",
+    "check_enabled": true
+  },
+  "699677934": {
+    "last_open": "2025-12-21T08:48:54.222183",
+    "can_open_after": "2025-12-21T19:00:00",
+    "check_enabled": true
+  },
+  "1043582882": {
+    "last_open": "2025-09-26T12:11:46.624835",
+    "can_open_after": "2025-09-26T19:00:00",
+    "check_enabled": true
+  },
+  "7061576568": {
+    "last_open": "2025-08-08T20:48:31.463770",
+    "can_open_after": "2025-08-09T19:00:00",
+    "check_enabled": true
+  },
+  "829091921": {
+    "last_open": "2025-11-18T19:16:15.182450",
+    "can_open_after": "2025-11-19T19:00:00",
+    "check_enabled": true
+  },
+  "326115913": {
+    "last_open": "2025-11-28T20:40:48.068478",
+    "can_open_after": "2025-11-29T19:00:00",
+    "check_enabled": true
+  },
+  "896199019": {
+    "last_open": "2026-01-11T23:14:41.437340",
+    "can_open_after": "2026-01-12T19:00:00",
+    "check_enabled": true
+  },
+  "6341022745": {
+    "last_open": "2025-08-05T19:13:59.514044",
+    "can_open_after": "2025-08-06T19:00:00",
+    "check_enabled": true
+  },
+  "5687741685": {
+    "last_open": "2025-10-14T19:17:20.445251",
+    "can_open_after": "2025-10-15T19:00:00",
+    "check_enabled": true
+  },
+  "1377909003": {
+    "last_open": "2025-10-06T19:37:51.772003",
+    "can_open_after": "2025-10-07T19:00:00",
+    "check_enabled": true
+  },
+  "1872120124": {
+    "last_open": "2025-08-07T21:06:16.388428",
+    "can_open_after": "2025-08-08T19:00:00",
+    "check_enabled": true
+  },
+  "983574675": {
+    "last_open": "2026-01-19T17:25:55.184271",
+    "can_open_after": "2026-01-19T19:00:00",
+    "check_enabled": true
+  },
+  "7315058778": {
+    "last_open": "2025-08-21T03:08:00.753661",
+    "can_open_after": "2025-08-21T19:00:00",
+    "check_enabled": true
+  },
+  "1914268746": {
+    "last_open": "2025-09-01T20:23:08.340499",
+    "can_open_after": "2025-09-02T19:00:00",
+    "check_enabled": true
+  },
+  "1028786807": {
+    "last_open": "2025-08-04T19:01:52.918186",
+    "can_open_after": "2025-08-05T19:00:00",
+    "check_enabled": true
+  },
+  "840105272": {
+    "last_open": "2025-08-01T21:52:59.707159",
+    "can_open_after": "2025-08-02T19:00:00",
+    "check_enabled": true
+  },
+  "1076345957": {
+    "last_open": "2025-08-08T10:42:28.892458",
+    "can_open_after": "2025-08-08T19:00:00",
+    "check_enabled": true
+  },
+  "544748700": {
+    "last_open": "2025-08-07T19:13:59.640145",
+    "can_open_after": "2025-08-08T19:00:00",
+    "check_enabled": true
+  },
+  "1861183287": {
+    "last_open": "2025-11-14T15:08:37.382864",
+    "can_open_after": "2025-11-14T19:00:00",
+    "check_enabled": true
+  },
+  "1673171430": {
+    "last_open": "2026-04-05T06:25:28.108156",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "615662361": {
+    "last_open": "2025-09-29T19:14:32.707351",
+    "can_open_after": "2025-09-30T19:00:00",
+    "check_enabled": true
+  },
+  "1114738443": {
+    "last_open": "2025-09-15T19:02:25.157871",
+    "can_open_after": "2025-09-16T19:00:00",
+    "check_enabled": true
+  },
+  "5606675165": {
+    "last_open": "2025-08-14T09:29:26.629249",
+    "can_open_after": "2025-08-14T19:00:00",
+    "check_enabled": true
+  },
+  "745830750": {
+    "last_open": "2026-01-13T19:21:50.172115",
+    "can_open_after": "2026-01-14T19:00:00",
+    "check_enabled": true
+  },
+  "780290580": {
+    "last_open": "2026-01-17T19:01:46.968701",
+    "can_open_after": "2026-01-18T19:00:00",
+    "check_enabled": true
+  },
+  "860397941": {
+    "last_open": "2025-08-15T20:41:12.234274",
+    "can_open_after": "2025-08-16T19:00:00",
+    "check_enabled": true
+  },
+  "6058356095": {
+    "last_open": "2026-01-12T19:06:34.387319",
+    "can_open_after": "2026-01-13T19:00:00",
+    "check_enabled": true
+  },
+  "1674452351": {
+    "last_open": "2025-12-09T19:00:45.054745",
+    "can_open_after": "2025-12-10T19:00:00",
+    "check_enabled": true
+  },
+  "327203873": {
+    "last_open": "2025-11-19T19:18:51.934207",
+    "can_open_after": "2025-11-20T19:00:00",
+    "check_enabled": true
+  },
+  "710627083": {
+    "last_open": "2025-08-02T01:05:39.996564",
+    "can_open_after": "2025-08-02T19:00:00",
+    "check_enabled": true
+  },
+  "1484490615": {
+    "last_open": "2026-01-28T19:01:19.162584",
+    "can_open_after": "2026-01-29T19:00:00",
+    "check_enabled": true
+  },
+  "671735810": {
+    "last_open": "2026-01-28T11:44:16.382135",
+    "can_open_after": "2026-01-28T19:00:00",
+    "check_enabled": true
+  },
+  "1060678867": {
+    "last_open": "2025-11-28T07:15:31.169783",
+    "can_open_after": "2025-11-28T19:00:00",
+    "check_enabled": true
+  },
+  "1085533171": {
+    "last_open": "2026-04-03T19:03:55.804680",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "5451482350": {
+    "last_open": "2025-09-05T03:47:06.124739",
+    "can_open_after": "2025-09-05T19:00:00",
+    "check_enabled": true
+  },
+  "377764189": {
+    "last_open": "2025-08-09T08:05:37.617230",
+    "can_open_after": "2025-08-09T19:00:00",
+    "check_enabled": true
+  },
+  "807460401": {
+    "last_open": "2025-08-28T19:04:32.107170",
+    "can_open_after": "2025-08-29T19:00:00",
+    "check_enabled": true
+  },
+  "915591288": {
+    "last_open": "2025-08-20T20:12:19.054474",
+    "can_open_after": "2025-08-21T19:00:00",
+    "check_enabled": true
+  },
+  "492777410": {
+    "last_open": "2026-02-15T19:06:05.334799",
+    "can_open_after": "2026-02-16T19:00:00",
+    "check_enabled": true
+  },
+  "1821129317": {
+    "last_open": "2025-10-15T20:45:36.696507",
+    "can_open_after": "2025-10-16T19:00:00",
+    "check_enabled": true
+  },
+  "654236043": {
+    "last_open": "2026-01-27T23:19:01.931458",
+    "can_open_after": "2026-01-28T19:00:00",
+    "check_enabled": true
+  },
+  "5161469150": {
+    "last_open": "2025-11-28T06:14:53.114073",
+    "can_open_after": "2025-11-28T19:00:00",
+    "check_enabled": true
+  },
+  "7632968417": {
+    "last_open": "2026-02-24T12:03:03.736877",
+    "can_open_after": "2026-02-24T19:00:00",
+    "check_enabled": true
+  },
+  "5155670857": {
+    "last_open": "2026-04-02T04:50:40.145498",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "1723941824": {
+    "last_open": "2025-08-02T05:36:15.642204",
+    "can_open_after": "2025-08-02T19:00:00",
+    "check_enabled": true
+  },
+  "2001836514": {
+    "last_open": "2025-08-08T06:07:50.739741",
+    "can_open_after": "2025-08-08T19:00:00",
+    "check_enabled": true
+  },
+  "1134360760": {
+    "last_open": "2025-08-09T05:14:37.926543",
+    "can_open_after": "2025-08-09T19:00:00",
+    "check_enabled": true
+  },
+  "325170400": {
+    "last_open": "2026-02-08T19:07:05.439347",
+    "can_open_after": "2026-02-09T19:00:00",
+    "check_enabled": true
+  },
+  "6387637582": {
+    "last_open": "2025-11-08T19:11:28.568524",
+    "can_open_after": "2025-11-09T19:00:00",
+    "check_enabled": true
+  },
+  "427663885": {
+    "last_open": "2025-09-05T19:08:12.583364",
+    "can_open_after": "2025-09-06T19:00:00",
+    "check_enabled": true
+  },
+  "1389478803": {
+    "last_open": "2026-02-13T20:20:57.828588",
+    "can_open_after": "2026-02-14T19:00:00",
+    "check_enabled": true
+  },
+  "5041745576": {
+    "last_open": "2025-08-19T10:52:45.481868",
+    "can_open_after": "2025-08-19T19:00:00",
+    "check_enabled": true
+  },
+  "387586453": {
+    "last_open": "2025-09-06T10:56:15.861824",
+    "can_open_after": "2025-09-06T19:00:00",
+    "check_enabled": true
+  },
+  "1008304156": {
+    "last_open": "2026-01-05T19:47:31.800089",
+    "can_open_after": "2026-01-06T19:00:00",
+    "check_enabled": true
+  },
+  "570167293": {
+    "last_open": "2025-12-09T19:04:30.736414",
+    "can_open_after": "2025-12-10T19:00:00",
+    "check_enabled": true
+  },
+  "197021276": {
+    "last_open": "2025-08-07T19:28:08.270936",
+    "can_open_after": "2025-08-08T19:00:00",
+    "check_enabled": true
+  },
+  "5298812146": {
+    "last_open": "2025-11-15T06:18:55.600939",
+    "can_open_after": "2025-11-15T19:00:00",
+    "check_enabled": true
+  },
+  "686425062": {
+    "last_open": "2025-11-05T19:05:59.258170",
+    "can_open_after": "2025-11-06T19:00:00",
+    "check_enabled": true
+  },
+  "1341166503": {
+    "last_open": "2025-08-08T21:55:13.271429",
+    "can_open_after": "2025-08-09T19:00:00",
+    "check_enabled": true
+  },
+  "720368099": {
+    "last_open": "2025-08-02T08:44:08.142649",
+    "can_open_after": "2025-08-02T19:00:00",
+    "check_enabled": true
+  },
+  "5604122150": {
+    "last_open": "2026-04-01T16:36:00.323774",
+    "can_open_after": "2026-04-01T19:00:00",
+    "check_enabled": true
+  },
+  "1102447967": {
+    "last_open": "2026-04-01T16:31:18.421676",
+    "can_open_after": "2026-04-01T19:00:00",
+    "check_enabled": true
+  },
+  "242355231": {
+    "last_open": "2025-08-07T19:08:42.119983",
+    "can_open_after": "2025-08-08T19:00:00",
+    "check_enabled": true
+  },
+  "637441167": {
+    "last_open": "2025-08-18T20:35:14.423207",
+    "can_open_after": "2025-08-19T19:00:00",
+    "check_enabled": true
+  },
+  "240791755": {
+    "last_open": "2025-08-02T09:19:16.400651",
+    "can_open_after": "2025-08-02T19:00:00",
+    "check_enabled": true
+  },
+  "1995762344": {
+    "last_open": "2025-08-02T09:32:38.226129",
+    "can_open_after": "2025-08-02T19:00:00",
+    "check_enabled": true
+  },
+  "875552826": {
+    "last_open": "2025-08-29T11:32:14.762232",
+    "can_open_after": "2025-08-29T19:00:00",
+    "check_enabled": true
+  },
+  "817421781": {
+    "last_open": "2026-01-02T08:30:13.323574",
+    "can_open_after": "2026-01-02T19:00:00",
+    "check_enabled": true
+  },
+  "722612954": {
+    "last_open": "2025-12-14T10:24:15.132597",
+    "can_open_after": "2025-12-14T19:00:00",
+    "check_enabled": true
+  },
+  "983363396": {
+    "last_open": "2026-01-28T19:02:14.929394",
+    "can_open_after": "2026-01-29T19:00:00",
+    "check_enabled": true
+  },
+  "435897544": {
+    "last_open": "2025-08-02T10:05:04.412021",
+    "can_open_after": "2025-08-02T19:00:00",
+    "check_enabled": true
+  },
+  "8147888049": {
+    "last_open": "2026-01-17T19:17:25.120844",
+    "can_open_after": "2026-01-18T19:00:00",
+    "check_enabled": true
+  },
+  "5461692081": {
+    "last_open": "2025-08-02T10:10:10.626958",
+    "can_open_after": "2025-08-02T19:00:00",
+    "check_enabled": true
+  },
+  "1886360558": {
+    "last_open": "2025-09-23T06:13:10.048298",
+    "can_open_after": "2025-09-23T19:00:00",
+    "check_enabled": true
+  },
+  "1691814193": {
+    "last_open": "2025-08-14T19:15:56.618760",
+    "can_open_after": "2025-08-15T19:00:00",
+    "check_enabled": true
+  },
+  "1387692621": {
+    "last_open": "2025-11-22T20:36:07.317731",
+    "can_open_after": "2025-11-23T19:00:00",
+    "check_enabled": true
+  },
+  "1874141003": {
+    "last_open": "2025-08-02T10:29:36.060024",
+    "can_open_after": "2025-08-02T19:00:00",
+    "check_enabled": true
+  },
+  "280767648": {
+    "last_open": "2025-12-03T19:14:32.788212",
+    "can_open_after": "2025-12-04T19:00:00",
+    "check_enabled": true
+  },
+  "899817332": {
+    "last_open": "2025-08-04T21:51:08.033238",
+    "can_open_after": "2025-08-05T19:00:00",
+    "check_enabled": true
+  },
+  "1991170867": {
+    "last_open": "2026-02-10T13:02:52.532604",
+    "can_open_after": "2026-02-10T19:00:00",
+    "check_enabled": true
+  },
+  "794422123": {
+    "last_open": "2025-08-03T05:56:28.234660",
+    "can_open_after": "2025-08-03T19:00:00",
+    "check_enabled": true
+  },
+  "1199017808": {
+    "last_open": "2025-08-02T11:28:05.837103",
+    "can_open_after": "2025-08-02T19:00:00",
+    "check_enabled": true
+  },
+  "1177239245": {
+    "last_open": "2025-10-03T22:41:27.290787",
+    "can_open_after": "2025-10-04T19:00:00",
+    "check_enabled": true
+  },
+  "2120811763": {
+    "last_open": "2026-04-02T19:01:00.217892",
+    "can_open_after": "2026-04-03T19:00:00",
+    "check_enabled": true
+  },
+  "721384170": {
+    "last_open": "2025-08-07T19:06:31.300906",
+    "can_open_after": "2025-08-08T19:00:00",
+    "check_enabled": true
+  },
+  "6265961667": {
+    "last_open": "2025-12-09T19:17:34.381927",
+    "can_open_after": "2025-12-10T19:00:00",
+    "check_enabled": true
+  },
+  "929781380": {
+    "last_open": "2025-08-02T14:39:14.269412",
+    "can_open_after": "2025-08-02T19:00:00",
+    "check_enabled": true
+  },
+  "1405897020": {
+    "last_open": "2025-08-18T19:17:25.558116",
+    "can_open_after": "2025-08-19T19:00:00",
+    "check_enabled": true
+  },
+  "1781927384": {
+    "last_open": "2025-08-29T15:25:28.721990",
+    "can_open_after": "2025-08-29T19:00:00",
+    "check_enabled": true
+  },
+  "1402198221": {
+    "last_open": "2026-04-03T19:00:35.120547",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "5532632307": {
+    "last_open": "2025-10-21T19:19:50.762340",
+    "can_open_after": "2025-10-22T19:00:00",
+    "check_enabled": true
+  },
+  "504467583": {
+    "last_open": "2026-04-03T19:07:48.665737",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "824803944": {
+    "last_open": "2025-08-02T22:49:19.165014",
+    "can_open_after": "2025-08-03T19:00:00",
+    "check_enabled": true
+  },
+  "5435172263": {
+    "last_open": "2025-08-04T19:56:40.226266",
+    "can_open_after": "2025-08-05T19:00:00",
+    "check_enabled": true
+  },
+  "5134912929": {
+    "last_open": "2025-08-04T07:03:46.694622",
+    "can_open_after": "2025-08-04T19:00:00",
+    "check_enabled": true
+  },
+  "733802030": {
+    "last_open": "2025-09-06T20:05:58.469081",
+    "can_open_after": "2025-09-07T19:00:00",
+    "check_enabled": true
+  },
+  "458133886": {
+    "last_open": "2025-10-22T09:49:59.173386",
+    "can_open_after": "2025-10-22T19:00:00",
+    "check_enabled": true
+  },
+  "492309299": {
+    "last_open": "2025-08-06T03:57:27.012568",
+    "can_open_after": "2025-08-06T19:00:00",
+    "check_enabled": true
+  },
+  "689763785": {
+    "last_open": "2025-08-25T09:39:47.365506",
+    "can_open_after": "2025-08-25T19:00:00",
+    "check_enabled": true
+  },
+  "897676054": {
+    "last_open": "2025-12-11T03:57:52.384219",
+    "can_open_after": "2025-12-11T19:00:00",
+    "check_enabled": true
+  },
+  "832877906": {
+    "last_open": "2025-11-21T19:25:52.852362",
+    "can_open_after": "2025-11-22T19:00:00",
+    "check_enabled": true
+  },
+  "758982464": {
+    "last_open": "2025-09-15T07:49:12.021284",
+    "can_open_after": "2025-09-15T19:00:00",
+    "check_enabled": true
+  },
+  "1285183632": {
+    "last_open": "2025-08-08T19:01:06.105378",
+    "can_open_after": "2025-08-09T19:00:00",
+    "check_enabled": true
+  },
+  "1655857165": {
+    "last_open": "2025-08-03T13:17:49.535061",
+    "can_open_after": "2025-08-03T19:00:00",
+    "check_enabled": true
+  },
+  "1036163363": {
+    "last_open": "2025-11-12T19:24:16.490115",
+    "can_open_after": "2025-11-13T19:00:00",
+    "check_enabled": true
+  },
+  "873617843": {
+    "last_open": "2025-08-06T19:03:47.001228",
+    "can_open_after": "2025-08-07T19:00:00",
+    "check_enabled": true
+  },
+  "1000523525": {
+    "last_open": "2025-08-03T15:05:50.985562",
+    "can_open_after": "2025-08-03T19:00:00",
+    "check_enabled": true
+  },
+  "5894604989": {
+    "last_open": "2025-08-03T19:40:40.736251",
+    "can_open_after": "2025-08-04T19:00:00",
+    "check_enabled": true
+  },
+  "978017302": {
+    "last_open": "2026-03-04T19:06:39.618290",
+    "can_open_after": "2026-03-05T19:00:00",
+    "check_enabled": true
+  },
+  "228060680": {
+    "last_open": "2025-08-05T19:12:29.135060",
+    "can_open_after": "2025-08-06T19:00:00",
+    "check_enabled": true
+  },
+  "1066202275": {
+    "last_open": "2026-04-01T22:41:47.589460",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "1736383194": {
+    "last_open": "2025-11-22T19:00:40.781995",
+    "can_open_after": "2025-11-23T19:00:00",
+    "check_enabled": true
+  },
+  "687507625": {
+    "last_open": "2025-12-22T20:56:07.444880",
+    "can_open_after": "2025-12-23T19:00:00",
+    "check_enabled": true
+  },
+  "1155127449": {
+    "last_open": "2026-04-01T19:21:28.392489",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "1769019852": {
+    "last_open": "2025-08-10T21:04:33.255581",
+    "can_open_after": "2025-08-11T19:00:00",
+    "check_enabled": true
+  },
+  "611039588": {
+    "last_open": "2025-11-23T20:36:50.192614",
+    "can_open_after": "2025-11-24T19:00:00",
+    "check_enabled": true
+  },
+  "5196059667": {
+    "last_open": "2025-12-02T19:16:13.439400",
+    "can_open_after": "2025-12-03T19:00:00",
+    "check_enabled": true
+  },
+  "6529560886": {
+    "last_open": "2026-04-04T19:50:52.359175",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "727882592": {
+    "last_open": "2025-11-23T19:00:32.893628",
+    "can_open_after": "2025-11-24T19:00:00",
+    "check_enabled": true
+  },
+  "1360239029": {
+    "last_open": "2025-09-16T12:43:56.484253",
+    "can_open_after": "2025-09-16T19:00:00",
+    "check_enabled": true
+  },
+  "735071306": {
+    "last_open": "2025-08-10T19:22:45.704636",
+    "can_open_after": "2025-08-11T19:00:00",
+    "check_enabled": true
+  },
+  "5982148286": {
+    "last_open": "2025-12-31T19:30:47.409419",
+    "can_open_after": "2026-01-01T19:00:00",
+    "check_enabled": true
+  },
+  "861750781": {
+    "last_open": "2025-09-01T19:11:12.587439",
+    "can_open_after": "2025-09-02T19:00:00",
+    "check_enabled": true
+  },
+  "1273686403": {
+    "last_open": "2025-08-06T19:05:23.837760",
+    "can_open_after": "2025-08-07T19:00:00",
+    "check_enabled": true
+  },
+  "5671576802": {
+    "last_open": "2026-03-10T19:00:59.815737",
+    "can_open_after": "2026-03-11T19:00:00",
+    "check_enabled": true
+  },
+  "898021979": {
+    "last_open": "2025-08-04T19:04:49.221428",
+    "can_open_after": "2025-08-05T19:00:00",
+    "check_enabled": true
+  },
+  "1321428694": {
+    "last_open": "2026-04-02T19:12:46.967103",
+    "can_open_after": "2026-04-03T19:00:00",
+    "check_enabled": true
+  },
+  "755380832": {
+    "last_open": "2025-10-05T19:16:56.844284",
+    "can_open_after": "2025-10-06T19:00:00",
+    "check_enabled": true
+  },
+  "1042139918": {
+    "last_open": "2025-08-30T19:00:25.688100",
+    "can_open_after": "2025-08-31T19:00:00",
+    "check_enabled": true
+  },
+  "1888722084": {
+    "last_open": "2025-09-02T05:05:34.696384",
+    "can_open_after": "2025-09-02T19:00:00",
+    "check_enabled": true
+  },
+  "445226655": {
+    "last_open": "2025-08-30T19:48:44.128193",
+    "can_open_after": "2025-08-31T19:00:00",
+    "check_enabled": true
+  },
+  "1938156701": {
+    "last_open": "2025-12-12T19:13:35.519736",
+    "can_open_after": "2025-12-13T19:00:00",
+    "check_enabled": true
+  },
+  "942220846": {
+    "last_open": "2025-08-07T00:27:28.615308",
+    "can_open_after": "2025-08-07T19:00:00",
+    "check_enabled": true
+  },
+  "1094536390": {
+    "last_open": "2025-08-06T03:55:50.673463",
+    "can_open_after": "2025-08-06T19:00:00",
+    "check_enabled": true
+  },
+  "6635922395": {
+    "last_open": "2026-02-24T03:59:44.574359",
+    "can_open_after": "2026-02-24T19:00:00",
+    "check_enabled": true
+  },
+  "984227788": {
+    "last_open": "2026-03-08T19:00:57.818137",
+    "can_open_after": "2026-03-09T19:00:00",
+    "check_enabled": true
+  },
+  "1598143471": {
+    "last_open": "2025-11-13T19:00:34.832305",
+    "can_open_after": "2025-11-14T19:00:00",
+    "check_enabled": true
+  },
+  "1179876160": {
+    "last_open": "2025-10-17T20:03:43.598378",
+    "can_open_after": "2025-10-18T19:00:00",
+    "check_enabled": true
+  },
+  "5777245637": {
+    "last_open": "2025-08-05T09:48:40.683236",
+    "can_open_after": "2025-08-05T19:00:00",
+    "check_enabled": true
+  },
+  "781384961": {
+    "last_open": "2025-08-30T09:22:52.069892",
+    "can_open_after": "2025-08-30T19:00:00",
+    "check_enabled": true
+  },
+  "723290543": {
+    "last_open": "2025-08-20T19:01:55.225484",
+    "can_open_after": "2025-08-21T19:00:00",
+    "check_enabled": true
+  },
+  "415723383": {
+    "last_open": "2026-01-24T19:08:19.506337",
+    "can_open_after": "2026-01-25T19:00:00",
+    "check_enabled": true
+  },
+  "943345680": {
+    "last_open": "2025-11-27T19:27:33.974099",
+    "can_open_after": "2025-11-28T19:00:00",
+    "check_enabled": true
+  },
+  "1239010186": {
+    "last_open": "2025-08-15T19:01:08.270051",
+    "can_open_after": "2025-08-16T19:00:00",
+    "check_enabled": true
+  },
+  "800758563": {
+    "last_open": "2025-09-03T20:23:28.239342",
+    "can_open_after": "2025-09-04T19:00:00",
+    "check_enabled": true
+  },
+  "5616534249": {
+    "last_open": "2025-08-20T23:07:20.361076",
+    "can_open_after": "2025-08-21T19:00:00",
+    "check_enabled": true
+  },
+  "5591305424": {
+    "last_open": "2025-08-05T13:02:45.015641",
+    "can_open_after": "2025-08-05T19:00:00",
+    "check_enabled": true
+  },
+  "1188708126": {
+    "last_open": "2025-08-07T08:17:41.689197",
+    "can_open_after": "2025-08-07T19:00:00",
+    "check_enabled": true
+  },
+  "7446778383": {
+    "last_open": "2025-08-05T14:43:12.066355",
+    "can_open_after": "2025-08-05T19:00:00",
+    "check_enabled": true
+  },
+  "879964509": {
+    "last_open": "2025-09-04T07:25:42.533006",
+    "can_open_after": "2025-09-04T19:00:00",
+    "check_enabled": true
+  },
+  "335319555": {
+    "last_open": "2025-08-08T20:20:28.920842",
+    "can_open_after": "2025-08-09T19:00:00",
+    "check_enabled": true
+  },
+  "664651166": {
+    "last_open": "2025-10-21T06:26:45.341864",
+    "can_open_after": "2025-10-21T19:00:00",
+    "check_enabled": true
+  },
+  "7395589232": {
+    "last_open": "2025-08-05T23:08:32.017726",
+    "can_open_after": "2025-08-06T19:00:00",
+    "check_enabled": true
+  },
+  "1474985962": {
+    "last_open": "2025-08-08T19:09:24.342652",
+    "can_open_after": "2025-08-09T19:00:00",
+    "check_enabled": true
+  },
+  "5340016894": {
+    "last_open": "2025-08-30T19:33:34.606845",
+    "can_open_after": "2025-08-31T19:00:00",
+    "check_enabled": true
+  },
+  "316707463": {
+    "last_open": "2026-04-04T20:02:59.264262",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "570671829": {
+    "last_open": "2025-08-05T17:39:42.244520",
+    "can_open_after": "2025-08-05T19:00:00",
+    "check_enabled": true
+  },
+  "5271552132": {
+    "last_open": "2025-08-05T18:36:16.531136",
+    "can_open_after": "2025-08-05T19:00:00",
+    "check_enabled": true
+  },
+  "970157399": {
+    "last_open": "2026-04-01T16:15:37.339561",
+    "can_open_after": "2026-04-01T19:00:00",
+    "check_enabled": true
+  },
+  "6272717322": {
+    "last_open": "2025-08-06T19:01:01.644581",
+    "can_open_after": "2025-08-07T19:00:00",
+    "check_enabled": true
+  },
+  "7271417576": {
+    "last_open": "2025-08-29T14:55:59.243283",
+    "can_open_after": "2025-08-29T19:00:00",
+    "check_enabled": true
+  },
+  "1228440124": {
+    "last_open": "2025-10-18T20:10:22.885407",
+    "can_open_after": "2025-10-19T19:00:00",
+    "check_enabled": true
+  },
+  "1170669158": {
+    "last_open": "2025-08-06T19:05:22.079428",
+    "can_open_after": "2025-08-07T19:00:00",
+    "check_enabled": true
+  },
+  "5347344322": {
+    "last_open": "2025-08-06T04:44:02.005588",
+    "can_open_after": "2025-08-06T19:00:00",
+    "check_enabled": true
+  },
+  "6507630010": {
+    "last_open": "2025-08-06T07:47:53.208317",
+    "can_open_after": "2025-08-06T19:00:00",
+    "check_enabled": true
+  },
+  "6403782931": {
+    "last_open": "2025-11-02T23:52:32.164707",
+    "can_open_after": "2025-11-03T19:00:00",
+    "check_enabled": true
+  },
+  "1158991657": {
+    "last_open": "2025-08-16T19:50:11.260939",
+    "can_open_after": "2025-08-17T19:00:00",
+    "check_enabled": true
+  },
+  "1308144472": {
+    "last_open": "2026-02-05T19:09:39.782081",
+    "can_open_after": "2026-02-06T19:00:00",
+    "check_enabled": true
+  },
+  "313815240": {
+    "last_open": "2026-03-15T19:15:19.906867",
+    "can_open_after": "2026-03-16T19:00:00",
+    "check_enabled": true
+  },
+  "759872356": {
+    "last_open": "2025-12-12T19:36:34.151434",
+    "can_open_after": "2025-12-13T19:00:00",
+    "check_enabled": true
+  },
+  "5286101394": {
+    "last_open": "2025-10-06T19:00:39.659794",
+    "can_open_after": "2025-10-07T19:00:00",
+    "check_enabled": true
+  },
+  "918756368": {
+    "last_open": "2025-08-08T00:36:42.413049",
+    "can_open_after": "2025-08-08T19:00:00",
+    "check_enabled": true
+  },
+  "1482209364": {
+    "last_open": "2025-08-07T19:03:57.867041",
+    "can_open_after": "2025-08-08T19:00:00",
+    "check_enabled": true
+  },
+  "828559255": {
+    "last_open": "2025-08-07T19:12:04.402307",
+    "can_open_after": "2025-08-08T19:00:00",
+    "check_enabled": true
+  },
+  "6951128464": {
+    "last_open": "2025-11-18T11:37:39.756742",
+    "can_open_after": "2025-11-18T19:00:00",
+    "check_enabled": true
+  },
+  "362591758": {
+    "last_open": "2026-04-02T05:54:37.402082",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "829333663": {
+    "last_open": "2025-12-09T19:00:23.343300",
+    "can_open_after": "2025-12-10T19:00:00",
+    "check_enabled": true
+  },
+  "507545951": {
+    "last_open": "2025-11-18T19:03:29.269667",
+    "can_open_after": "2025-11-19T19:00:00",
+    "check_enabled": true
+  },
+  "536511284": {
+    "last_open": "2025-11-24T19:08:14.511234",
+    "can_open_after": "2025-11-25T19:00:00",
+    "check_enabled": true
+  },
+  "687981350": {
+    "last_open": "2025-10-08T19:40:24.195119",
+    "can_open_after": "2025-10-09T19:00:00",
+    "check_enabled": true
+  },
+  "542111205": {
+    "last_open": "2025-08-07T06:46:19.754359",
+    "can_open_after": "2025-08-07T19:00:00",
+    "check_enabled": true
+  },
+  "966423757": {
+    "last_open": "2025-11-14T19:37:32.400832",
+    "can_open_after": "2025-11-15T19:00:00",
+    "check_enabled": true
+  },
+  "452569680": {
+    "last_open": "2025-11-15T19:03:30.017488",
+    "can_open_after": "2025-11-16T19:00:00",
+    "check_enabled": true
+  },
+  "1711213446": {
+    "last_open": "2025-11-23T19:01:32.566594",
+    "can_open_after": "2025-11-24T19:00:00",
+    "check_enabled": true
+  },
+  "920833862": {
+    "last_open": "2025-08-07T11:00:12.822726",
+    "can_open_after": "2025-08-07T19:00:00",
+    "check_enabled": true
+  },
+  "679100657": {
+    "last_open": "2025-08-07T19:05:48.604639",
+    "can_open_after": "2025-08-08T19:00:00",
+    "check_enabled": true
+  },
+  "377298276": {
+    "last_open": "2025-08-07T12:24:44.718684",
+    "can_open_after": "2025-08-07T19:00:00",
+    "check_enabled": true
+  },
+  "7206789384": {
+    "last_open": "2026-03-03T07:39:54.159591",
+    "can_open_after": "2026-03-03T19:00:00",
+    "check_enabled": true
+  },
+  "902728398": {
+    "last_open": "2025-08-07T19:01:43.088995",
+    "can_open_after": "2025-08-08T19:00:00",
+    "check_enabled": true
+  },
+  "647776739": {
+    "last_open": "2025-08-07T13:28:38.691460",
+    "can_open_after": "2025-08-07T19:00:00",
+    "check_enabled": true
+  },
+  "1551811966": {
+    "last_open": "2025-08-07T13:28:50.793645",
+    "can_open_after": "2025-08-07T19:00:00",
+    "check_enabled": true
+  },
+  "5097008620": {
+    "last_open": "2026-02-20T21:56:06.948729",
+    "can_open_after": "2026-02-21T19:00:00",
+    "check_enabled": true
+  },
+  "1042684870": {
+    "last_open": "2025-11-18T19:00:29.290930",
+    "can_open_after": "2025-11-19T19:00:00",
+    "check_enabled": true
+  },
+  "643300513": {
+    "last_open": "2025-08-08T21:34:20.573049",
+    "can_open_after": "2025-08-09T19:00:00",
+    "check_enabled": true
+  },
+  "1291745068": {
+    "last_open": "2025-08-31T19:00:40.752182",
+    "can_open_after": "2025-09-01T19:00:00",
+    "check_enabled": true
+  },
+  "1678309993": {
+    "last_open": "2025-12-10T08:24:17.078678",
+    "can_open_after": "2025-12-10T19:00:00",
+    "check_enabled": true
+  },
+  "1047634791": {
+    "last_open": "2026-03-17T19:33:10.296982",
+    "can_open_after": "2026-03-18T19:00:00",
+    "check_enabled": true
+  },
+  "6701786180": {
+    "last_open": "2026-04-03T06:13:38.363733",
+    "can_open_after": "2026-04-03T19:00:00",
+    "check_enabled": true
+  },
+  "7268524186": {
+    "last_open": "2025-08-07T20:39:24.100719",
+    "can_open_after": "2025-08-08T19:00:00",
+    "check_enabled": true
+  },
+  "7939426602": {
+    "last_open": "2025-08-18T19:32:09.920912",
+    "can_open_after": "2025-08-19T19:00:00",
+    "check_enabled": true
+  },
+  "1199680908": {
+    "last_open": "2026-04-02T04:37:34.891888",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "7428331130": {
+    "last_open": "2025-10-13T16:27:28.582388",
+    "can_open_after": "2025-10-13T19:00:00",
+    "check_enabled": true
+  },
+  "891600624": {
+    "last_open": "2025-11-26T19:03:39.214020",
+    "can_open_after": "2025-11-27T19:00:00",
+    "check_enabled": true
+  },
+  "721185768": {
+    "last_open": "2025-08-08T19:25:00.220303",
+    "can_open_after": "2025-08-09T19:00:00",
+    "check_enabled": true
+  },
+  "2102283570": {
+    "last_open": "2025-08-07T21:04:28.466625",
+    "can_open_after": "2025-08-08T19:00:00",
+    "check_enabled": true
+  },
+  "7229340598": {
+    "last_open": "2025-08-10T21:55:41.771886",
+    "can_open_after": "2025-08-11T19:00:00",
+    "check_enabled": true
+  },
+  "1334338218": {
+    "last_open": "2025-11-09T19:05:05.553359",
+    "can_open_after": "2025-11-10T19:00:00",
+    "check_enabled": true
+  },
+  "7630405093": {
+    "last_open": "2026-04-02T20:05:39.454130",
+    "can_open_after": "2026-04-03T19:00:00",
+    "check_enabled": true
+  },
+  "1789401798": {
+    "last_open": "2026-03-02T14:33:57.001602",
+    "can_open_after": "2026-03-02T19:00:00",
+    "check_enabled": true
+  },
+  "791242942": {
+    "last_open": "2025-11-08T21:29:36.046136",
+    "can_open_after": "2025-11-09T19:00:00",
+    "check_enabled": true
+  },
+  "919704748": {
+    "last_open": "2025-11-04T07:27:25.410467",
+    "can_open_after": "2025-11-04T19:00:00",
+    "check_enabled": true
+  },
+  "7531282406": {
+    "last_open": "2025-08-08T19:04:40.421305",
+    "can_open_after": "2025-08-09T19:00:00",
+    "check_enabled": true
+  },
+  "6349906586": {
+    "last_open": "2025-08-08T08:56:32.891916",
+    "can_open_after": "2025-08-08T19:00:00",
+    "check_enabled": true
+  },
+  "871472311": {
+    "last_open": "2025-08-08T10:41:09.182604",
+    "can_open_after": "2025-08-08T19:00:00",
+    "check_enabled": true
+  },
+  "5002364533": {
+    "last_open": "2025-08-08T10:55:45.519344",
+    "can_open_after": "2025-08-08T19:00:00",
+    "check_enabled": true
+  },
+  "387740482": {
+    "last_open": "2025-08-17T19:04:22.332094",
+    "can_open_after": "2025-08-18T19:00:00",
+    "check_enabled": true
+  },
+  "812730080": {
+    "last_open": "2025-09-11T20:22:29.798816",
+    "can_open_after": "2025-09-12T19:00:00",
+    "check_enabled": true
+  },
+  "536779024": {
+    "last_open": "2025-08-08T19:26:46.530684",
+    "can_open_after": "2025-08-09T19:00:00",
+    "check_enabled": true
+  },
+  "5423002505": {
+    "last_open": "2026-01-17T19:58:38.578254",
+    "can_open_after": "2026-01-18T19:00:00",
+    "check_enabled": true
+  },
+  "5524521592": {
+    "last_open": "2025-08-15T04:03:35.457383",
+    "can_open_after": "2025-08-15T19:00:00",
+    "check_enabled": true
+  },
+  "5114216049": {
+    "last_open": "2025-12-14T19:00:40.996733",
+    "can_open_after": "2025-12-15T19:00:00",
+    "check_enabled": true
+  },
+  "5692357064": {
+    "last_open": "2025-08-22T16:47:34.337868",
+    "can_open_after": "2025-08-22T19:00:00",
+    "check_enabled": true
+  },
+  "7909184837": {
+    "last_open": "2025-08-31T19:01:04.128871",
+    "can_open_after": "2025-09-01T19:00:00",
+    "check_enabled": true
+  },
+  "5663143903": {
+    "last_open": "2026-01-01T05:39:29.522956",
+    "can_open_after": "2026-01-01T19:00:00",
+    "check_enabled": true
+  },
+  "909923259": {
+    "last_open": "2025-08-09T13:08:21.014817",
+    "can_open_after": "2025-08-09T19:00:00",
+    "check_enabled": true
+  },
+  "1099982996": {
+    "last_open": "2025-08-09T16:24:22.107205",
+    "can_open_after": "2025-08-09T19:00:00",
+    "check_enabled": true
+  },
+  "5789293648": {
+    "last_open": "2025-12-01T19:23:30.095703",
+    "can_open_after": "2025-12-02T19:00:00",
+    "check_enabled": true
+  },
+  "1391460558": {
+    "last_open": "2025-08-09T19:25:44.095612",
+    "can_open_after": "2025-08-10T19:00:00",
+    "check_enabled": true
+  },
+  "1643513068": {
+    "last_open": "2025-08-09T21:05:02.153733",
+    "can_open_after": "2025-08-10T19:00:00",
+    "check_enabled": true
+  },
+  "763286012": {
+    "last_open": "2025-10-20T19:18:33.361068",
+    "can_open_after": "2025-10-21T19:00:00",
+    "check_enabled": true
+  },
+  "455258503": {
+    "last_open": "2025-11-15T15:28:17.855172",
+    "can_open_after": "2025-11-15T19:00:00",
+    "check_enabled": true
+  },
+  "1225137876": {
+    "last_open": "2025-08-29T02:50:59.238882",
+    "can_open_after": "2025-08-29T19:00:00",
+    "check_enabled": true
+  },
+  "776301286": {
+    "last_open": "2025-09-01T18:47:21.402565",
+    "can_open_after": "2025-09-01T19:00:00",
+    "check_enabled": true
+  },
+  "724915427": {
+    "last_open": "2025-08-12T20:32:02.167519",
+    "can_open_after": "2025-08-13T19:00:00",
+    "check_enabled": true
+  },
+  "6144318393": {
+    "last_open": "2026-04-04T00:32:48.538996",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "1913882208": {
+    "last_open": "2025-09-23T19:01:52.157078",
+    "can_open_after": "2025-09-24T19:00:00",
+    "check_enabled": true
+  },
+  "6647279418": {
+    "last_open": "2025-12-13T17:52:46.498157",
+    "can_open_after": "2025-12-13T19:00:00",
+    "check_enabled": true
+  },
+  "6656596197": {
+    "last_open": "2026-04-01T15:34:13.164706",
+    "can_open_after": "2026-04-01T19:00:00",
+    "check_enabled": true
+  },
+  "6936915885": {
+    "last_open": "2025-09-01T21:19:57.268794",
+    "can_open_after": "2025-09-02T19:00:00",
+    "check_enabled": true
+  },
+  "7037201909": {
+    "last_open": "2025-08-30T03:10:53.426413",
+    "can_open_after": "2025-08-30T19:00:00",
+    "check_enabled": true
+  },
+  "5837362553": {
+    "last_open": "2025-08-19T14:19:41.464968",
+    "can_open_after": "2025-08-19T19:00:00",
+    "check_enabled": true
+  },
+  "1067704320": {
+    "last_open": "2025-08-11T19:01:42.307881",
+    "can_open_after": "2025-08-12T19:00:00",
+    "check_enabled": true
+  },
+  "1407254288": {
+    "last_open": "2025-08-11T18:48:13.795619",
+    "can_open_after": "2025-08-11T19:00:00",
+    "check_enabled": true
+  },
+  "7964298877": {
+    "last_open": "2026-04-03T19:40:45.968967",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "7351916808": {
+    "last_open": "2026-04-04T03:30:33.272766",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "6778198417": {
+    "last_open": "2025-12-12T19:00:51.287164",
+    "can_open_after": "2025-12-13T19:00:00",
+    "check_enabled": true
+  },
+  "967066515": {
+    "last_open": "2025-08-11T19:05:20.679182",
+    "can_open_after": "2025-08-12T19:00:00",
+    "check_enabled": true
+  },
+  "1512643157": {
+    "last_open": "2026-01-21T19:54:22.313849",
+    "can_open_after": "2026-01-22T19:00:00",
+    "check_enabled": true
+  },
+  "780491822": {
+    "last_open": "2026-04-04T01:07:54.458587",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "1019907025": {
+    "last_open": "2025-12-26T04:37:32.170546",
+    "can_open_after": "2025-12-26T19:00:00",
+    "check_enabled": true
+  },
+  "1486962484": {
+    "last_open": "2025-08-15T08:39:47.179773",
+    "can_open_after": "2025-08-15T19:00:00",
+    "check_enabled": true
+  },
+  "921331335": {
+    "last_open": "2025-08-15T10:59:43.491950",
+    "can_open_after": "2025-08-15T19:00:00",
+    "check_enabled": true
+  },
+  "1466393095": {
+    "last_open": "2025-12-04T19:16:59.311932",
+    "can_open_after": "2025-12-05T19:00:00",
+    "check_enabled": true
+  },
+  "1138077895": {
+    "last_open": "2025-12-06T19:01:33.129082",
+    "can_open_after": "2025-12-07T19:00:00",
+    "check_enabled": true
+  },
+  "895063684": {
+    "last_open": "2025-08-30T19:06:06.779695",
+    "can_open_after": "2025-08-31T19:00:00",
+    "check_enabled": true
+  },
+  "2055891042": {
+    "last_open": "2026-04-03T19:01:40.079001",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "1780758907": {
+    "last_open": "2026-02-15T19:02:48.166186",
+    "can_open_after": "2026-02-16T19:00:00",
+    "check_enabled": true
+  },
+  "2085877441": {
+    "last_open": "2026-02-12T19:07:16.053116",
+    "can_open_after": "2026-02-13T19:00:00",
+    "check_enabled": true
+  },
+  "7084409759": {
+    "last_open": "2025-08-12T19:32:50.768477",
+    "can_open_after": "2025-08-13T19:00:00",
+    "check_enabled": true
+  },
+  "1137588600": {
+    "last_open": "2025-08-13T21:08:31.784225",
+    "can_open_after": "2025-08-14T19:00:00",
+    "check_enabled": true
+  },
+  "5233218480": {
+    "last_open": "2025-08-13T21:10:47.587924",
+    "can_open_after": "2025-08-14T19:00:00",
+    "check_enabled": true
+  },
+  "5315188783": {
+    "last_open": "2025-09-21T19:02:17.632123",
+    "can_open_after": "2025-09-22T19:00:00",
+    "check_enabled": true
+  },
+  "1579285713": {
+    "last_open": "2026-01-04T21:38:58.791404",
+    "can_open_after": "2026-01-05T19:00:00",
+    "check_enabled": true
+  },
+  "1021406313": {
+    "last_open": "2026-04-03T20:52:28.154796",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "703732245": {
+    "last_open": "2025-09-05T19:00:21.402974",
+    "can_open_after": "2025-09-06T19:00:00",
+    "check_enabled": true
+  },
+  "7494752143": {
+    "last_open": "2025-08-18T19:01:05.262581",
+    "can_open_after": "2025-08-19T19:00:00",
+    "check_enabled": true
+  },
+  "1970995051": {
+    "last_open": "2025-08-30T19:08:01.887686",
+    "can_open_after": "2025-08-31T19:00:00",
+    "check_enabled": true
+  },
+  "860921233": {
+    "last_open": "2025-11-30T19:01:17.930401",
+    "can_open_after": "2025-12-01T19:00:00",
+    "check_enabled": true
+  },
+  "1033471160": {
+    "last_open": "2026-01-19T19:00:27.060595",
+    "can_open_after": "2026-01-20T19:00:00",
+    "check_enabled": true
+  },
+  "681515684": {
+    "last_open": "2025-09-29T09:18:35.417233",
+    "can_open_after": "2025-09-29T19:00:00",
+    "check_enabled": true
+  },
+  "1076328464": {
+    "last_open": "2025-08-15T03:34:41.416522",
+    "can_open_after": "2025-08-15T19:00:00",
+    "check_enabled": true
+  },
+  "6612647831": {
+    "last_open": "2025-12-13T07:21:53.250631",
+    "can_open_after": "2025-12-13T19:00:00",
+    "check_enabled": true
+  },
+  "681981780": {
+    "last_open": "2025-12-31T19:00:28.647735",
+    "can_open_after": "2026-01-01T19:00:00",
+    "check_enabled": true
+  },
+  "139134700": {
+    "last_open": "2025-12-28T07:37:17.328304",
+    "can_open_after": "2025-12-28T19:00:00",
+    "check_enabled": true
+  },
+  "807714523": {
+    "last_open": "2026-04-03T03:11:27.621543",
+    "can_open_after": "2026-04-03T19:00:00",
+    "check_enabled": true
+  },
+  "7066915705": {
+    "last_open": "2026-02-07T00:13:31.699909",
+    "can_open_after": "2026-02-07T19:00:00",
+    "check_enabled": true
+  },
+  "1353292986": {
+    "last_open": "2025-10-30T18:14:19.387034",
+    "can_open_after": "2025-10-30T19:00:00",
+    "check_enabled": true
+  },
+  "1564209238": {
+    "last_open": "2025-08-17T09:36:37.579203",
+    "can_open_after": "2025-08-17T19:00:00",
+    "check_enabled": true
+  },
+  "703438894": {
+    "last_open": "2026-02-18T19:18:32.460025",
+    "can_open_after": "2026-02-19T19:00:00",
+    "check_enabled": true
+  },
+  "635548143": {
+    "last_open": "2025-09-19T03:46:50.441973",
+    "can_open_after": "2025-09-19T19:00:00",
+    "check_enabled": true
+  },
+  "707197489": {
+    "last_open": "2025-12-03T19:02:01.976464",
+    "can_open_after": "2025-12-04T19:00:00",
+    "check_enabled": true
+  },
+  "939121002": {
+    "last_open": "2025-08-17T19:01:35.268944",
+    "can_open_after": "2025-08-18T19:00:00",
+    "check_enabled": true
+  },
+  "5594072044": {
+    "last_open": "2025-09-20T20:36:29.979995",
+    "can_open_after": "2025-09-21T19:00:00",
+    "check_enabled": true
+  },
+  "8410942485": {
+    "last_open": "2025-08-20T20:11:44.500010",
+    "can_open_after": "2025-08-21T19:00:00",
+    "check_enabled": true
+  },
+  "1534896005": {
+    "last_open": "2025-09-15T19:00:36.843394",
+    "can_open_after": "2025-09-16T19:00:00",
+    "check_enabled": true
+  },
+  "1826682896": {
+    "last_open": "2025-08-18T19:00:46.390905",
+    "can_open_after": "2025-08-19T19:00:00",
+    "check_enabled": true
+  },
+  "496284625": {
+    "last_open": "2025-08-18T14:27:09.460874",
+    "can_open_after": "2025-08-18T19:00:00",
+    "check_enabled": true
+  },
+  "457313430": {
+    "last_open": "2025-08-18T16:13:48.740067",
+    "can_open_after": "2025-08-18T19:00:00",
+    "check_enabled": true
+  },
+  "1227905399": {
+    "last_open": "2025-09-16T19:00:26.208304",
+    "can_open_after": "2025-09-17T19:00:00",
+    "check_enabled": true
+  },
+  "1946911335": {
+    "last_open": "2025-08-19T19:33:58.143572",
+    "can_open_after": "2025-08-20T19:00:00",
+    "check_enabled": true
+  },
+  "970329160": {
+    "last_open": "2025-12-09T20:08:24.074135",
+    "can_open_after": "2025-12-10T19:00:00",
+    "check_enabled": true
+  },
+  "6025335509": {
+    "last_open": "2026-03-14T19:00:52.652992",
+    "can_open_after": "2026-03-15T19:00:00",
+    "check_enabled": true
+  },
+  "612399362": {
+    "last_open": "2026-03-13T09:15:10.287139",
+    "can_open_after": "2026-03-13T19:00:00",
+    "check_enabled": true
+  },
+  "1639937999": {
+    "last_open": "2025-09-04T20:33:19.542134",
+    "can_open_after": "2025-09-05T19:00:00",
+    "check_enabled": true
+  },
+  "6584797076": {
+    "last_open": "2025-10-03T20:12:23.094672",
+    "can_open_after": "2025-10-04T19:00:00",
+    "check_enabled": true
+  },
+  "452110895": {
+    "last_open": "2025-08-29T22:56:08.994364",
+    "can_open_after": "2025-08-30T19:00:00",
+    "check_enabled": true
+  },
+  "6534189449": {
+    "last_open": "2025-08-21T16:44:54.701483",
+    "can_open_after": "2025-08-21T19:00:00",
+    "check_enabled": true
+  },
+  "5649148168": {
+    "last_open": "2026-04-01T19:01:43.576869",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "8160579951": {
+    "last_open": "2025-08-22T10:14:38.014785",
+    "can_open_after": "2025-08-22T19:00:00",
+    "check_enabled": true
+  },
+  "1022931452": {
+    "last_open": "2025-08-22T11:32:43.863953",
+    "can_open_after": "2025-08-22T19:00:00",
+    "check_enabled": true
+  },
+  "6939654597": {
+    "last_open": "2026-02-15T19:02:31.124707",
+    "can_open_after": "2026-02-16T19:00:00",
+    "check_enabled": true
+  },
+  "5372573503": {
+    "last_open": "2025-08-22T16:21:12.642390",
+    "can_open_after": "2025-08-22T19:00:00",
+    "check_enabled": true
+  },
+  "7362134979": {
+    "last_open": "2025-08-22T23:54:27.717615",
+    "can_open_after": "2025-08-23T19:00:00",
+    "check_enabled": true
+  },
+  "5081191032": {
+    "last_open": "2026-02-12T19:35:32.418322",
+    "can_open_after": "2026-02-13T19:00:00",
+    "check_enabled": true
+  },
+  "282807762": {
+    "last_open": "2025-09-14T19:57:56.401715",
+    "can_open_after": "2025-09-15T19:00:00",
+    "check_enabled": true
+  },
+  "7777892242": {
+    "last_open": "2025-12-26T04:55:15.992416",
+    "can_open_after": "2025-12-26T19:00:00",
+    "check_enabled": true
+  },
+  "308061938": {
+    "last_open": "2026-01-25T05:10:58.328099",
+    "can_open_after": "2026-01-25T19:00:00",
+    "check_enabled": true
+  },
+  "757171452": {
+    "last_open": "2025-08-25T09:56:55.492414",
+    "can_open_after": "2025-08-25T19:00:00",
+    "check_enabled": true
+  },
+  "1921202085": {
+    "last_open": "2025-10-24T08:47:32.733791",
+    "can_open_after": "2025-10-24T19:00:00",
+    "check_enabled": true
+  },
+  "7238433642": {
+    "last_open": "2025-08-25T13:19:21.791209",
+    "can_open_after": "2025-08-25T19:00:00",
+    "check_enabled": true
+  },
+  "1113167300": {
+    "last_open": "2025-10-10T19:00:41.526322",
+    "can_open_after": "2025-10-11T19:00:00",
+    "check_enabled": true
+  },
+  "414177917": {
+    "last_open": "2026-04-03T19:10:15.815876",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "881655194": {
+    "last_open": "2025-08-30T12:24:32.951828",
+    "can_open_after": "2025-08-30T19:00:00",
+    "check_enabled": true
+  },
+  "604615035": {
+    "last_open": "2025-09-14T19:10:48.716614",
+    "can_open_after": "2025-09-15T19:00:00",
+    "check_enabled": true
+  },
+  "235456924": {
+    "last_open": "2025-09-14T19:23:27.798844",
+    "can_open_after": "2025-09-15T19:00:00",
+    "check_enabled": true
+  },
+  "477817698": {
+    "last_open": "2025-08-28T19:00:23.984548",
+    "can_open_after": "2025-08-29T19:00:00",
+    "check_enabled": true
+  },
+  "373322047": {
+    "last_open": "2025-08-28T19:00:26.222932",
+    "can_open_after": "2025-08-29T19:00:00",
+    "check_enabled": true
+  },
+  "8254289687": {
+    "last_open": "2025-08-28T19:01:07.406725",
+    "can_open_after": "2025-08-29T19:00:00",
+    "check_enabled": true
+  },
+  "5822897095": {
+    "last_open": "2025-08-28T19:03:22.942448",
+    "can_open_after": "2025-08-29T19:00:00",
+    "check_enabled": true
+  },
+  "707392935": {
+    "last_open": "2025-12-23T19:16:55.115232",
+    "can_open_after": "2025-12-24T19:00:00",
+    "check_enabled": true
+  },
+  "5467428328": {
+    "last_open": "2025-08-28T20:32:08.751143",
+    "can_open_after": "2025-08-29T19:00:00",
+    "check_enabled": true
+  },
+  "1404134503": {
+    "last_open": "2026-02-19T19:10:16.534026",
+    "can_open_after": "2026-02-20T19:00:00",
+    "check_enabled": true
+  },
+  "1472836520": {
+    "last_open": "2025-08-30T20:02:50.355033",
+    "can_open_after": "2025-08-31T19:00:00",
+    "check_enabled": true
+  },
+  "1758985133": {
+    "last_open": "2025-09-09T04:03:12.137306",
+    "can_open_after": "2025-09-09T19:00:00",
+    "check_enabled": true
+  },
+  "6318917951": {
+    "last_open": "2025-10-28T22:26:53.013196",
+    "can_open_after": "2025-10-29T19:00:00",
+    "check_enabled": true
+  },
+  "811552488": {
+    "last_open": "2025-11-25T15:15:07.070654",
+    "can_open_after": "2025-11-25T19:00:00",
+    "check_enabled": true
+  },
+  "1234501696": {
+    "last_open": "2025-09-15T04:37:24.372781",
+    "can_open_after": "2025-09-15T19:00:00",
+    "check_enabled": true
+  },
+  "1039790329": {
+    "last_open": "2025-08-30T12:00:47.609890",
+    "can_open_after": "2025-08-30T19:00:00",
+    "check_enabled": true
+  },
+  "1714748757": {
+    "last_open": "2025-12-09T16:35:31.410203",
+    "can_open_after": "2025-12-09T19:00:00",
+    "check_enabled": true
+  },
+  "924479104": {
+    "last_open": "2025-12-12T22:09:21.309342",
+    "can_open_after": "2025-12-13T19:00:00",
+    "check_enabled": true
+  },
+  "587945872": {
+    "last_open": "2025-11-14T19:00:21.059777",
+    "can_open_after": "2025-11-15T19:00:00",
+    "check_enabled": true
+  },
+  "5928887657": {
+    "last_open": "2026-01-15T15:34:40.987680",
+    "can_open_after": "2026-01-15T19:00:00",
+    "check_enabled": true
+  },
+  "294061428": {
+    "last_open": "2026-02-21T18:59:45.218799",
+    "can_open_after": "2026-02-21T19:00:00",
+    "check_enabled": true
+  },
+  "6557832101": {
+    "last_open": "2025-09-11T19:01:43.929484",
+    "can_open_after": "2025-09-12T19:00:00",
+    "check_enabled": true
+  },
+  "628203031": {
+    "last_open": "2025-11-11T19:04:35.586271",
+    "can_open_after": "2025-11-12T19:00:00",
+    "check_enabled": true
+  },
+  "669172625": {
+    "last_open": "2025-09-02T19:21:29.515270",
+    "can_open_after": "2025-09-03T19:00:00",
+    "check_enabled": true
+  },
+  "1142926176": {
+    "last_open": "2026-01-08T19:35:05.340186",
+    "can_open_after": "2026-01-09T19:00:00",
+    "check_enabled": true
+  },
+  "398069212": {
+    "last_open": "2025-09-04T20:48:42.031420",
+    "can_open_after": "2025-09-05T19:00:00",
+    "check_enabled": true
+  },
+  "695912534": {
+    "last_open": "2026-02-16T12:30:54.932535",
+    "can_open_after": "2026-02-16T19:00:00",
+    "check_enabled": true
+  },
+  "5412247569": {
+    "last_open": "2025-09-03T19:20:07.066148",
+    "can_open_after": "2025-09-04T19:00:00",
+    "check_enabled": true
+  },
+  "482740468": {
+    "last_open": "2026-01-14T19:00:47.457192",
+    "can_open_after": "2026-01-15T19:00:00",
+    "check_enabled": true
+  },
+  "1018247885": {
+    "last_open": "2025-12-09T21:13:10.546199",
+    "can_open_after": "2025-12-10T19:00:00",
+    "check_enabled": true
+  },
+  "1522007478": {
+    "last_open": "2025-09-04T19:01:46.285688",
+    "can_open_after": "2025-09-05T19:00:00",
+    "check_enabled": true
+  },
+  "946741058": {
+    "last_open": "2025-12-10T19:27:33.243847",
+    "can_open_after": "2025-12-11T19:00:00",
+    "check_enabled": true
+  },
+  "967810116": {
+    "last_open": "2025-10-06T21:55:22.787657",
+    "can_open_after": "2025-10-07T19:00:00",
+    "check_enabled": true
+  },
+  "816877806": {
+    "last_open": "2026-04-01T19:00:42.729120",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "5170598858": {
+    "last_open": "2025-08-31T19:44:25.718392",
+    "can_open_after": "2025-09-01T19:00:00",
+    "check_enabled": true
+  },
+  "6598260119": {
+    "last_open": "2025-09-01T08:18:36.593172",
+    "can_open_after": "2025-09-01T19:00:00",
+    "check_enabled": true
+  },
+  "617539797": {
+    "last_open": "2025-12-31T19:17:11.289994",
+    "can_open_after": "2026-01-01T19:00:00",
+    "check_enabled": true
+  },
+  "5216444217": {
+    "last_open": "2025-09-01T20:48:31.474547",
+    "can_open_after": "2025-09-02T19:00:00",
+    "check_enabled": true
+  },
+  "1955537181": {
+    "last_open": "2026-04-04T19:04:22.402295",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "1231589339": {
+    "last_open": "2025-09-04T19:01:22.652513",
+    "can_open_after": "2025-09-05T19:00:00",
+    "check_enabled": true
+  },
+  "7935742508": {
+    "last_open": "2025-12-08T19:00:53.193140",
+    "can_open_after": "2025-12-09T19:00:00",
+    "check_enabled": true
+  },
+  "901334670": {
+    "last_open": "2025-09-05T19:08:25.155028",
+    "can_open_after": "2025-09-06T19:00:00",
+    "check_enabled": true
+  },
+  "5249682914": {
+    "last_open": "2025-09-02T06:33:48.449419",
+    "can_open_after": "2025-09-02T19:00:00",
+    "check_enabled": true
+  },
+  "663137194": {
+    "last_open": "2025-09-02T07:31:02.716456",
+    "can_open_after": "2025-09-02T19:00:00",
+    "check_enabled": true
+  },
+  "452688539": {
+    "last_open": "2025-09-02T13:46:40.795009",
+    "can_open_after": "2025-09-02T19:00:00",
+    "check_enabled": true
+  },
+  "437428935": {
+    "last_open": "2025-09-02T14:44:26.583199",
+    "can_open_after": "2025-09-02T19:00:00",
+    "check_enabled": true
+  },
+  "8281196764": {
+    "last_open": "2025-09-26T12:11:11.777139",
+    "can_open_after": "2025-09-26T19:00:00",
+    "check_enabled": true
+  },
+  "1553762406": {
+    "last_open": "2025-09-02T19:03:58.110512",
+    "can_open_after": "2025-09-03T19:00:00",
+    "check_enabled": true
+  },
+  "1074856698": {
+    "last_open": "2025-09-21T19:00:46.623483",
+    "can_open_after": "2025-09-22T19:00:00",
+    "check_enabled": true
+  },
+  "1055048151": {
+    "last_open": "2025-12-17T22:37:04.913775",
+    "can_open_after": "2025-12-18T19:00:00",
+    "check_enabled": true
+  },
+  "7756788431": {
+    "last_open": "2026-01-24T03:59:47.688014",
+    "can_open_after": "2026-01-24T19:00:00",
+    "check_enabled": true
+  },
+  "774884393": {
+    "last_open": "2025-09-07T09:03:23.595302",
+    "can_open_after": "2025-09-07T19:00:00",
+    "check_enabled": true
+  },
+  "1023209890": {
+    "last_open": "2026-02-15T19:00:39.294279",
+    "can_open_after": "2026-02-16T19:00:00",
+    "check_enabled": true
+  },
+  "1110273096": {
+    "last_open": "2025-09-03T09:18:15.822288",
+    "can_open_after": "2025-09-03T19:00:00",
+    "check_enabled": true
+  },
+  "7941390876": {
+    "last_open": "2025-10-16T19:00:49.055859",
+    "can_open_after": "2025-10-17T19:00:00",
+    "check_enabled": true
+  },
+  "7928945192": {
+    "last_open": "2026-01-12T18:11:16.873953",
+    "can_open_after": "2026-01-12T19:00:00",
+    "check_enabled": true
+  },
+  "6949160475": {
+    "last_open": "2025-12-23T19:04:31.537772",
+    "can_open_after": "2025-12-24T19:00:00",
+    "check_enabled": true
+  },
+  "1310518679": {
+    "last_open": "2025-09-03T14:09:11.910873",
+    "can_open_after": "2025-09-03T19:00:00",
+    "check_enabled": true
+  },
+  "588492215": {
+    "last_open": "2025-09-03T15:39:06.579748",
+    "can_open_after": "2025-09-03T19:00:00",
+    "check_enabled": true
+  },
+  "8011726466": {
+    "last_open": "2025-09-03T19:00:50.500628",
+    "can_open_after": "2025-09-04T19:00:00",
+    "check_enabled": true
+  },
+  "654176312": {
+    "last_open": "2025-09-03T19:46:21.980170",
+    "can_open_after": "2025-09-04T19:00:00",
+    "check_enabled": true
+  },
+  "7127862538": {
+    "last_open": "2025-12-24T19:06:30.295415",
+    "can_open_after": "2025-12-25T19:00:00",
+    "check_enabled": true
+  },
+  "484545504": {
+    "last_open": "2026-03-16T05:57:47.169845",
+    "can_open_after": "2026-03-16T19:00:00",
+    "check_enabled": true
+  },
+  "550150233": {
+    "last_open": "2025-09-13T09:48:40.347928",
+    "can_open_after": "2025-09-13T19:00:00",
+    "check_enabled": true
+  },
+  "5179660375": {
+    "last_open": "2026-02-10T19:00:59.612478",
+    "can_open_after": "2026-02-11T19:00:00",
+    "check_enabled": true
+  },
+  "858098502": {
+    "last_open": "2025-09-23T19:00:31.492028",
+    "can_open_after": "2025-09-24T19:00:00",
+    "check_enabled": true
+  },
+  "623513219": {
+    "last_open": "2025-09-05T13:01:30.779255",
+    "can_open_after": "2025-09-05T19:00:00",
+    "check_enabled": true
+  },
+  "1100718987": {
+    "last_open": "2026-01-03T19:00:29.401010",
+    "can_open_after": "2026-01-04T19:00:00",
+    "check_enabled": true
+  },
+  "906846615": {
+    "last_open": "2025-09-12T15:54:31.662482",
+    "can_open_after": "2025-09-12T19:00:00",
+    "check_enabled": true
+  },
+  "6922428598": {
+    "last_open": "2025-09-27T03:06:21.761408",
+    "can_open_after": "2025-09-27T19:00:00",
+    "check_enabled": true
+  },
+  "759538526": {
+    "last_open": "2026-01-05T19:01:17.456740",
+    "can_open_after": "2026-01-06T19:00:00",
+    "check_enabled": true
+  },
+  "6940733557": {
+    "last_open": "2025-12-27T19:01:05.902941",
+    "can_open_after": "2025-12-28T19:00:00",
+    "check_enabled": true
+  },
+  "922493031": {
+    "last_open": "2025-11-23T00:37:03.932117",
+    "can_open_after": "2025-11-23T19:00:00",
+    "check_enabled": true
+  },
+  "1422755788": {
+    "last_open": "2025-11-30T15:07:12.906721",
+    "can_open_after": "2025-11-30T19:00:00",
+    "check_enabled": true
+  },
+  "888384647": {
+    "last_open": "2026-01-20T19:41:53.527268",
+    "can_open_after": "2026-01-21T19:00:00",
+    "check_enabled": true
+  },
+  "8356189746": {
+    "last_open": "2026-04-04T21:33:20.122793",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "931645706": {
+    "last_open": "2025-11-17T01:36:50.306806",
+    "can_open_after": "2025-11-17T19:00:00",
+    "check_enabled": true
+  },
+  "1734191390": {
+    "last_open": "2025-10-10T21:13:02.468478",
+    "can_open_after": "2025-10-11T19:00:00",
+    "check_enabled": true
+  },
+  "7375720867": {
+    "last_open": "2025-12-16T19:00:53.907843",
+    "can_open_after": "2025-12-17T19:00:00",
+    "check_enabled": true
+  },
+  "1822503146": {
+    "last_open": "2026-02-07T19:30:57.240174",
+    "can_open_after": "2026-02-08T19:00:00",
+    "check_enabled": true
+  },
+  "683498786": {
+    "last_open": "2025-09-09T13:53:14.399894",
+    "can_open_after": "2025-09-09T19:00:00",
+    "check_enabled": true
+  },
+  "7112704977": {
+    "last_open": "2025-10-19T19:00:42.519314",
+    "can_open_after": "2025-10-20T19:00:00",
+    "check_enabled": true
+  },
+  "899056733": {
+    "last_open": "2026-04-04T05:13:47.706574",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "1421774405": {
+    "last_open": "2025-09-10T09:59:55.662590",
+    "can_open_after": "2025-09-10T19:00:00",
+    "check_enabled": true
+  },
+  "1261128245": {
+    "last_open": "2026-02-04T19:36:29.119364",
+    "can_open_after": "2026-02-05T19:00:00",
+    "check_enabled": true
+  },
+  "787883511": {
+    "last_open": "2026-02-07T20:51:44.047535",
+    "can_open_after": "2026-02-08T19:00:00",
+    "check_enabled": true
+  },
+  "819711963": {
+    "last_open": "2025-09-11T08:18:16.562999",
+    "can_open_after": "2025-09-11T19:00:00",
+    "check_enabled": true
+  },
+  "411022997": {
+    "last_open": "2025-09-30T22:20:28.643717",
+    "can_open_after": "2025-10-01T19:00:00",
+    "check_enabled": true
+  },
+  "620657630": {
+    "last_open": "2026-01-17T19:18:43.084732",
+    "can_open_after": "2026-01-18T19:00:00",
+    "check_enabled": true
+  },
+  "5736051121": {
+    "last_open": "2025-09-13T06:10:12.534450",
+    "can_open_after": "2025-09-13T19:00:00",
+    "check_enabled": true
+  },
+  "1200331732": {
+    "last_open": "2025-09-13T17:08:31.881165",
+    "can_open_after": "2025-09-13T19:00:00",
+    "check_enabled": true
+  },
+  "6609507075": {
+    "last_open": "2026-02-17T19:25:33.157445",
+    "can_open_after": "2026-02-18T19:00:00",
+    "check_enabled": true
+  },
+  "1020536365": {
+    "last_open": "2026-02-26T19:04:59.993543",
+    "can_open_after": "2026-02-27T19:00:00",
+    "check_enabled": true
+  },
+  "5011899547": {
+    "last_open": "2026-01-07T02:29:07.484927",
+    "can_open_after": "2026-01-07T19:00:00",
+    "check_enabled": true
+  },
+  "6375685469": {
+    "last_open": "2025-10-07T02:44:52.231925",
+    "can_open_after": "2025-10-07T19:00:00",
+    "check_enabled": true
+  },
+  "1208856258": {
+    "last_open": "2025-09-14T10:03:22.120982",
+    "can_open_after": "2025-09-14T19:00:00",
+    "check_enabled": true
+  },
+  "1361966751": {
+    "last_open": "2025-09-16T19:07:07.396235",
+    "can_open_after": "2025-09-17T19:00:00",
+    "check_enabled": true
+  },
+  "636609336": {
+    "last_open": "2025-09-15T20:05:02.781451",
+    "can_open_after": "2025-09-16T19:00:00",
+    "check_enabled": true
+  },
+  "1562182217": {
+    "last_open": "2026-02-12T19:13:55.453126",
+    "can_open_after": "2026-02-13T19:00:00",
+    "check_enabled": true
+  },
+  "1729324035": {
+    "last_open": "2026-01-28T19:22:14.066800",
+    "can_open_after": "2026-01-29T19:00:00",
+    "check_enabled": true
+  },
+  "619785745": {
+    "last_open": "2026-01-25T19:00:18.266013",
+    "can_open_after": "2026-01-26T19:00:00",
+    "check_enabled": true
+  },
+  "5937107997": {
+    "last_open": "2026-04-03T19:05:29.919629",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "5493125246": {
+    "last_open": "2025-09-17T03:39:51.759631",
+    "can_open_after": "2025-09-17T19:00:00",
+    "check_enabled": true
+  },
+  "1340132172": {
+    "last_open": "2025-11-20T19:55:50.941597",
+    "can_open_after": "2025-11-21T19:00:00",
+    "check_enabled": true
+  },
+  "8485943153": {
+    "last_open": "2025-10-19T20:59:50.240231",
+    "can_open_after": "2025-10-20T19:00:00",
+    "check_enabled": true
+  },
+  "5773859937": {
+    "last_open": "2026-01-19T19:03:42.082440",
+    "can_open_after": "2026-01-20T19:00:00",
+    "check_enabled": true
+  },
+  "1745001657": {
+    "last_open": "2025-09-18T10:53:26.964647",
+    "can_open_after": "2025-09-18T19:00:00",
+    "check_enabled": true
+  },
+  "872091688": {
+    "last_open": "2026-02-13T19:14:43.825562",
+    "can_open_after": "2026-02-14T19:00:00",
+    "check_enabled": true
+  },
+  "7735593255": {
+    "last_open": "2026-04-01T19:18:32.146401",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "1135267022": {
+    "last_open": "2025-09-18T21:36:17.956428",
+    "can_open_after": "2025-09-19T19:00:00",
+    "check_enabled": true
+  },
+  "7774746151": {
+    "last_open": "2026-01-08T19:47:46.356630",
+    "can_open_after": "2026-01-09T19:00:00",
+    "check_enabled": true
+  },
+  "5686923825": {
+    "last_open": "2026-01-08T19:06:54.849858",
+    "can_open_after": "2026-01-09T19:00:00",
+    "check_enabled": true
+  },
+  "1084720100": {
+    "last_open": "2026-01-07T19:43:57.789020",
+    "can_open_after": "2026-01-08T19:00:00",
+    "check_enabled": true
+  },
+  "7980900114": {
+    "last_open": "2025-09-21T00:57:22.679066",
+    "can_open_after": "2025-09-21T19:00:00",
+    "check_enabled": true
+  },
+  "5729991165": {
+    "last_open": "2025-09-21T08:28:01.213519",
+    "can_open_after": "2025-09-21T19:00:00",
+    "check_enabled": true
+  },
+  "8351676518": {
+    "last_open": "2025-10-15T19:56:00.313723",
+    "can_open_after": "2025-10-16T19:00:00",
+    "check_enabled": true
+  },
+  "6482926290": {
+    "last_open": "2025-09-25T07:20:47.242312",
+    "can_open_after": "2025-09-25T19:00:00",
+    "check_enabled": true
+  },
+  "5294120591": {
+    "last_open": "2026-03-18T19:52:39.448705",
+    "can_open_after": "2026-03-19T19:00:00",
+    "check_enabled": true
+  },
+  "869054833": {
+    "last_open": "2025-09-22T19:27:36.338792",
+    "can_open_after": "2025-09-23T19:00:00",
+    "check_enabled": true
+  },
+  "5913474418": {
+    "last_open": "2025-11-08T01:42:27.629267",
+    "can_open_after": "2025-11-08T19:00:00",
+    "check_enabled": true
+  },
+  "1172536460": {
+    "last_open": "2025-09-23T07:01:05.688581",
+    "can_open_after": "2025-09-23T19:00:00",
+    "check_enabled": true
+  },
+  "1279092447": {
+    "last_open": "2025-09-23T07:02:56.995236",
+    "can_open_after": "2025-09-23T19:00:00",
+    "check_enabled": true
+  },
+  "323898473": {
+    "last_open": "2025-09-24T19:00:16.085861",
+    "can_open_after": "2025-09-25T19:00:00",
+    "check_enabled": true
+  },
+  "328950600": {
+    "last_open": "2025-09-24T14:07:27.689869",
+    "can_open_after": "2025-09-24T19:00:00",
+    "check_enabled": true
+  },
+  "6674447760": {
+    "last_open": "2025-12-27T19:03:44.914100",
+    "can_open_after": "2025-12-28T19:00:00",
+    "check_enabled": true
+  },
+  "1588312731": {
+    "last_open": "2025-09-24T19:56:26.211098",
+    "can_open_after": "2025-09-25T19:00:00",
+    "check_enabled": true
+  },
+  "1283654636": {
+    "last_open": "2026-02-10T19:10:23.997135",
+    "can_open_after": "2026-02-11T19:00:00",
+    "check_enabled": true
+  },
+  "834790858": {
+    "last_open": "2025-09-26T06:14:31.820409",
+    "can_open_after": "2025-09-26T19:00:00",
+    "check_enabled": true
+  },
+  "7659378731": {
+    "last_open": "2026-04-02T07:31:07.561938",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "482186139": {
+    "last_open": "2025-09-27T19:05:00.914103",
+    "can_open_after": "2025-09-28T19:00:00",
+    "check_enabled": true
+  },
+  "1235969712": {
+    "last_open": "2025-09-26T19:01:46.062074",
+    "can_open_after": "2025-09-27T19:00:00",
+    "check_enabled": true
+  },
+  "859864762": {
+    "last_open": "2025-12-06T21:58:03.788859",
+    "can_open_after": "2025-12-07T19:00:00",
+    "check_enabled": true
+  },
+  "779982610": {
+    "last_open": "2025-09-27T08:51:30.359226",
+    "can_open_after": "2025-09-27T19:00:00",
+    "check_enabled": true
+  },
+  "7777710208": {
+    "last_open": "2026-04-04T19:14:51.963422",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "7331553012": {
+    "last_open": "2026-04-01T16:55:50.059929",
+    "can_open_after": "2026-04-01T19:00:00",
+    "check_enabled": true
+  },
+  "1193262872": {
+    "last_open": "2025-11-10T08:54:01.875086",
+    "can_open_after": "2025-11-10T19:00:00",
+    "check_enabled": true
+  },
+  "8327074212": {
+    "last_open": "2025-09-28T19:44:11.602120",
+    "can_open_after": "2025-09-29T19:00:00",
+    "check_enabled": true
+  },
+  "5277041121": {
+    "last_open": "2025-11-16T19:22:29.066110",
+    "can_open_after": "2025-11-17T19:00:00",
+    "check_enabled": true
+  },
+  "1160897606": {
+    "last_open": "2025-10-07T19:18:28.878216",
+    "can_open_after": "2025-10-08T19:00:00",
+    "check_enabled": true
+  },
+  "254260927": {
+    "last_open": "2025-10-07T19:31:03.472491",
+    "can_open_after": "2025-10-08T19:00:00",
+    "check_enabled": true
+  },
+  "1951241017": {
+    "last_open": "2025-10-02T20:09:50.111581",
+    "can_open_after": "2025-10-03T19:00:00",
+    "check_enabled": true
+  },
+  "291037038": {
+    "last_open": "2026-02-02T13:16:03.444781",
+    "can_open_after": "2026-02-02T19:00:00",
+    "check_enabled": true
+  },
+  "6842644053": {
+    "last_open": "2026-03-17T19:21:04.265775",
+    "can_open_after": "2026-03-18T19:00:00",
+    "check_enabled": true
+  },
+  "1962590732": {
+    "last_open": "2026-03-16T18:50:35.027865",
+    "can_open_after": "2026-03-16T19:00:00",
+    "check_enabled": true
+  },
+  "363603546": {
+    "last_open": "2026-04-01T19:31:03.126930",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "8090429212": {
+    "last_open": "2026-02-01T19:03:29.420583",
+    "can_open_after": "2026-02-02T19:00:00",
+    "check_enabled": true
+  },
+  "5814258218": {
+    "last_open": "2025-11-06T05:53:59.771919",
+    "can_open_after": "2025-11-06T19:00:00",
+    "check_enabled": true
+  },
+  "1012933940": {
+    "last_open": "2025-10-31T09:22:02.736481",
+    "can_open_after": "2025-10-31T19:00:00",
+    "check_enabled": true
+  },
+  "1607908243": {
+    "last_open": "2026-02-05T01:27:40.700473",
+    "can_open_after": "2026-02-05T19:00:00",
+    "check_enabled": true
+  },
+  "5224641176": {
+    "last_open": "2025-10-06T19:11:49.157695",
+    "can_open_after": "2025-10-07T19:00:00",
+    "check_enabled": true
+  },
+  "1091751121": {
+    "last_open": "2025-10-06T19:20:47.364569",
+    "can_open_after": "2025-10-07T19:00:00",
+    "check_enabled": true
+  },
+  "798207219": {
+    "last_open": "2025-10-16T11:09:00.747459",
+    "can_open_after": "2025-10-16T19:00:00",
+    "check_enabled": true
+  },
+  "742199744": {
+    "last_open": "2025-10-07T10:20:47.118661",
+    "can_open_after": "2025-10-07T19:00:00",
+    "check_enabled": true
+  },
+  "1245570384": {
+    "last_open": "2025-10-07T13:32:50.917595",
+    "can_open_after": "2025-10-07T19:00:00",
+    "check_enabled": true
+  },
+  "882304965": {
+    "last_open": "2025-10-10T05:15:44.255965",
+    "can_open_after": "2025-10-10T19:00:00",
+    "check_enabled": true
+  },
+  "7132571153": {
+    "last_open": "2026-03-17T19:01:23.891649",
+    "can_open_after": "2026-03-18T19:00:00",
+    "check_enabled": true
+  },
+  "6245494734": {
+    "last_open": "2026-04-02T19:07:01.321420",
+    "can_open_after": "2026-04-03T19:00:00",
+    "check_enabled": true
+  },
+  "854335583": {
+    "last_open": "2025-10-17T22:05:37.330120",
+    "can_open_after": "2025-10-18T19:00:00",
+    "check_enabled": true
+  },
+  "1003836601": {
+    "last_open": "2025-12-17T09:35:29.236842",
+    "can_open_after": "2025-12-17T19:00:00",
+    "check_enabled": true
+  },
+  "6814343816": {
+    "last_open": "2025-10-08T19:01:22.110946",
+    "can_open_after": "2025-10-09T19:00:00",
+    "check_enabled": true
+  },
+  "1720693085": {
+    "last_open": "2025-10-15T19:17:46.822075",
+    "can_open_after": "2025-10-16T19:00:00",
+    "check_enabled": true
+  },
+  "379804417": {
+    "last_open": "2025-10-08T20:01:40.314614",
+    "can_open_after": "2025-10-09T19:00:00",
+    "check_enabled": true
+  },
+  "1251218365": {
+    "last_open": "2026-01-13T19:00:30.359510",
+    "can_open_after": "2026-01-14T19:00:00",
+    "check_enabled": true
+  },
+  "949270715": {
+    "last_open": "2026-04-02T09:21:24.382534",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "1135188129": {
+    "last_open": "2025-10-13T19:03:49.318959",
+    "can_open_after": "2025-10-14T19:00:00",
+    "check_enabled": true
+  },
+  "5000290671": {
+    "last_open": "2025-10-11T19:05:04.426442",
+    "can_open_after": "2025-10-12T19:00:00",
+    "check_enabled": true
+  },
+  "1769395203": {
+    "last_open": "2025-10-09T19:28:41.487845",
+    "can_open_after": "2025-10-10T19:00:00",
+    "check_enabled": true
+  },
+  "1080934324": {
+    "last_open": "2025-10-10T09:52:40.795228",
+    "can_open_after": "2025-10-10T19:00:00",
+    "check_enabled": true
+  },
+  "5269574952": {
+    "last_open": "2025-10-10T19:02:53.878202",
+    "can_open_after": "2025-10-11T19:00:00",
+    "check_enabled": true
+  },
+  "1384839259": {
+    "last_open": "2025-10-11T18:20:34.824275",
+    "can_open_after": "2025-10-11T19:00:00",
+    "check_enabled": true
+  },
+  "202704925": {
+    "last_open": "2025-10-22T05:51:27.912085",
+    "can_open_after": "2025-10-22T19:00:00",
+    "check_enabled": true
+  },
+  "1095511996": {
+    "last_open": "2025-11-03T19:00:51.745369",
+    "can_open_after": "2025-11-04T19:00:00",
+    "check_enabled": true
+  },
+  "499293376": {
+    "last_open": "2026-03-17T19:14:16.608132",
+    "can_open_after": "2026-03-18T19:00:00",
+    "check_enabled": true
+  },
+  "1851958570": {
+    "last_open": "2025-10-12T05:25:05.488162",
+    "can_open_after": "2025-10-12T19:00:00",
+    "check_enabled": true
+  },
+  "1581878760": {
+    "last_open": "2025-10-12T07:29:39.793081",
+    "can_open_after": "2025-10-12T19:00:00",
+    "check_enabled": true
+  },
+  "1176190204": {
+    "last_open": "2026-04-03T21:05:24.303594",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "477098369": {
+    "last_open": "2025-12-18T17:30:53.219553",
+    "can_open_after": "2025-12-18T19:00:00",
+    "check_enabled": true
+  },
+  "1097533210": {
+    "last_open": "2026-01-26T21:53:43.224926",
+    "can_open_after": "2026-01-27T19:00:00",
+    "check_enabled": true
+  },
+  "445907175": {
+    "last_open": "2025-10-14T10:20:24.725892",
+    "can_open_after": "2025-10-14T19:00:00",
+    "check_enabled": true
+  },
+  "1074565840": {
+    "last_open": "2026-01-12T19:01:50.446072",
+    "can_open_after": "2026-01-13T19:00:00",
+    "check_enabled": true
+  },
+  "804449083": {
+    "last_open": "2025-11-25T20:25:36.039915",
+    "can_open_after": "2025-11-26T19:00:00",
+    "check_enabled": true
+  },
+  "1780801076": {
+    "last_open": "2026-02-21T08:25:49.868073",
+    "can_open_after": "2026-02-21T19:00:00",
+    "check_enabled": true
+  },
+  "828755105": {
+    "last_open": "2025-10-14T19:00:18.708079",
+    "can_open_after": "2025-10-15T19:00:00",
+    "check_enabled": true
+  },
+  "5327933037": {
+    "last_open": "2025-10-21T13:40:30.798031",
+    "can_open_after": "2025-10-21T19:00:00",
+    "check_enabled": true
+  },
+  "1227532410": {
+    "last_open": "2025-10-27T19:00:45.615577",
+    "can_open_after": "2025-10-28T19:00:00",
+    "check_enabled": true
+  },
+  "1247536721": {
+    "last_open": "2026-02-02T12:40:45.273421",
+    "can_open_after": "2026-02-02T19:00:00",
+    "check_enabled": true
+  },
+  "434518199": {
+    "last_open": "2025-10-15T19:02:53.508904",
+    "can_open_after": "2025-10-16T19:00:00",
+    "check_enabled": true
+  },
+  "677814475": {
+    "last_open": "2025-10-15T10:41:49.885646",
+    "can_open_after": "2025-10-15T19:00:00",
+    "check_enabled": true
+  },
+  "467175058": {
+    "last_open": "2025-10-15T19:00:25.506722",
+    "can_open_after": "2025-10-16T19:00:00",
+    "check_enabled": true
+  },
+  "6355194832": {
+    "last_open": "2025-10-19T19:00:52.378629",
+    "can_open_after": "2025-10-20T19:00:00",
+    "check_enabled": true
+  },
+  "1279793866": {
+    "last_open": "2025-11-10T19:15:43.666872",
+    "can_open_after": "2025-11-11T19:00:00",
+    "check_enabled": true
+  },
+  "6690808409": {
+    "last_open": "2025-10-26T19:01:38.302348",
+    "can_open_after": "2025-10-27T19:00:00",
+    "check_enabled": true
+  },
+  "1217972563": {
+    "last_open": "2025-10-16T12:32:08.790488",
+    "can_open_after": "2025-10-16T19:00:00",
+    "check_enabled": true
+  },
+  "499458107": {
+    "last_open": "2026-02-11T06:41:11.465229",
+    "can_open_after": "2026-02-11T19:00:00",
+    "check_enabled": true
+  },
+  "763836771": {
+    "last_open": "2026-04-03T12:43:50.114500",
+    "can_open_after": "2026-04-03T19:00:00",
+    "check_enabled": true
+  },
+  "1369938490": {
+    "last_open": "2025-10-17T19:45:09.583500",
+    "can_open_after": "2025-10-18T19:00:00",
+    "check_enabled": true
+  },
+  "1491473649": {
+    "last_open": "2025-10-30T20:37:04.023144",
+    "can_open_after": "2025-10-31T19:00:00",
+    "check_enabled": true
+  },
+  "439100253": {
+    "last_open": "2026-04-01T20:32:51.260730",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "1924818651": {
+    "last_open": "2025-10-19T17:28:53.799273",
+    "can_open_after": "2025-10-19T19:00:00",
+    "check_enabled": true
+  },
+  "748349114": {
+    "last_open": "2026-02-01T19:04:13.478644",
+    "can_open_after": "2026-02-02T19:00:00",
+    "check_enabled": true
+  },
+  "5070200641": {
+    "last_open": "2025-10-27T12:12:48.797427",
+    "can_open_after": "2025-10-27T19:00:00",
+    "check_enabled": true
+  },
+  "281086818": {
+    "last_open": "2025-10-27T19:00:09.750708",
+    "can_open_after": "2025-10-28T19:00:00",
+    "check_enabled": true
+  },
+  "1042081338": {
+    "last_open": "2025-12-03T13:08:10.499673",
+    "can_open_after": "2025-12-03T19:00:00",
+    "check_enabled": true
+  },
+  "1641051329": {
+    "last_open": "2026-02-05T22:20:27.129030",
+    "can_open_after": "2026-02-06T19:00:00",
+    "check_enabled": true
+  },
+  "5185484861": {
+    "last_open": "2026-04-03T19:09:07.649912",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "7525032876": {
+    "last_open": "2025-11-26T19:19:36.680084",
+    "can_open_after": "2025-11-27T19:00:00",
+    "check_enabled": true
+  },
+  "1112865173": {
+    "last_open": "2025-11-19T19:00:31.572970",
+    "can_open_after": "2025-11-20T19:00:00",
+    "check_enabled": true
+  },
+  "7878916028": {
+    "last_open": "2025-10-28T02:07:48.891038",
+    "can_open_after": "2025-10-28T19:00:00",
+    "check_enabled": true
+  },
+  "5346942011": {
+    "last_open": "2026-02-11T19:51:38.689314",
+    "can_open_after": "2026-02-12T19:00:00",
+    "check_enabled": true
+  },
+  "5067683969": {
+    "last_open": "2025-10-28T15:50:06.518275",
+    "can_open_after": "2025-10-28T19:00:00",
+    "check_enabled": true
+  },
+  "1949614085": {
+    "last_open": "2025-10-28T17:20:42.729550",
+    "can_open_after": "2025-10-28T19:00:00",
+    "check_enabled": true
+  },
+  "874916002": {
+    "last_open": "2025-10-28T20:21:23.353667",
+    "can_open_after": "2025-10-29T19:00:00",
+    "check_enabled": true
+  },
+  "821884326": {
+    "last_open": "2026-03-04T20:28:48.351510",
+    "can_open_after": "2026-03-05T19:00:00",
+    "check_enabled": true
+  },
+  "7046705954": {
+    "last_open": "2025-10-31T19:57:50.482698",
+    "can_open_after": "2025-11-01T19:00:00",
+    "check_enabled": true
+  },
+  "5682026403": {
+    "last_open": "2025-12-22T11:42:22.266572",
+    "can_open_after": "2025-12-22T19:00:00",
+    "check_enabled": true
+  },
+  "1103675735": {
+    "last_open": "2025-11-01T19:00:30.232270",
+    "can_open_after": "2025-11-02T19:00:00",
+    "check_enabled": true
+  },
+  "1627374082": {
+    "last_open": "2025-11-01T22:12:43.809785",
+    "can_open_after": "2025-11-02T19:00:00",
+    "check_enabled": true
+  },
+  "742614356": {
+    "last_open": "2026-04-03T19:40:02.833659",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "1034299984": {
+    "last_open": "2026-02-02T06:37:08.108241",
+    "can_open_after": "2026-02-02T19:00:00",
+    "check_enabled": true
+  },
+  "1178335982": {
+    "last_open": "2026-04-04T19:14:16.602865",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "7683964879": {
+    "last_open": "2025-11-04T16:43:11.557481",
+    "can_open_after": "2025-11-04T19:00:00",
+    "check_enabled": true
+  },
+  "7086185935": {
+    "last_open": "2025-12-13T19:01:39.037305",
+    "can_open_after": "2025-12-14T19:00:00",
+    "check_enabled": true
+  },
+  "788959589": {
+    "last_open": "2026-02-23T19:35:22.111118",
+    "can_open_after": "2026-02-24T19:00:00",
+    "check_enabled": true
+  },
+  "534845396": {
+    "last_open": "2026-04-05T04:42:51.336654",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "1336132373": {
+    "last_open": "2025-11-06T16:56:22.340551",
+    "can_open_after": "2025-11-06T19:00:00",
+    "check_enabled": true
+  },
+  "830011952": {
+    "last_open": "2025-11-07T19:07:22.612390",
+    "can_open_after": "2025-11-08T19:00:00",
+    "check_enabled": true
+  },
+  "1488840087": {
+    "last_open": "2025-11-09T21:44:11.217843",
+    "can_open_after": "2025-11-10T19:00:00",
+    "check_enabled": true
+  },
+  "5965141397": {
+    "last_open": "2025-12-07T20:05:23.742397",
+    "can_open_after": "2025-12-08T19:00:00",
+    "check_enabled": true
+  },
+  "7680095664": {
+    "last_open": "2025-11-10T10:56:24.275007",
+    "can_open_after": "2025-11-10T19:00:00",
+    "check_enabled": true
+  },
+  "463971016": {
+    "last_open": "2025-11-21T19:00:06.496913",
+    "can_open_after": "2025-11-22T19:00:00",
+    "check_enabled": true
+  },
+  "234591872": {
+    "last_open": "2025-11-10T12:35:02.589506",
+    "can_open_after": "2025-11-10T19:00:00",
+    "check_enabled": true
+  },
+  "6289870934": {
+    "last_open": "2026-04-03T19:01:09.738550",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "354923552": {
+    "last_open": "2026-03-05T20:21:27.366990",
+    "can_open_after": "2026-03-06T19:00:00",
+    "check_enabled": true
+  },
+  "1696419950": {
+    "last_open": "2025-11-10T16:55:11.525758",
+    "can_open_after": "2025-11-10T19:00:00",
+    "check_enabled": true
+  },
+  "1456315894": {
+    "last_open": "2025-11-11T07:28:10.911728",
+    "can_open_after": "2025-11-11T19:00:00",
+    "check_enabled": true
+  },
+  "1726340085": {
+    "last_open": "2025-12-18T11:09:47.833490",
+    "can_open_after": "2025-12-18T19:00:00",
+    "check_enabled": true
+  },
+  "1317362074": {
+    "last_open": "2025-11-11T08:16:45.121695",
+    "can_open_after": "2025-11-11T19:00:00",
+    "check_enabled": true
+  },
+  "1732197261": {
+    "last_open": "2026-02-28T20:04:06.920144",
+    "can_open_after": "2026-03-01T19:00:00",
+    "check_enabled": true
+  },
+  "1128173239": {
+    "last_open": "2026-02-18T19:00:42.207964",
+    "can_open_after": "2026-02-19T19:00:00",
+    "check_enabled": true
+  },
+  "822019636": {
+    "last_open": "2025-11-12T08:39:06.575250",
+    "can_open_after": "2025-11-12T19:00:00",
+    "check_enabled": true
+  },
+  "8018359588": {
+    "last_open": "2025-12-16T19:02:59.932653",
+    "can_open_after": "2025-12-17T19:00:00",
+    "check_enabled": true
+  },
+  "1002731881": {
+    "last_open": "2025-11-15T19:28:21.324368",
+    "can_open_after": "2025-11-16T19:00:00",
+    "check_enabled": true
+  },
+  "1968206733": {
+    "last_open": "2025-11-17T04:33:04.142466",
+    "can_open_after": "2025-11-17T19:00:00",
+    "check_enabled": true
+  },
+  "6830343763": {
+    "last_open": "2025-11-14T06:26:09.334901",
+    "can_open_after": "2025-11-14T19:00:00",
+    "check_enabled": true
+  },
+  "1395307876": {
+    "last_open": "2026-04-03T19:08:11.467959",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "8022970820": {
+    "last_open": "2026-04-04T08:39:16.703549",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "5348196148": {
+    "last_open": "2026-03-08T19:01:05.076841",
+    "can_open_after": "2026-03-09T19:00:00",
+    "check_enabled": true
+  },
+  "6213202498": {
+    "last_open": "2025-12-31T19:00:45.414739",
+    "can_open_after": "2026-01-01T19:00:00",
+    "check_enabled": true
+  },
+  "5147700469": {
+    "last_open": "2025-11-25T19:48:15.279707",
+    "can_open_after": "2025-11-26T19:00:00",
+    "check_enabled": true
+  },
+  "1786670649": {
+    "last_open": "2026-03-11T19:19:30.541109",
+    "can_open_after": "2026-03-12T19:00:00",
+    "check_enabled": true
+  },
+  "5837834332": {
+    "last_open": "2026-02-06T03:39:23.488989",
+    "can_open_after": "2026-02-06T19:00:00",
+    "check_enabled": true
+  },
+  "5485383558": {
+    "last_open": "2025-12-16T20:37:44.835865",
+    "can_open_after": "2025-12-17T19:00:00",
+    "check_enabled": true
+  },
+  "1424154653": {
+    "last_open": "2026-02-24T07:25:41.944216",
+    "can_open_after": "2026-02-24T19:00:00",
+    "check_enabled": true
+  },
+  "1327525563": {
+    "last_open": "2026-01-08T19:01:10.039604",
+    "can_open_after": "2026-01-09T19:00:00",
+    "check_enabled": true
+  },
+  "7387412408": {
+    "last_open": "2025-12-26T19:13:56.247444",
+    "can_open_after": "2025-12-27T19:00:00",
+    "check_enabled": true
+  },
+  "6318564013": {
+    "last_open": "2026-02-20T21:15:43.341149",
+    "can_open_after": "2026-02-21T19:00:00",
+    "check_enabled": true
+  },
+  "5603281704": {
+    "last_open": "2026-02-25T19:03:27.501510",
+    "can_open_after": "2026-02-26T19:00:00",
+    "check_enabled": true
+  },
+  "1472927381": {
+    "last_open": "2026-02-23T19:00:39.961700",
+    "can_open_after": "2026-02-24T19:00:00",
+    "check_enabled": true
+  },
+  "6704892645": {
+    "last_open": "2026-01-09T03:48:57.178049",
+    "can_open_after": "2026-01-09T19:00:00",
+    "check_enabled": true
+  },
+  "6383107832": {
+    "last_open": "2025-12-01T21:49:09.327821",
+    "can_open_after": "2025-12-02T19:00:00",
+    "check_enabled": true
+  },
+  "1703798469": {
+    "last_open": "2025-11-23T20:55:44.336745",
+    "can_open_after": "2025-11-24T19:00:00",
+    "check_enabled": true
+  },
+  "1378241686": {
+    "last_open": "2025-12-05T21:57:01.976357",
+    "can_open_after": "2025-12-06T19:00:00",
+    "check_enabled": true
+  },
+  "1133851437": {
+    "last_open": "2026-04-02T19:13:29.220960",
+    "can_open_after": "2026-04-03T19:00:00",
+    "check_enabled": true
+  },
+  "8137624148": {
+    "last_open": "2025-11-24T11:46:55.726878",
+    "can_open_after": "2025-11-24T19:00:00",
+    "check_enabled": true
+  },
+  "527907998": {
+    "last_open": "2026-01-12T10:01:59.052073",
+    "can_open_after": "2026-01-12T19:00:00",
+    "check_enabled": true
+  },
+  "954990100": {
+    "last_open": "2025-11-30T00:07:29.412940",
+    "can_open_after": "2025-11-30T19:00:00",
+    "check_enabled": true
+  },
+  "5617122582": {
+    "last_open": "2025-11-30T03:44:32.332587",
+    "can_open_after": "2025-11-30T19:00:00",
+    "check_enabled": true
+  },
+  "1904854215": {
+    "last_open": "2026-04-01T16:27:15.354488",
+    "can_open_after": "2026-04-01T19:00:00",
+    "check_enabled": true
+  },
+  "1050508892": {
+    "last_open": "2025-12-01T19:07:31.268088",
+    "can_open_after": "2025-12-02T19:00:00",
+    "check_enabled": true
+  },
+  "1190032605": {
+    "last_open": "2025-12-24T19:18:18.646756",
+    "can_open_after": "2025-12-25T19:00:00",
+    "check_enabled": true
+  },
+  "1392469040": {
+    "last_open": "2026-01-13T20:11:03.198073",
+    "can_open_after": "2026-01-14T19:00:00",
+    "check_enabled": true
+  },
+  "7405459515": {
+    "last_open": "2025-12-02T19:03:46.203331",
+    "can_open_after": "2025-12-03T19:00:00",
+    "check_enabled": true
+  },
+  "6779907330": {
+    "last_open": "2025-12-03T17:57:45.126144",
+    "can_open_after": "2025-12-03T19:00:00",
+    "check_enabled": true
+  },
+  "5096824216": {
+    "last_open": "2025-12-05T03:30:27.191964",
+    "can_open_after": "2025-12-05T19:00:00",
+    "check_enabled": true
+  },
+  "8032193771": {
+    "last_open": "2025-12-07T03:26:47.704152",
+    "can_open_after": "2025-12-07T19:00:00",
+    "check_enabled": true
+  },
+  "462011657": {
+    "last_open": "2025-12-07T11:47:36.521600",
+    "can_open_after": "2025-12-07T19:00:00",
+    "check_enabled": true
+  },
+  "1623114780": {
+    "last_open": "2025-12-15T03:42:48.186723",
+    "can_open_after": "2025-12-15T19:00:00",
+    "check_enabled": true
+  },
+  "5279631671": {
+    "last_open": "2025-12-07T19:16:25.493404",
+    "can_open_after": "2025-12-08T19:00:00",
+    "check_enabled": true
+  },
+  "7916757706": {
+    "last_open": "2025-12-22T21:21:35.141270",
+    "can_open_after": "2025-12-23T19:00:00",
+    "check_enabled": true
+  },
+  "930468528": {
+    "last_open": "2025-12-22T21:21:44.155833",
+    "can_open_after": "2025-12-23T19:00:00",
+    "check_enabled": true
+  },
+  "1741365400": {
+    "last_open": "2025-12-13T04:07:49.004359",
+    "can_open_after": "2025-12-13T19:00:00",
+    "check_enabled": true
+  },
+  "888530181": {
+    "last_open": "2025-12-13T20:53:11.052680",
+    "can_open_after": "2025-12-14T19:00:00",
+    "check_enabled": true
+  },
+  "6792550518": {
+    "last_open": "2025-12-14T20:01:35.841066",
+    "can_open_after": "2025-12-15T19:00:00",
+    "check_enabled": true
+  },
+  "1051623172": {
+    "last_open": "2026-04-03T20:59:48.365333",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "963605180": {
+    "last_open": "2026-01-26T19:08:34.621246",
+    "can_open_after": "2026-01-27T19:00:00",
+    "check_enabled": true
+  },
+  "990381233": {
+    "last_open": "2025-12-23T19:43:04.168294",
+    "can_open_after": "2025-12-24T19:00:00",
+    "check_enabled": true
+  },
+  "7590733785": {
+    "last_open": "2025-12-17T10:42:54.497785",
+    "can_open_after": "2025-12-17T19:00:00",
+    "check_enabled": true
+  },
+  "7869142150": {
+    "last_open": "2025-12-18T15:28:36.932774",
+    "can_open_after": "2025-12-18T19:00:00",
+    "check_enabled": true
+  },
+  "8271403621": {
+    "last_open": "2025-12-19T01:13:34.658561",
+    "can_open_after": "2025-12-19T19:00:00",
+    "check_enabled": true
+  },
+  "403263117": {
+    "last_open": "2026-04-04T23:31:58.047097",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "559475455": {
+    "last_open": "2025-12-23T19:00:26.298501",
+    "can_open_after": "2025-12-24T19:00:00",
+    "check_enabled": true
+  },
+  "1949596020": {
+    "last_open": "2026-04-05T05:26:02.137939",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "1912200865": {
+    "last_open": "2026-02-01T20:07:31.164938",
+    "can_open_after": "2026-02-02T19:00:00",
+    "check_enabled": true
+  },
+  "1846757746": {
+    "last_open": "2026-04-04T19:57:01.654771",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "278268841": {
+    "last_open": "2025-12-25T13:57:34.588355",
+    "can_open_after": "2025-12-25T19:00:00",
+    "check_enabled": true
+  },
+  "952557673": {
+    "last_open": "2026-01-14T19:02:41.094178",
+    "can_open_after": "2026-01-15T19:00:00",
+    "check_enabled": true
+  },
+  "8288850654": {
+    "last_open": "2025-12-26T04:43:51.466505",
+    "can_open_after": "2025-12-26T19:00:00",
+    "check_enabled": true
+  },
+  "1941033507": {
+    "last_open": "2025-12-26T19:28:53.704170",
+    "can_open_after": "2025-12-27T19:00:00",
+    "check_enabled": true
+  },
+  "1382123639": {
+    "last_open": "2026-03-02T19:04:27.621312",
+    "can_open_after": "2026-03-03T19:00:00",
+    "check_enabled": true
+  },
+  "494187755": {
+    "last_open": "2026-04-04T19:03:08.467068",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "511635883": {
+    "last_open": "2025-12-28T01:55:51.733256",
+    "can_open_after": "2025-12-28T19:00:00",
+    "check_enabled": true
+  },
+  "5097703153": {
+    "last_open": "2026-03-01T06:56:02.851328",
+    "can_open_after": "2026-03-01T19:00:00",
+    "check_enabled": true
+  },
+  "6299967506": {
+    "last_open": "2026-01-29T19:02:39.476332",
+    "can_open_after": "2026-01-30T19:00:00",
+    "check_enabled": true
+  },
+  "965951683": {
+    "last_open": "2026-04-04T20:19:32.778416",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "5972051626": {
+    "last_open": "2026-04-04T19:31:28.620527",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "1558946049": {
+    "last_open": "2026-04-04T19:12:59.883702",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "801509912": {
+    "last_open": "2026-01-18T19:36:17.102995",
+    "can_open_after": "2026-01-19T19:00:00",
+    "check_enabled": true
+  },
+  "7157489544": {
+    "last_open": "2026-04-04T20:25:30.749884",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "1904529461": {
+    "last_open": "2026-03-19T19:47:26.213160",
+    "can_open_after": "2026-03-20T19:00:00",
+    "check_enabled": true
+  },
+  "2108699812": {
+    "last_open": "2026-04-03T20:48:31.872571",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "1485179502": {
+    "last_open": "2026-01-05T19:25:02.466345",
+    "can_open_after": "2026-01-06T19:00:00",
+    "check_enabled": true
+  },
+  "408820346": {
+    "last_open": "2026-01-07T19:01:47.389833",
+    "can_open_after": "2026-01-08T19:00:00",
+    "check_enabled": true
+  },
+  "6757265742": {
+    "last_open": "2026-03-21T19:18:54.516882",
+    "can_open_after": "2026-03-22T19:00:00",
+    "check_enabled": true
+  },
+  "5489249941": {
+    "last_open": "2026-01-09T19:00:38.924902",
+    "can_open_after": "2026-01-10T19:00:00",
+    "check_enabled": true
+  },
+  "6569174417": {
+    "last_open": "2026-01-10T19:30:06.531241",
+    "can_open_after": "2026-01-11T19:00:00",
+    "check_enabled": true
+  },
+  "6600156881": {
+    "last_open": "2026-04-05T04:38:11.418401",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "6597118226": {
+    "last_open": "2026-04-04T04:32:10.267548",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "8494159626": {
+    "last_open": "2026-04-04T20:12:16.262749",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "509920418": {
+    "last_open": "2026-01-12T19:04:38.945783",
+    "can_open_after": "2026-01-13T19:00:00",
+    "check_enabled": true
+  },
+  "6568944333": {
+    "last_open": "2026-03-22T05:38:25.414698",
+    "can_open_after": "2026-03-22T19:00:00",
+    "check_enabled": true
+  },
+  "719731142": {
+    "last_open": "2026-02-06T01:56:51.503494",
+    "can_open_after": "2026-02-06T19:00:00",
+    "check_enabled": true
+  },
+  "1108856052": {
+    "last_open": "2026-01-15T20:22:33.264664",
+    "can_open_after": "2026-01-16T19:00:00",
+    "check_enabled": true
+  },
+  "478615939": {
+    "last_open": "2026-01-26T06:24:51.953136",
+    "can_open_after": "2026-01-26T19:00:00",
+    "check_enabled": true
+  },
+  "898091017": {
+    "last_open": "2026-01-20T19:44:53.185732",
+    "can_open_after": "2026-01-21T19:00:00",
+    "check_enabled": true
+  },
+  "2092036005": {
+    "last_open": "2026-04-04T19:36:43.019354",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "5161664384": {
+    "last_open": "2026-01-24T10:59:20.066110",
+    "can_open_after": "2026-01-24T19:00:00",
+    "check_enabled": true
+  },
+  "1448127407": {
+    "last_open": "2026-01-31T19:01:36.300612",
+    "can_open_after": "2026-02-01T19:00:00",
+    "check_enabled": true
+  },
+  "6864257317": {
+    "last_open": "2026-02-21T19:02:46.556440",
+    "can_open_after": "2026-02-22T19:00:00",
+    "check_enabled": true
+  },
+  "1842413528": {
+    "last_open": "2026-04-01T18:21:40.597811",
+    "can_open_after": "2026-04-01T19:00:00",
+    "check_enabled": true
+  },
+  "1088827480": {
+    "last_open": "2026-02-06T01:31:02.589690",
+    "can_open_after": "2026-02-06T19:00:00",
+    "check_enabled": true
+  },
+  "7577569014": {
+    "last_open": "2026-02-04T12:49:24.161299",
+    "can_open_after": "2026-02-04T19:00:00",
+    "check_enabled": true
+  },
+  "7510763321": {
+    "last_open": "2026-02-15T19:43:10.270142",
+    "can_open_after": "2026-02-16T19:00:00",
+    "check_enabled": true
+  },
+  "956039904": {
+    "last_open": "2026-04-04T19:21:35.223528",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "1217544049": {
+    "last_open": "2026-02-12T19:00:35.439889",
+    "can_open_after": "2026-02-13T19:00:00",
+    "check_enabled": true
+  },
+  "1821567507": {
+    "last_open": "2026-04-02T19:41:34.797566",
+    "can_open_after": "2026-04-03T19:00:00",
+    "check_enabled": true
+  },
+  "7774514758": {
+    "last_open": "2026-01-31T07:01:57.297240",
+    "can_open_after": "2026-01-31T19:00:00",
+    "check_enabled": true
+  },
+  "6175758398": {
+    "last_open": "2026-04-04T19:01:28.349655",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "1125538112": {
+    "last_open": "2026-04-04T19:01:43.192995",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "5874291297": {
+    "last_open": "2026-04-04T19:05:53.702739",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "6670388042": {
+    "last_open": "2026-02-05T15:20:31.666558",
+    "can_open_after": "2026-02-05T19:00:00",
+    "check_enabled": true
+  },
+  "1059999310": {
+    "last_open": "2026-04-04T20:13:01.180919",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "8031215177": {
+    "last_open": "2026-02-08T03:15:26.059869",
+    "can_open_after": "2026-02-08T19:00:00",
+    "check_enabled": true
+  },
+  "8356392736": {
+    "last_open": "2026-02-09T06:51:54.284123",
+    "can_open_after": "2026-02-09T19:00:00",
+    "check_enabled": true
+  },
+  "1478309510": {
+    "last_open": "2026-04-04T03:52:34.263387",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "1356986776": {
+    "last_open": "2026-02-18T19:40:32.605650",
+    "can_open_after": "2026-02-19T19:00:00",
+    "check_enabled": true
+  },
+  "1122176591": {
+    "last_open": "2026-03-13T19:10:13.986863",
+    "can_open_after": "2026-03-14T19:00:00",
+    "check_enabled": true
+  },
+  "1932011502": {
+    "last_open": "2026-03-01T01:39:50.687866",
+    "can_open_after": "2026-03-01T19:00:00",
+    "check_enabled": true
+  },
+  "6996327242": {
+    "last_open": "2026-03-17T18:08:15.638429",
+    "can_open_after": "2026-03-17T19:00:00",
+    "check_enabled": true
+  },
+  "937671725": {
+    "last_open": "2026-03-11T19:00:43.788884",
+    "can_open_after": "2026-03-12T19:00:00",
+    "check_enabled": true
+  },
+  "6819953032": {
+    "last_open": "2026-02-23T20:24:06.504922",
+    "can_open_after": "2026-02-24T19:00:00",
+    "check_enabled": true
+  },
+  "6467097403": {
+    "last_open": "2026-02-24T17:48:59.223989",
+    "can_open_after": "2026-02-24T19:00:00",
+    "check_enabled": true
+  },
+  "877722468": {
+    "last_open": "2026-02-24T23:07:18.160598",
+    "can_open_after": "2026-02-25T19:00:00",
+    "check_enabled": true
+  },
+  "927492691": {
+    "last_open": "2026-04-04T10:03:13.357949",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "7774774253": {
+    "last_open": "2026-03-01T19:01:23.655237",
+    "can_open_after": "2026-03-02T19:00:00",
+    "check_enabled": true
+  },
+  "829832127": {
+    "last_open": "2026-04-02T19:05:10.840253",
+    "can_open_after": "2026-04-03T19:00:00",
+    "check_enabled": true
+  },
+  "813288455": {
+    "last_open": "2026-03-21T19:00:23.438728",
+    "can_open_after": "2026-03-22T19:00:00",
+    "check_enabled": true
+  },
+  "7863160226": {
+    "last_open": "2026-03-21T19:01:27.786207",
+    "can_open_after": "2026-03-22T19:00:00",
+    "check_enabled": true
+  },
+  "996606646": {
+    "last_open": "2026-03-04T09:27:43.528844",
+    "can_open_after": "2026-03-04T19:00:00",
+    "check_enabled": true
+  },
+  "456717505": {
+    "last_open": "2026-03-21T19:06:39.693717",
+    "can_open_after": "2026-03-22T19:00:00",
+    "check_enabled": true
+  },
+  "792568669": {
+    "last_open": "2026-03-05T19:30:37.017975",
+    "can_open_after": "2026-03-06T19:00:00",
+    "check_enabled": true
+  },
+  "8337830947": {
+    "last_open": "2026-04-04T20:31:03.663563",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "974956921": {
+    "last_open": "2026-03-07T19:00:42.838653",
+    "can_open_after": "2026-03-08T19:00:00",
+    "check_enabled": true
+  },
+  "8476754598": {
+    "last_open": "2026-04-04T19:31:05.292879",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "830205799": {
+    "last_open": "2026-04-01T17:15:38.716931",
+    "can_open_after": "2026-04-01T19:00:00",
+    "check_enabled": true
+  },
+  "6342197140": {
+    "last_open": "2026-03-11T19:27:37.869005",
+    "can_open_after": "2026-03-12T19:00:00",
+    "check_enabled": true
+  },
+  "718332776": {
+    "last_open": "2026-03-12T21:30:45.922855",
+    "can_open_after": "2026-03-13T19:00:00",
+    "check_enabled": true
+  },
+  "1800697939": {
+    "last_open": "2026-03-21T19:00:41.299447",
+    "can_open_after": "2026-03-22T19:00:00",
+    "check_enabled": true
+  },
+  "7680186030": {
+    "last_open": "2026-04-04T19:02:41.557994",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "5475213207": {
+    "last_open": "2026-03-18T19:02:09.535519",
+    "can_open_after": "2026-03-19T19:00:00",
+    "check_enabled": true
+  },
+  "1138050856": {
+    "last_open": "2026-03-20T19:10:07.958459",
+    "can_open_after": "2026-03-21T19:00:00",
+    "check_enabled": true
+  },
+  "170229760": {
+    "last_open": "2026-03-18T19:41:54.760878",
+    "can_open_after": "2026-03-19T19:00:00",
+    "check_enabled": true
+  },
+  "5983312552": {
+    "last_open": "2026-04-04T19:16:22.878414",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "7882120106": {
+    "last_open": "2026-04-04T19:16:24.702728",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "7839700916": {
+    "last_open": "2026-04-03T19:35:16.197337",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  },
+  "1330822764": {
+    "last_open": "2026-04-01T20:31:55.516343",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "1273333002": {
+    "last_open": "2026-04-01T21:54:25.452004",
+    "can_open_after": "2026-04-02T19:00:00",
+    "check_enabled": true
+  },
+  "5513716001": {
+    "last_open": "2026-04-04T19:00:59.461749",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "410794187": {
+    "last_open": "2026-04-03T12:14:35.888328",
+    "can_open_after": "2026-04-03T19:00:00",
+    "check_enabled": true
+  },
+  "5061047589": {
+    "last_open": "2026-04-02T21:17:02.138954",
+    "can_open_after": "2026-04-03T19:00:00",
+    "check_enabled": true
+  },
+  "5666398771": {
+    "last_open": "2026-04-04T21:14:54.846159",
+    "can_open_after": "2026-04-05T19:00:00",
+    "check_enabled": true
+  },
+  "633921304": {
+    "last_open": "2026-04-04T08:40:02.858939",
+    "can_open_after": "2026-04-04T19:00:00",
+    "check_enabled": true
+  }
+}

@@ -1,0 +1,7 @@
+__author__ = 'Yaraslau Byshyk'
+__author_email__ = 'dev@shyk.by'
+__description__ = 'SIO is short IO that even shorter that ShortIO'
+__license__ = 'WTFPL'
+__title__ = 'sio'
+__url__ = 'https://github.com/byshyk/sio'
+__version__ = '0.1.0'
