@@ -1,18 +1,18 @@
 {
-  "total_users": 1040,
+  "total_users": 1065,
   "cards_opened": {
-    "members": 8490,
-    "skills": 26748
+    "members": 8858,
+    "skills": 27357
   },
   "global": {
-    "roulette_opened": 84500,
+    "roulette_opened": 86220,
     "roulette_prizes": {
-      "JOPA": 1874,
-      "+10": 2224,
-      "skills_bonus": 905,
-      "members_bonus": 232,
+      "JOPA": 1918,
+      "+10": 2269,
+      "skills_bonus": 924,
+      "members_bonus": 236,
       "POCELUI": 18,
-      "nothing": 79247
+      "nothing": 80855
     }
   },
   "daily": {
@@ -2393,14 +2393,168 @@
       }
     },
     "2026-04-05": {
-      "roulette_opened": 20,
+      "roulette_opened": 135,
       "roulette_prizes": {
-        "JOPA": 0,
-        "+10": 0,
+        "JOPA": 3,
+        "+10": 1,
+        "skills_bonus": 2,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 128
+      }
+    },
+    "2026-04-06": {
+      "roulette_opened": 167,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 6,
+        "skills_bonus": 3,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 154
+      }
+    },
+    "2026-04-07": {
+      "roulette_opened": 146,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 5,
+        "skills_bonus": 3,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 134
+      }
+    },
+    "2026-04-08": {
+      "roulette_opened": 100,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 2,
         "skills_bonus": 0,
         "members_bonus": 0,
         "POCELUI": 0,
-        "nothing": 20
+        "nothing": 95
+      }
+    },
+    "2026-04-09": {
+      "roulette_opened": 149,
+      "roulette_prizes": {
+        "JOPA": 4,
+        "+10": 2,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 141
+      }
+    },
+    "2026-04-10": {
+      "roulette_opened": 61,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 1,
+        "skills_bonus": 3,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 56
+      }
+    },
+    "2026-04-11": {
+      "roulette_opened": 114,
+      "roulette_prizes": {
+        "JOPA": 1,
+        "+10": 3,
+        "skills_bonus": 0,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 109
+      }
+    },
+    "2026-04-12": {
+      "roulette_opened": 179,
+      "roulette_prizes": {
+        "JOPA": 9,
+        "+10": 6,
+        "skills_bonus": 1,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 162
+      }
+    },
+    "2026-04-13": {
+      "roulette_opened": 86,
+      "roulette_prizes": {
+        "JOPA": 0,
+        "+10": 1,
+        "skills_bonus": 2,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 83
+      }
+    },
+    "2026-04-14": {
+      "roulette_opened": 103,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 1,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 98
+      }
+    },
+    "2026-04-15": {
+      "roulette_opened": 142,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 4,
+        "skills_bonus": 1,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 133
+      }
+    },
+    "2026-04-16": {
+      "roulette_opened": 109,
+      "roulette_prizes": {
+        "JOPA": 6,
+        "+10": 5,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 98
+      }
+    },
+    "2026-04-17": {
+      "roulette_opened": 85,
+      "roulette_prizes": {
+        "JOPA": 0,
+        "+10": 4,
+        "skills_bonus": 1,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 80
+      }
+    },
+    "2026-04-18": {
+      "roulette_opened": 103,
+      "roulette_prizes": {
+        "JOPA": 3,
+        "+10": 3,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 97
+      }
+    },
+    "2026-04-19": {
+      "roulette_opened": 61,
+      "roulette_prizes": {
+        "JOPA": 0,
+        "+10": 1,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 60
       }
     }
   }
