@@ -1,5 +1,6 @@
 import asyncio
 from datetime import datetime
+import json
 
 from aiogram import Bot
 from aiogram.utils.keyboard import InlineKeyboardButton, InlineKeyboardBuilder
@@ -7,7 +8,7 @@ from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
 
 from utils.config import TOKEN  # Твой токен
-from database.db import connect, get_all_user_ids, load_roulette_data, save_roulette_data
+from database.db import connect, get_all_user_ids, get_skill_cards, load_roulette_data, save_roulette_data
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
@@ -16,6 +17,19 @@ MAX_SPINS = 10
 # Глобальные переменные для хранения даты последнего уведомления
 last_member_notify_date = None
 last_skill_notify_date = None
+
+# Путь к файлу с картами суперспособностей
+SKILLS_JSON_PATH = "data/cards/skills.json"
+
+def get_total_skill_cards_count() -> int:
+    """Получить общее количество карт суперспособностей из JSON файла."""
+    try:
+        with open(SKILLS_JSON_PATH, "r", encoding="utf-8") as f:
+            skills_data = json.load(f)
+            return len(skills_data)
+    except Exception as e:
+        print(f"[get_total_skill_cards_count] Ошибка загрузки {SKILLS_JSON_PATH}: {e}")
+        return 100  # Значение по умолчанию
 
 def get_notify_member_keyboard():
     builder = InlineKeyboardBuilder()
@@ -52,6 +66,8 @@ REMINDER_MINUTE = 0
 
 async def notify_skill_card_reminder():
     global last_skill_notify_date
+    total_skill_cards = get_total_skill_cards_count()
+    
     while True:
         now = datetime.utcnow()
         today_str = now.strftime("%Y-%m-%d")
@@ -59,11 +75,30 @@ async def notify_skill_card_reminder():
         # Проверяем, наступило ли заданное время
         if now.hour == REMINDER_HOUR and now.minute == REMINDER_MINUTE:
             if last_skill_notify_date != today_str:
-                await send_reminder(
-                    "🧠 Пора открыть суперспособность!", 
-                    reply_markup=get_notify_skill_keyboard()
-                )
-                last_skill_notify_date = today_str
+                # Получаем всех пользователей и проверяем, у кого собраны все карты
+                with connect() as conn:
+                    cur = conn.cursor()
+                    cur.execute("SELECT user_id FROM users")
+                    all_users = cur.fetchall()
+                
+                # Формируем список пользователей, которым нужно отправить уведомление
+                users_to_notify = []
+                for (user_id,) in all_users:
+                    user_skills = get_skill_cards(user_id)
+                    # Считаем только реальные карты (исключаем служебные ключи)
+                    user_skills_count = len([k for k in user_skills.keys() if not k.startswith("_")])
+                    
+                    # Отправляем уведомление только если у пользователя еще не все карты
+                    if user_skills_count < total_skill_cards:
+                        users_to_notify.append(user_id)
+                
+                if users_to_notify:
+                    await send_reminder_to_users(
+                        "🧠 Пора открыть суперспособность!", 
+                        get_notify_skill_keyboard(),
+                        users_to_notify
+                    )
+                    last_skill_notify_date = today_str
 
         await asyncio.sleep(10) 
 
@@ -108,6 +143,15 @@ async def send_reminder(text: str, reply_markup=None):
         tasks = [_safe_send(user_id, text, reply_markup) for (user_id,) in batch]
         await asyncio.gather(*tasks)
         await asyncio.sleep(1)
+
+
+# --- Рассылка для выбранного списка пользователей ---
+async def send_reminder_to_users(text: str, reply_markup, users_list: list):
+    """Отправить уведомление только указанному списку пользователей (30 сообщений в минуту)."""
+    # 30 сообщений в минуту = 1 сообщение каждые 2 секунды
+    for user_id in users_list:
+        await _safe_send(user_id, text, reply_markup)
+        await asyncio.sleep(2)  # 2 секунды между сообщениями = 30 сообщений в минуту
 
 # --- Запуск всех задач ---
 async def main():
