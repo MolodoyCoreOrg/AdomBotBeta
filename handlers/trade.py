@@ -1,16 +1,17 @@
 """
 Модуль системы обмена карточками между пользователями.
-Реализует:
-- Создание заявки на обмен
-- Просмотр карт партнера (исправлена ошибка с user_id)
-- Выбор карт для обмена
-- Подтверждение обмена
-- Отмену обмена
+Реализует полный цикл обмена через кнопки:
+- Создание обмена через кнопку "➕ Создать обмен"
+- Выбор типа карт (участники/суперспособности)
+- Просмотр и выбор карт партнера
+- Принятие/отклонение обмена
+- Навигация кнопкой "↪️ Назад"
 """
 
 import logging
+import json
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 
 from aiogram import Router, F, types
 from aiogram.types import CallbackQuery, Message, FSInputFile
@@ -19,7 +20,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from database.db import get_member_cards, get_skill_cards, update_member_cards, update_skill_cards
+from database.db import get_member_cards, get_skill_cards
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +30,7 @@ router = Router()
 # ====== FSM States ======
 class TradeState(StatesGroup):
     waiting_for_partner = State()
+    selecting_card_type = State()
     viewing_partner_cards = State()
     selecting_own_cards = State()
     selecting_partner_cards = State()
@@ -52,6 +54,7 @@ def get_trade_key(user1: int, user2: int) -> tuple:
 
 
 async def create_trade(initiator_id: int, partner_id: int) -> Optional[int]:
+    """Создать новый обмен между двумя пользователями."""
     if initiator_id == partner_id:
         return None
     
@@ -71,7 +74,7 @@ async def create_trade(initiator_id: int, partner_id: int) -> Optional[int]:
         "created_at": datetime.utcnow(),
         "initiator_cards": [],
         "partner_cards": [],
-        "viewing_user": None,
+        "selected_card_type": None,  # 'members' или 'skills'
     }
     user_pair_trades[trade_key] = trade_id
     
@@ -80,6 +83,7 @@ async def create_trade(initiator_id: int, partner_id: int) -> Optional[int]:
 
 
 def get_active_trade_for_user(user_id: int) -> Optional[Dict[str, Any]]:
+    """Получить активный обмен для пользователя."""
     for trade_id, trade in active_trades.items():
         if trade.get("status") == "active":
             if trade["initiator_id"] == user_id or trade["partner_id"] == user_id:
@@ -88,6 +92,7 @@ def get_active_trade_for_user(user_id: int) -> Optional[Dict[str, Any]]:
 
 
 def get_partner_id(trade: Dict[str, Any], user_id: int) -> Optional[int]:
+    """Получить ID партнера по обмену."""
     if trade["initiator_id"] == user_id:
         return trade["partner_id"]
     elif trade["partner_id"] == user_id:
@@ -95,11 +100,36 @@ def get_partner_id(trade: Dict[str, Any], user_id: int) -> Optional[int]:
     return None
 
 
+# ====== Утилита для безопасного редактирования сообщений ======
+async def safe_trade_edit(callback: CallbackQuery, text: str, reply_markup=None, parse_mode="HTML"):
+    """Безопасное редактирование сообщения в торговом меню."""
+    msg = callback.message
+    
+    try:
+        if msg.content_type == "text":
+            await msg.edit_text(text, reply_markup=reply_markup, parse_mode=parse_mode)
+        elif msg.content_type in ("photo", "video", "document", "audio", "voice"):
+            try:
+                await msg.edit_caption(text, reply_markup=reply_markup, parse_mode=parse_mode)
+            except TelegramBadRequest:
+                await msg.delete()
+                await callback.message.answer(text, reply_markup=reply_markup, parse_mode=parse_mode)
+        else:
+            await msg.delete()
+            await callback.message.answer(text, reply_markup=reply_markup, parse_mode=parse_mode)
+    except TelegramBadRequest as e:
+        if "message is not modified" not in str(e):
+            logger.warning(f"Ошибка редактирования: {e}")
+        await callback.message.answer(text, reply_markup=reply_markup, parse_mode=parse_mode)
+    
+    await callback.answer()
+
+
 # ====== Клавиатуры для торговли ======
 def get_trade_main_keyboard(partner_id: int) -> types.InlineKeyboardMarkup:
+    """Главное меню обмена."""
     builder = InlineKeyboardBuilder()
     
-    # ВАЖНО: передаем именно partner_id, а не свой!
     builder.row(
         types.InlineKeyboardButton(
             text="📋 Карты партнера",
@@ -114,51 +144,99 @@ def get_trade_main_keyboard(partner_id: int) -> types.InlineKeyboardMarkup:
     )
     builder.row(
         types.InlineKeyboardButton(
-            text="✅ Завершить обмен",
-            callback_data=f"trade_finish:{partner_id}"
+            text="✅ Принять обмен",
+            callback_data=f"trade_accept:{partner_id}"
+        ),
+        types.InlineKeyboardButton(
+            text="❌ Отклонить обмен",
+            callback_data=f"trade_decline:{partner_id}"
         )
     )
     builder.row(
-        types.InlineKeyboardButton(
-            text="❌ Отменить обмен",
-            callback_data=f"trade_cancel:{partner_id}"
-        )
+        types.InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu")
     )
     
     return builder.as_markup()
 
 
-def get_trade_partner_cards_keyboard(partner_id: int, card_index: int, total: int) -> types.InlineKeyboardMarkup:
+def get_trade_card_type_keyboard(partner_id: int) -> types.InlineKeyboardMarkup:
+    """Выбор типа карт для обмена."""
+    builder = InlineKeyboardBuilder()
+    
+    builder.row(
+        types.InlineKeyboardButton(text="👥 Участники", callback_data=f"trade_type_members:{partner_id}"),
+        types.InlineKeyboardButton(text="🃏 Суперспособности", callback_data=f"trade_type_skills:{partner_id}")
+    )
+    builder.row(
+        types.InlineKeyboardButton(text="↪️ Назад", callback_data=f"trade_menu:{partner_id}")
+    )
+    
+    return builder.as_markup()
+
+
+def get_trade_partner_cards_keyboard(partner_id: int, card_index: int, total: int, card_type: str) -> types.InlineKeyboardMarkup:
+    """Навигация по картам партнера."""
     builder = InlineKeyboardBuilder()
     
     prev_index = (card_index - 1) % total
     next_index = (card_index + 1) % total
     
     builder.row(
-        types.InlineKeyboardButton(text="⬅", callback_data=f"trade_partner_prev:{partner_id}:{prev_index}"),
+        types.InlineKeyboardButton(text="⬅", callback_data=f"trade_partner_prev:{partner_id}:{card_index}:{prev_index}:{card_type}"),
         types.InlineKeyboardButton(text=f"{card_index + 1}/{total}", callback_data="noop"),
-        types.InlineKeyboardButton(text="➡", callback_data=f"trade_partner_next:{partner_id}:{next_index}"),
+        types.InlineKeyboardButton(text="➡", callback_data=f"trade_partner_next:{partner_id}:{card_index}:{next_index}:{card_type}"),
     )
     
     builder.row(
         types.InlineKeyboardButton(
-            text="🔄 Выбрать для обмена",
-            callback_data=f"trade_select_partner_card:{partner_id}:{card_index}"
+            text="🔄 Выбрать эту карту",
+            callback_data=f"trade_select_partner_card:{partner_id}:{card_index}:{card_type}"
         )
     )
     
     builder.row(
-        types.InlineKeyboardButton(text="↩️ Назад к обмену", callback_data=f"trade_menu:{partner_id}")
+        types.InlineKeyboardButton(text="↪️ Назад", callback_data=f"trade_menu:{partner_id}")
     )
     
     return builder.as_markup()
 
 
-def get_trade_cancel_keyboard(partner_id: int) -> types.InlineKeyboardMarkup:
+def get_trade_own_cards_keyboard(partner_id: int, card_index: int, total: int, card_type: str) -> types.InlineKeyboardMarkup:
+    """Навигация по своим картам для выбора."""
     builder = InlineKeyboardBuilder()
+    
+    prev_index = (card_index - 1) % total
+    next_index = (card_index + 1) % total
+    
     builder.row(
-        types.InlineKeyboardButton(text="↩️ Назад к обмену", callback_data=f"trade_menu:{partner_id}")
+        types.InlineKeyboardButton(text="⬅", callback_data=f"trade_own_prev:{partner_id}:{card_index}:{prev_index}:{card_type}"),
+        types.InlineKeyboardButton(text=f"{card_index + 1}/{total}", callback_data="noop"),
+        types.InlineKeyboardButton(text="➡", callback_data=f"trade_own_next:{partner_id}:{card_index}:{next_index}:{card_type}"),
     )
+    
+    builder.row(
+        types.InlineKeyboardButton(
+            text="🎁 Предложить эту карту",
+            callback_data=f"trade_select_own_card:{partner_id}:{card_index}:{card_type}"
+        )
+    )
+    
+    builder.row(
+        types.InlineKeyboardButton(text="↪️ Назад", callback_data=f"trade_menu:{partner_id}")
+    )
+    
+    return builder.as_markup()
+
+
+def get_trade_confirm_keyboard(partner_id: int) -> types.InlineKeyboardMarkup:
+    """Подтверждение обмена."""
+    builder = InlineKeyboardBuilder()
+    
+    builder.row(
+        types.InlineKeyboardButton(text="✅ Подтвердить обмен", callback_data=f"trade_confirm:{partner_id}"),
+        types.InlineKeyboardButton(text="❌ Отмена", callback_data=f"trade_menu:{partner_id}")
+    )
+    
     return builder.as_markup()
 
 
@@ -424,11 +502,55 @@ async def finish_trade_handler(callback: CallbackQuery, state: FSMContext):
     
     await state.clear()
     
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        types.InlineKeyboardButton(text="↪️ Назад", callback_data="main_trade")
+    )
+    
     await callback.message.edit_text(
         text="✅ Обмен успешно завершен!",
-        reply_markup=None
+        reply_markup=builder.as_markup()
     )
     await callback.answer("Обмен завершен")
+
+
+@router.callback_query(F.data == "main_trade")
+async def back_to_trade_from_menu(callback: CallbackQuery, state: FSMContext):
+    """Возврат в меню обмена из других разделов."""
+    from handlers.menu import safe_edit_or_replace
+    
+    user_id = callback.from_user.id
+    trade = get_active_trade_for_user(user_id)
+    
+    if trade and trade.get("status") == "active":
+        partner_id = get_partner_id(trade, user_id)
+        if partner_id:
+            await safe_edit_or_replace(
+                callback,
+                "🔄 <b>Меню обмена</b>\n\nВыберите действие:",
+                reply_markup=get_trade_main_keyboard(partner_id),
+                parse_mode="HTML"
+            )
+            return
+    
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        types.InlineKeyboardButton(text="➕ Создать обмен", callback_data="trade_create_new")
+    )
+    builder.row(
+        types.InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu")
+    )
+    
+    await safe_edit_or_replace(
+        callback,
+        "🔄 <b>Обмен карточками</b>\n\n"
+        "У вас нет активного обмена.\n\n"
+        "Вы можете:\n"
+        "• Создать новый обмен с пользователем\n"
+        "• Принять входящий обмен",
+        reply_markup=builder.as_markup(),
+        parse_mode="HTML"
+    )
 
 
 __all__ = [
@@ -436,4 +558,6 @@ __all__ = [
     "router",
     "create_trade",
     "get_active_trade_for_user",
+    "get_trade_main_keyboard",
+    "get_partner_id",
 ]
