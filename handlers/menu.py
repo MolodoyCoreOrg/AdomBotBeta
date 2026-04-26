@@ -267,17 +267,25 @@ async def start_trade_command(message: Message, state: FSMContext):
     partner_id = None
     
     if args.startswith("@"):
-        # Это username - пока не поддерживаем поиск по username
-        await message.answer(
-            "❌ Поиск по username временно недоступен. Пожалуйста, используйте ID пользователя.\n\n"
-            "ID можно узнать в профиле пользователя."
-        )
-        return
+        # Это username - ищем пользователя в базе по username
+        username = args[1:]  # убираем @
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT user_id FROM users WHERE username = ?", (username,))
+        user_row = cursor.fetchone()
+        conn.close()
+        
+        if not user_row:
+            await message.answer(f"❌ Пользователь @{username} не найден.")
+            return
+        
+        partner_id = user_row["user_id"]
     else:
         try:
             partner_id = int(args)
         except ValueError:
-            await message.answer("❌ Неверный формат ID. Используйте числовое значение.")
+            await message.answer("❌ Неверный формат ID. Используйте числовое значение или @username.")
             return
     
     if partner_id == user_id:
@@ -288,8 +296,11 @@ async def start_trade_command(message: Message, state: FSMContext):
         await message.answer("❌ Пользователь с таким ID не найден.")
         return
     
+    # Импортируем create_trade из handlers.trade
+    from handlers.trade import create_trade as trade_create, get_trade_main_keyboard
+    
     # Создаем обмен
-    trade_id = await create_trade(user_id, partner_id)
+    trade_id = await trade_create(user_id, partner_id)
     if not trade_id:
         await message.answer("❌ Не удалось создать обмен.")
         return
@@ -314,7 +325,6 @@ async def start_trade_command(message: Message, state: FSMContext):
         print(f"Не удалось отправить уведомление партнеру {partner_id}: {e}")
     
     # Показываем меню обмена инициатору
-    from handlers.trade import get_trade_main_keyboard
     await message.answer(
         text=f"🔄 <b>Обмен создан!</b>\n\n"
              f"Партнер: <code>{partner_id}</code>\n\n"
@@ -370,7 +380,10 @@ async def start_trade_callback_handler(callback: CallbackQuery, state: FSMContex
         await callback.answer("❌ Пользователь не найден", show_alert=True)
         return
     
-    trade_id = await create_trade(user_id, partner_id)
+    # Импортируем create_trade из handlers.trade
+    from handlers.trade import create_trade as trade_create, get_trade_main_keyboard
+    
+    trade_id = await trade_create(user_id, partner_id)
     if not trade_id:
         await callback.answer("❌ Не удалось создать обмен", show_alert=True)
         return
@@ -380,8 +393,6 @@ async def start_trade_callback_handler(callback: CallbackQuery, state: FSMContex
         partner_id=partner_id,
         trade_mode=True
     )
-    
-    from handlers.trade import get_trade_main_keyboard
     
     try:
         await callback.bot.send_message(
