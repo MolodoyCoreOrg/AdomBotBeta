@@ -24,15 +24,162 @@ def connect():
 router = Router()
 
 @router.callback_query(F.data == "main_trade")
-async def handle_trade_button(callback: CallbackQuery):
+async def handle_trade_button(callback: CallbackQuery, state: FSMContext):
+    """Показать главное меню обмена с кнопками."""
+    from handlers.trade import get_active_trade_for_user, get_partner_id, get_trade_main_keyboard
+    from aiogram.utils.keyboard import InlineKeyboardBuilder
+    
+    user_id = callback.from_user.id
+    trade = get_active_trade_for_user(user_id)
+    
+    if trade and trade.get("status") == "active":
+        # Если есть активный обмен - показываем меню обмена
+        partner_id = get_partner_id(trade, user_id)
+        if partner_id:
+            await safe_edit_or_replace(
+                callback,
+                "🔄 <b>Активный обмен</b>\n\n"
+                f"Партнер: <code>{partner_id}</code>\n\n"
+                "Выберите действие:",
+                reply_markup=get_trade_main_keyboard(partner_id),
+                parse_mode="HTML"
+            )
+            return
+    
+    # Если нет активного обмена - показываем меню создания
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="➕ Создать обмен", callback_data="trade_create_new")
+    )
+    builder.row(
+        InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu")
+    )
+    
     await safe_edit_or_replace(
         callback,
         "🔄 <b>Обмен карточками</b>\n\n"
-        "Для начала обмена введите ID партнера командой:\n"
-        "<code>/trade ID_пользователя</code>\n\n"
-        "Пример: <code>/trade 123456789</code>\n\n"
-        "ID пользователя можно узнать в его профиле.\n\n"
-        "Также вы можете использовать команду /trademenu для доступа к активному обмену.",
+        "У вас нет активного обмена.\n\n"
+        "Вы можете:\n"
+        "• Создать новый обмен с пользователем\n"
+        "• Принять входящий обмен\n\n"
+        "Для создания обмена нажмите кнопку ниже.",
+        reply_markup=builder.as_markup(),
+        parse_mode="HTML"
+    )
+
+
+@router.callback_query(F.data == "trade_create_new")
+async def handle_trade_create_new(callback: CallbackQuery, state: FSMContext):
+    """Начать создание нового обмена - запрос ID партнера."""
+    await state.set_state(TradeState.waiting_for_partner)
+    
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="↪️ Назад", callback_data="main_trade")
+    )
+    
+    await callback.message.edit_text(
+        text="✏️ <b>Создание обмена</b>\n\n"
+             "Введите ID партнера или @username:\n\n"
+             "Примеры:\n"
+             "• 123456789\n"
+             "• @username\n\n"
+             "ID пользователя можно узнать в его профиле.",
+        reply_markup=builder.as_markup(),
+        parse_mode="HTML"
+    )
+    await callback.answer()
+
+
+@router.message(TradeState.waiting_for_partner)
+async def process_partner_input(message: Message, state: FSMContext):
+    """Обработка ввода ID партнера для создания обмена."""
+    user_id = message.from_user.id
+    text = message.text.strip()
+    
+    if not text:
+        await message.answer("❌ Введите корректный ID или username.")
+        return
+    
+    # Пытаемся определить partner_id
+    partner_id = None
+    
+    if text.startswith("@"):
+        # Это username - ищем пользователя в базе по username
+        username = text[1:]  # убираем @
+        conn = connect()
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT user_id FROM users WHERE username = ?", (username,))
+        user_row = cursor.fetchone()
+        conn.close()
+        
+        if not user_row:
+            await message.answer(f"❌ Пользователь @{username} не найден.")
+            return
+        
+        partner_id = user_row["user_id"]
+    else:
+        try:
+            partner_id = int(text)
+        except ValueError:
+            await message.answer("❌ Неверный формат ID. Используйте числовое значение или @username.")
+            return
+    
+    if partner_id == user_id:
+        await message.answer("❌ Нельзя начать обмен с самим собой.")
+        await state.clear()
+        return
+    
+    if not user_exists(partner_id):
+        await message.answer("❌ Пользователь с таким ID не найден.")
+        await state.clear()
+        return
+    
+    # Импортируем create_trade из handlers.trade
+    from handlers.trade import create_trade as trade_create, get_trade_main_keyboard
+    
+    # Создаем обмен
+    trade_id = await trade_create(user_id, partner_id)
+    if not trade_id:
+        await message.answer("❌ Не удалось создать обмен.")
+        await state.clear()
+        return
+    
+    await state.update_data(
+        trade_id=trade_id,
+        partner_id=partner_id,
+        trade_mode=True
+    )
+    await state.clear()
+    
+    # Отправляем уведомление партнеру
+    try:
+        await message.bot.send_message(
+            chat_id=partner_id,
+            text=f"🔄 <b>Вам предложили обмен!</b>\n\n"
+                 f"Пользователь {message.from_user.username or message.from_user.first_name} "
+                 f"хочет обменяться карточками.\n\n"
+                 f"Нажмите кнопку 'Принять обмен' в меню обмена.",
+            parse_mode="HTML"
+        )
+    except Exception as e:
+        print(f"Не удалось отправить уведомление партнеру {partner_id}: {e}")
+    
+    # Показываем меню обмена инициатору
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="↪️ Назад", callback_data="main_trade")
+    )
+    
+    await message.answer(
+        text=f"✅ <b>Обмен создан!</b>\n\n"
+             f"Партнер: <code>{partner_id}</code>\n\n"
+             f"Теперь вы можете:\n"
+             f"• Посмотреть карты партнера\n"
+             f"• Предложить свои карты\n"
+             f"• Завершить или отклонить обмен",
+        reply_markup=get_trade_main_keyboard(partner_id),
         parse_mode="HTML"
     )
 
