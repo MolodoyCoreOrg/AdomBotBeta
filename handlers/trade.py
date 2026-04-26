@@ -17,6 +17,7 @@ from aiogram.types import CallbackQuery, Message, FSInputFile
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.exceptions import TelegramBadRequest
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from database.db import get_member_cards, get_skill_cards, update_member_cards, update_skill_cards
 
@@ -96,7 +97,7 @@ def get_partner_id(trade: Dict[str, Any], user_id: int) -> Optional[int]:
 
 # ====== Клавиатуры для торговли ======
 def get_trade_main_keyboard(partner_id: int) -> types.InlineKeyboardMarkup:
-    builder = types.InlineKeyboardBuilder()
+    builder = InlineKeyboardBuilder()
     
     # ВАЖНО: передаем именно partner_id, а не свой!
     builder.row(
@@ -128,7 +129,7 @@ def get_trade_main_keyboard(partner_id: int) -> types.InlineKeyboardMarkup:
 
 
 def get_trade_partner_cards_keyboard(partner_id: int, card_index: int, total: int) -> types.InlineKeyboardMarkup:
-    builder = types.InlineKeyboardBuilder()
+    builder = InlineKeyboardBuilder()
     
     prev_index = (card_index - 1) % total
     next_index = (card_index + 1) % total
@@ -154,7 +155,7 @@ def get_trade_partner_cards_keyboard(partner_id: int, card_index: int, total: in
 
 
 def get_trade_cancel_keyboard(partner_id: int) -> types.InlineKeyboardMarkup:
-    builder = types.InlineKeyboardBuilder()
+    builder = InlineKeyboardBuilder()
     builder.row(
         types.InlineKeyboardButton(text="↩️ Назад к обмену", callback_data=f"trade_menu:{partner_id}")
     )
