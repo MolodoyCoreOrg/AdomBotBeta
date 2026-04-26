@@ -37,6 +37,9 @@ async def get_main_keyboard(spins, user_id) -> InlineKeyboardMarkup:
         InlineKeyboardButton(text="🛒 Магазин", callback_data="shop_menu"),
     )
     builder.row(
+        InlineKeyboardButton(text="🔄 Обмен карточками", callback_data="main_trade"),
+    )
+    builder.row(
         InlineKeyboardButton(text=f"🎰 Казик — круток: {spins} ", callback_data="roulette_button"),
     )
     builder.row(

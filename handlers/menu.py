@@ -5,6 +5,8 @@ from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery, ContentType
 from aiogram.exceptions import TelegramBadRequest
+from aiogram.fsm.state import State, StatesGroup
+from aiogram.fsm.context import FSMContext
 
 
 from .keyboard import get_main_keyboard, get_card_open_ui_keyboard, get_card_collection_ui_keyboard, profile_ui, support_ui, donate_ui, top_menu_ui, get_persistent_bottom_keyboard, shop_ui
@@ -20,6 +22,19 @@ def connect():
     return conn
 
 router = Router()
+
+@router.callback_query(F.data == "main_trade")
+async def handle_trade_button(callback: CallbackQuery):
+    await safe_edit_or_replace(
+        callback,
+        "🔄 <b>Обмен карточками</b>\n\n"
+        "Для начала обмена введите ID партнера командой:\n"
+        "<code>/trade ID_пользователя</code>\n\n"
+        "Пример: <code>/trade 123456789</code>\n\n"
+        "ID пользователя можно узнать в его профиле.\n\n"
+        "Также вы можете использовать команду /trademenu для доступа к активному обмену.",
+        parse_mode="HTML"
+    )
 
 @router.message(Command("menu"))
 @router.message(Command("start"))
@@ -213,6 +228,184 @@ async def handle_card_collection(callback: CallbackQuery):
         "📦 Коллекцию каких карточек вы хотите посмотреть?",
         get_card_collection_ui_keyboard()
     )
+
+
+# Состояния FSM для системы обмена
+class TradeState(StatesGroup):
+    waiting_for_partner = State()
+    viewing_partner_cards = State()
+    selecting_own_cards = State()
+    selecting_partner_cards = State()
+    confirming_trade = State()
+
+
+from aiogram import F as FilterF
+from aiogram.filters import Command
+from database.db import user_exists
+
+
+@router.message(Command("trade"))
+async def start_trade_command(message: Message, state: FSMContext):
+    """Команда /trade для начала обмена."""
+    user_id = message.from_user.id
+    
+    # Парсим аргументы команды
+    text = message.text or ""
+    args = text.split(maxsplit=1)[1] if len(text.split()) > 1 else ""
+    
+    if not args:
+        await message.answer(
+            "❌ Укажите ID партнера или username.\n\n"
+            "Пример:\n"
+            "<code>/trade @username</code>\n"
+            "<code>/trade 123456789</code>",
+            parse_mode="HTML"
+        )
+        return
+    
+    # Пытаемся определить partner_id
+    partner_id = None
+    
+    if args.startswith("@"):
+        # Это username - пока не поддерживаем поиск по username
+        await message.answer(
+            "❌ Поиск по username временно недоступен. Пожалуйста, используйте ID пользователя.\n\n"
+            "ID можно узнать в профиле пользователя."
+        )
+        return
+    else:
+        try:
+            partner_id = int(args)
+        except ValueError:
+            await message.answer("❌ Неверный формат ID. Используйте числовое значение.")
+            return
+    
+    if partner_id == user_id:
+        await message.answer("❌ Нельзя начать обмен с самим собой.")
+        return
+    
+    if not user_exists(partner_id):
+        await message.answer("❌ Пользователь с таким ID не найден.")
+        return
+    
+    # Создаем обмен
+    trade_id = await create_trade(user_id, partner_id)
+    if not trade_id:
+        await message.answer("❌ Не удалось создать обмен.")
+        return
+    
+    await state.update_data(
+        trade_id=trade_id,
+        partner_id=partner_id,
+        trade_mode=True
+    )
+    
+    # Отправляем уведомление партнеру
+    try:
+        await message.bot.send_message(
+            chat_id=partner_id,
+            text=f"🔄 <b>Вам предложили обмен!</b>\n\n"
+                 f"Пользователь {message.from_user.username or message.from_user.first_name} "
+                 f"хочет обменяться карточками.\n\n"
+                 f"Используйте команду <code>/trademenu</code> для управления обменом.",
+            parse_mode="HTML"
+        )
+    except Exception as e:
+        print(f"Не удалось отправить уведомление партнеру {partner_id}: {e}")
+    
+    # Показываем меню обмена инициатору
+    from handlers.trade import get_trade_main_keyboard
+    await message.answer(
+        text=f"🔄 <b>Обмен создан!</b>\n\n"
+             f"Партнер: <code>{partner_id}</code>\n\n"
+             f"Вы можете:\n"
+             f"• Посмотреть карты партнера\n"
+             f"• Предложить свои карты\n"
+             f"• Завершить или отменить обмен",
+        reply_markup=get_trade_main_keyboard(partner_id),
+        parse_mode="HTML"
+    )
+
+
+@router.message(Command("trademenu"))
+async def show_trade_menu(message: Message, state: FSMContext):
+    """Показать меню текущего активного обмена."""
+    from handlers.trade import get_active_trade_for_user, get_trade_main_keyboard, get_partner_id
+    
+    user_id = message.from_user.id
+    trade = get_active_trade_for_user(user_id)
+    
+    if not trade:
+        await message.answer("❌ У вас нет активного обмена.")
+        return
+    
+    partner_id = get_partner_id(trade, user_id)
+    if not partner_id:
+        await message.answer("❌ Ошибка: партнер не найден.")
+        return
+    
+    await message.answer(
+        text="🔄 <b>Меню обмена</b>\n\nВыберите действие:",
+        reply_markup=get_trade_main_keyboard(partner_id),
+        parse_mode="HTML"
+    )
+
+
+@router.callback_query(FilterF.data.startswith("start_trade:"))
+async def start_trade_callback_handler(callback: CallbackQuery, state: FSMContext):
+    """Обработчик callback для начала обмена из профиля."""
+    try:
+        partner_id = int(callback.data.split(":")[1])
+    except (ValueError, IndexError):
+        await callback.answer("❌ Ошибка: неверный ID партнера", show_alert=True)
+        return
+    
+    user_id = callback.from_user.id
+    
+    if partner_id == user_id:
+        await callback.answer("❌ Нельзя начать обмен с самим собой", show_alert=True)
+        return
+    
+    if not user_exists(partner_id):
+        await callback.answer("❌ Пользователь не найден", show_alert=True)
+        return
+    
+    trade_id = await create_trade(user_id, partner_id)
+    if not trade_id:
+        await callback.answer("❌ Не удалось создать обмен", show_alert=True)
+        return
+    
+    await state.update_data(
+        trade_id=trade_id,
+        partner_id=partner_id,
+        trade_mode=True
+    )
+    
+    from handlers.trade import get_trade_main_keyboard
+    
+    try:
+        await callback.bot.send_message(
+            chat_id=partner_id,
+            text=f"🔄 <b>Вам предложили обмен!</b>\n\n"
+                 f"Пользователь {callback.from_user.username or callback.from_user.first_name} "
+                 f"хочет обменяться карточками.\n\n"
+                 f"Используйте команду <code>/trademenu</code> для управления обменом.",
+            parse_mode="HTML"
+        )
+    except Exception as e:
+        print(f"Не удалось отправить уведомление партнеру {partner_id}: {e}")
+    
+    await callback.message.edit_text(
+        text=f"🔄 <b>Обмен создан!</b>\n\n"
+             f"Партнер: <code>{partner_id}</code>\n\n"
+             f"Вы можете:\n"
+             f"• Посмотреть карты партнера\n"
+             f"• Предложить свои карты\n"
+             f"• Завершить или отменить обмен",
+        reply_markup=get_trade_main_keyboard(partner_id),
+        parse_mode="HTML"
+    )
+    await callback.answer()
 
 
 @router.callback_query(F.data == "main_profile")
