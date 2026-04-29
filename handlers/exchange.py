@@ -8,7 +8,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 
 from database.db import (
-    get_member_cards, get_skill_cards, get_epic_cards, 
+    get_member_cards, get_skill_cards, 
     get_user_full_data, create_exchange_offer, get_pending_offers_to_user,
     get_pending_offers_from_user, update_exchange_offer_status, 
     set_exchange_offer_message_id, add_exchange_to_history,

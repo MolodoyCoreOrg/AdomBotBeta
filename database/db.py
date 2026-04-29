@@ -419,14 +419,46 @@ def get_skill_cards(user_id: int) -> dict:
             return json.loads(row[0])
         return {}
     
-def update_skill_cards(user_id: int, member_cards: dict):
+def update_skill_cards(user_id: int, skill_cards: dict):
     with connect() as conn:
         c = conn.cursor()
         c.execute(
             "UPDATE users SET skill_cards = ? WHERE user_id = ?",
-            (json.dumps(member_cards), user_id)
+            (json.dumps(skill_cards), user_id)
         )
         conn.commit()
+
+def add_member_card(user_id: int, card_name: str):
+    """Добавляет карту участника пользователю."""
+    cards = get_member_cards(user_id)
+    cards[card_name] = cards.get(card_name, 0) + 1
+    update_member_cards(user_id, cards)
+
+def remove_member_card(user_id: int, card_name: str):
+    """Удаляет одну карту участника у пользователя."""
+    cards = get_member_cards(user_id)
+    if card_name in cards:
+        if cards[card_name] > 1:
+            cards[card_name] -= 1
+        else:
+            del cards[card_name]
+        update_member_cards(user_id, cards)
+
+def add_skill_card(user_id: int, card_name: str):
+    """Добавляет карту суперспособности пользователю."""
+    cards = get_skill_cards(user_id)
+    cards[card_name] = cards.get(card_name, 0) + 1
+    update_skill_cards(user_id, cards)
+
+def remove_skill_card(user_id: int, card_name: str):
+    """Удаляет одну карту суперспособности у пользователя."""
+    cards = get_skill_cards(user_id)
+    if card_name in cards:
+        if cards[card_name] > 1:
+            cards[card_name] -= 1
+        else:
+            del cards[card_name]
+        update_skill_cards(user_id, cards)
 
 
 def add_balance(user_id: int, amount: int) -> int:
@@ -691,6 +723,16 @@ def find_user_by_username(username: str) -> dict | None:
         row = cur.fetchone()
         if row:
             return {"user_id": row[0], "username": row[1]}
+        return None
+
+def get_user_full_data(user_id: int) -> dict | None:
+    """Получает полные данные пользователя по user_id."""
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT user_id, username, first_name, last_name FROM users WHERE user_id = ?", (user_id,))
+        row = cur.fetchone()
+        if row:
+            return {"user_id": row[0], "username": row[1], "first_name": row[2], "last_name": row[3]}
         return None
 
 
