@@ -240,6 +240,17 @@ def get_trade_confirm_keyboard(partner_id: int) -> types.InlineKeyboardMarkup:
     return builder.as_markup()
 
 
+def get_trade_cancel_keyboard(partner_id: int) -> types.InlineKeyboardMarkup:
+    """Отмена обмена (когда нет карт)."""
+    builder = InlineKeyboardBuilder()
+    
+    builder.row(
+        types.InlineKeyboardButton(text="↪️ Назад", callback_data=f"trade_menu:{partner_id}")
+    )
+    
+    return builder.as_markup()
+
+
 # ====== Обработчики ======
 
 @router.callback_query(F.data.startswith("start_trade:"))
@@ -384,7 +395,7 @@ async def show_partner_card_page(
     caption = format_card_text(card_name, card_data, card_info["rarity"], work, user_id=partner_id)
     caption = f"<b>Карта партнера:</b>\n\n{caption}"
     
-    keyboard = get_trade_partner_cards_keyboard(partner_id, index, len(card_names))
+    keyboard = get_trade_partner_cards_keyboard(partner_id, index, len(card_names), "members")
     
     photo = FSInputFile(image_path)
     
@@ -512,6 +523,395 @@ async def finish_trade_handler(callback: CallbackQuery, state: FSMContext):
         reply_markup=builder.as_markup()
     )
     await callback.answer("Обмен завершен")
+
+
+@router.callback_query(F.data.startswith("trade_select_own:"))
+async def select_own_cards_handler(callback: CallbackQuery, state: FSMContext):
+    """Выбор своих карт для предложения."""
+    try:
+        partner_id = int(callback.data.split(":")[1])
+    except (ValueError, IndexError):
+        await callback.answer("❌ Ошибка: неверный ID партнера", show_alert=True)
+        return
+    
+    user_id = callback.from_user.id
+    
+    state_data = await state.get_data()
+    trade_id = state_data.get("trade_id")
+    
+    if not trade_id or trade_id not in active_trades:
+        await callback.answer("❌ Обмен не найден или завершен", show_alert=True)
+        return
+    
+    trade = active_trades[trade_id]
+    if trade.get("status") != "active":
+        await callback.answer("❌ Обмен уже завершен или отменен", show_alert=True)
+        return
+    
+    await state.update_data(selecting_own_cards=True, current_partner_id=partner_id)
+    
+    # Сначала показываем выбор типа карт
+    await callback.message.edit_text(
+        text="🃏 <b>Выберите тип карт для предложения:</b>",
+        reply_markup=get_trade_card_type_keyboard(partner_id),
+        parse_mode="HTML"
+    )
+    await callback.answer()
+
+
+@router.callback_query(F.data.startswith("trade_type_members:") | F.data.startswith("trade_type_skills:"))
+async def select_card_type_handler(callback: CallbackQuery, state: FSMContext):
+    """Выбор типа карт (участники или суперспособности)."""
+    try:
+        parts = callback.data.split(":")
+        card_type = "members" if "members" in callback.data else "skills"
+        partner_id = int(parts[1])
+    except (ValueError, IndexError):
+        await callback.answer("❌ Ошибка", show_alert=True)
+        return
+    
+    user_id = callback.from_user.id
+    state_data = await state.get_data()
+    
+    await state.update_data(selected_card_type=card_type)
+    
+    # Получаем карты пользователя
+    if card_type == "members":
+        cards_dict = get_member_cards(user_id)
+    else:
+        cards_dict = get_skill_cards(user_id)
+    
+    card_names = [name for name in cards_dict if not name.startswith("_")]
+    
+    if not card_names:
+        card_type_name = "участников" if card_type == "members" else "суперспособностей"
+        await callback.message.edit_text(
+            text=f"📭 У вас нет карт {card_type_name}.",
+            reply_markup=get_trade_cancel_keyboard(partner_id)
+        )
+        await callback.answer()
+        return
+    
+    # Показываем первую карту
+    if card_type == "members":
+        await show_own_card_page(callback, partner_id, card_names, 0, cards_dict, card_type)
+    else:
+        await show_own_skill_card_page(callback, partner_id, card_names, 0, cards_dict, card_type)
+
+
+async def show_own_card_page(
+    callback: CallbackQuery,
+    partner_id: int,
+    card_names: list,
+    index: int,
+    cards_dict: dict,
+    card_type: str
+):
+    """Показать страницу со своей картой участника."""
+    from handlers.cards_handler.cards_member import format_card_text, get_member_card_image_path
+    
+    try:
+        with open("data/cards/members.json", "r", encoding="utf-8") as f:
+            MEMBER_CARDS = json.load(f)
+    except Exception as e:
+        logger.error(f"Ошибка загрузки members.json: {e}")
+        await callback.answer("❌ Ошибка загрузки данных карт", show_alert=True)
+        return
+    
+    card_name = card_names[index]
+    card_data = cards_dict[card_name]
+    
+    card_info = next(
+        (c for c in MEMBER_CARDS if c["name"].strip().lower() == card_name.strip().lower()),
+        None
+    )
+    
+    if not card_info:
+        await callback.answer("❌ Информация о карте не найдена", show_alert=True)
+        return
+    
+    image_path = get_member_card_image_path(card_data, card_info)
+    if not image_path:
+        await callback.answer("❌ Изображение карты не найдено", show_alert=True)
+        return
+    
+    work = card_info.get("work", "неизвестно")
+    caption = format_card_text(card_name, card_data, card_info["rarity"], work, user_id=callback.from_user.id)
+    caption = f"<b>Ваша карта:</b>\\n\\n{caption}"
+    
+    keyboard = get_trade_own_cards_keyboard(partner_id, index, len(card_names), card_type)
+    
+    photo = FSInputFile(image_path)
+    
+    try:
+        await callback.message.edit_media(
+            media=types.InputMediaPhoto(media=photo, caption=caption),
+            reply_markup=keyboard
+        )
+    except TelegramBadRequest as e:
+        if "message is not modified" not in str(e):
+            logger.error(f"Ошибка при редактировании медиа: {e}")
+            await callback.message.answer_photo(photo=photo, caption=caption, reply_markup=keyboard)
+    
+    await callback.answer()
+
+
+async def show_own_skill_card_page(
+    callback: CallbackQuery,
+    partner_id: int,
+    card_names: list,
+    index: int,
+    cards_dict: dict,
+    card_type: str
+):
+    """Показать страницу со своей картой суперспособности."""
+    try:
+        with open("data/cards/skills.json", "r", encoding="utf-8") as f:
+            SKILL_CARDS = json.load(f)
+    except Exception as e:
+        logger.error(f"Ошибка загрузки skills.json: {e}")
+        await callback.answer("❌ Ошибка загрузки данных карт", show_alert=True)
+        return
+    
+    card_name = card_names[index]
+    card_data = cards_dict[card_name]
+    
+    card_info = next(
+        (c for c in SKILL_CARDS if c["name"].strip().lower() == card_name.strip().lower()),
+        None
+    )
+    
+    if not card_info:
+        await callback.answer("❌ Информация о карте не найдена", show_alert=True)
+        return
+    
+    rarity = card_info.get("rarity", "common")
+    description = card_info.get("description", "")
+    
+    caption = f"<b>Суперспособность:</b>\\n\\n"
+    caption += f"🎴 <b>{card_name}</b>\\n"
+    caption += f"Редкость: {rarity}\\n"
+    if description:
+        caption += f"\\n{description}"
+    
+    keyboard = get_trade_own_cards_keyboard(partner_id, index, len(card_names), card_type)
+    
+    # Для навыков пока без изображения
+    try:
+        await callback.message.edit_text(
+            text=caption,
+            reply_markup=keyboard,
+            parse_mode="HTML"
+        )
+    except TelegramBadRequest as e:
+        if "message is not modified" not in str(e):
+            logger.error(f"Ошибка при редактировании: {e}")
+            await callback.message.answer(text=caption, reply_markup=keyboard, parse_mode="HTML")
+    
+    await callback.answer()
+
+
+@router.callback_query(F.data.startswith("trade_own_prev:") | F.data.startswith("trade_own_next:"))
+async def navigate_own_cards_handler(callback: CallbackQuery, state: FSMContext):
+    """Навигация по своим картам."""
+    try:
+        parts = callback.data.split(":")
+        partner_id = int(parts[1])
+        new_index = int(parts[3])
+        card_type = parts[4] if len(parts) > 4 else "members"
+    except (ValueError, IndexError):
+        await callback.answer("❌ Ошибка навигации", show_alert=True)
+        return
+    
+    user_id = callback.from_user.id
+    state_data = await state.get_data()
+    selected_card_type = state_data.get("selected_card_type", card_type)
+    
+    if selected_card_type == "members":
+        cards_dict = get_member_cards(user_id)
+    else:
+        cards_dict = get_skill_cards(user_id)
+    
+    card_names = [name for name in cards_dict if not name.startswith("_")]
+    
+    if not card_names:
+        await callback.answer("У вас нет карт", show_alert=True)
+        return
+    
+    new_index %= len(card_names)
+    
+    if selected_card_type == "members":
+        await show_own_card_page(callback, partner_id, card_names, new_index, cards_dict, selected_card_type)
+    else:
+        await show_own_skill_card_page(callback, partner_id, card_names, new_index, cards_dict, selected_card_type)
+
+
+@router.callback_query(F.data.startswith("trade_select_own_card:"))
+async def select_own_card_for_trade_handler(callback: CallbackQuery, state: FSMContext):
+    """Выбор своей карты для обмена."""
+    try:
+        parts = callback.data.split(":")
+        partner_id = int(parts[1])
+        card_index = int(parts[2])
+        card_type = parts[3] if len(parts) > 3 else "members"
+    except (ValueError, IndexError):
+        await callback.answer("❌ Ошибка", show_alert=True)
+        return
+    
+    user_id = callback.from_user.id
+    
+    if card_type == "members":
+        cards_dict = get_member_cards(user_id)
+    else:
+        cards_dict = get_skill_cards(user_id)
+    
+    card_names = [name for name in cards_dict if not name.startswith("_")]
+    
+    if card_index >= len(card_names):
+        await callback.answer("❌ Карта не найдена", show_alert=True)
+        return
+    
+    card_name = card_names[card_index]
+    
+    # Сохраняем выбранную карту в состоянии
+    await state.update_data(own_selected_card=card_name, own_card_type=card_type)
+    
+    await callback.answer(f"✅ Карта '{card_name}' выбрана для обмена")
+    
+    # Возвращаемся к главному меню обмена
+    await callback.message.edit_text(
+        text=f"🔄 <b>Меню обмена</b>\\n\\n"
+             f"Вы выбрали карту: <b>{card_name}</b>\\n\\n"
+             f"Теперь выберите карту партнера или подтвердите обмен.",
+        reply_markup=get_trade_main_keyboard(partner_id),
+        parse_mode="HTML"
+    )
+
+
+@router.callback_query(F.data.startswith("trade_accept:"))
+async def accept_trade_handler(callback: CallbackQuery, state: FSMContext):
+    """Принять обмен."""
+    try:
+        partner_id = int(callback.data.split(":")[1])
+    except (ValueError, IndexError):
+        await callback.answer("❌ Ошибка", show_alert=True)
+        return
+    
+    user_id = callback.from_user.id
+    trade = get_active_trade_for_user(user_id)
+    
+    if not trade:
+        await callback.answer("❌ Активный обмен не найден", show_alert=True)
+        return
+    
+    # Проверяем, есть ли выбранные карты
+    state_data = await state.get_data()
+    own_card = state_data.get("own_selected_card")
+    
+    if not own_card:
+        await callback.answer("⚠️ Сначала выберите карту для обмена", show_alert=True)
+        return
+    
+    # Показываем подтверждение
+    await callback.message.edit_text(
+        text=f"✅ <b>Подтверждение обмена</b>\\n\\n"
+             f"Вы предлагаете: <b>{own_card}</b>\\n\\n"
+             f"Партнер: <code>{partner_id}</code>\\n\\n"
+             f"Подтвердите обмен:",
+        reply_markup=get_trade_confirm_keyboard(partner_id),
+        parse_mode="HTML"
+    )
+    await callback.answer()
+
+
+@router.callback_query(F.data.startswith("trade_confirm:"))
+async def confirm_trade_handler(callback: CallbackQuery, state: FSMContext):
+    """Подтвердить и завершить обмен."""
+    try:
+        partner_id = int(callback.data.split(":")[1])
+    except (ValueError, IndexError):
+        await callback.answer("❌ Ошибка", show_alert=True)
+        return
+    
+    user_id = callback.from_user.id
+    trade = get_active_trade_for_user(user_id)
+    
+    if not trade:
+        await callback.answer("❌ Активный обмен не найден", show_alert=True)
+        return
+    
+    state_data = await state.get_data()
+    own_card = state_data.get("own_selected_card")
+    own_card_type = state_data.get("own_card_type", "members")
+    
+    if not own_card:
+        await callback.answer("⚠️ Карта не выбрана", show_alert=True)
+        return
+    
+    # Здесь должна быть логика реального обмена картами между пользователями
+    # Для примера просто завершаем обмен
+    trade["status"] = "completed"
+    trade_key = get_trade_key(user_id, partner_id)
+    user_pair_trades.pop(trade_key, None)
+    
+    # TODO: Реализовать передачу карт между пользователями
+    logger.info(f"Обмен завершен: {user_id} отдал {own_card} ({own_card_type}) пользователю {partner_id}")
+    
+    await state.clear()
+    
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        types.InlineKeyboardButton(text="↪️ Назад в меню", callback_data="go_back_menu")
+    )
+    
+    await callback.message.edit_text(
+        text=f"✅ <b>Обмен успешно завершен!</b>\\n\\n"
+             f"Вы отдали: <b>{own_card}</b>\\n"
+             f"Получатель: <code>{partner_id}</code>\\n\\n"
+             f"Карты будут обновлены в ближайшее время.",
+        reply_markup=builder.as_markup(),
+        parse_mode="HTML"
+    )
+    await callback.answer("Обмен завершен!")
+
+
+@router.callback_query(F.data.startswith("trade_decline:"))
+async def decline_trade_handler(callback: CallbackQuery, state: FSMContext):
+    """Отклонить обмен."""
+    try:
+        partner_id = int(callback.data.split(":")[1])
+    except (ValueError, IndexError):
+        await callback.answer("❌ Ошибка", show_alert=True)
+        return
+    
+    user_id = callback.from_user.id
+    trade = get_active_trade_for_user(user_id)
+    
+    if trade:
+        trade["status"] = "declined"
+        trade_key = get_trade_key(user_id, partner_id)
+        user_pair_trades.pop(trade_key, None)
+        
+        try:
+            await callback.bot.send_message(
+                chat_id=partner_id,
+                text=f"❌ Пользователь {callback.from_user.username or callback.from_user.first_name} отклонил обмен."
+            )
+        except Exception:
+            pass
+        
+        await state.clear()
+    
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        types.InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu")
+    )
+    
+    await callback.message.edit_text(
+        text="❌ Обмен отклонен.",
+        reply_markup=builder.as_markup()
+    )
+    await callback.answer("Обмен отклонен")
 
 
 @router.callback_query(F.data == "main_trade")
