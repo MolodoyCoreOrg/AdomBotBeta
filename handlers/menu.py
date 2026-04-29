@@ -36,6 +36,7 @@ async def handle_trade_button(callback: CallbackQuery, state: FSMContext):
     """Показать главное меню обмена с кнопками."""
     from handlers.trade import get_active_trade_for_user, get_partner_id, get_trade_main_keyboard
     from aiogram.utils.keyboard import InlineKeyboardBuilder
+    from aiogram.types import InlineKeyboardButton
     
     user_id = callback.from_user.id
     trade = get_active_trade_for_user(user_id)
