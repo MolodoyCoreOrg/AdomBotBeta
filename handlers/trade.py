@@ -554,7 +554,9 @@ async def navigate_partner_cards_handler(callback: CallbackQuery, state: FSMCont
     try:
         parts = callback.data.split(":")
         partner_id = int(parts[1])
-        index = int(parts[2])
+        # parts[2] - текущий индекс (не используется)
+        new_index = int(parts[3])  # Используем новый индекс (parts[3])
+        card_type = parts[4] if len(parts) > 4 else "members"
     except (ValueError, IndexError):
         await callback.answer("❌ Ошибка навигации", show_alert=True)
         return
@@ -567,8 +569,8 @@ async def navigate_partner_cards_handler(callback: CallbackQuery, state: FSMCont
         await callback.answer("У партнера нет карт", show_alert=True)
         return
     
-    index %= len(card_names)
-    await show_partner_card_page(callback, partner_id, card_names, index, cards_dict)
+    new_index %= len(card_names)
+    await show_partner_card_page(callback, partner_id, card_names, new_index, cards_dict)
 
 
 @router.callback_query(F.data.startswith("trade_menu:"))
