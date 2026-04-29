@@ -17,11 +17,9 @@ from utils.helpers import get_timer_status
 
 # Состояния FSM для системы обмена (должны быть определены до использования)
 class TradeState(StatesGroup):
-    waiting_for_partner = State()
+    waiting_for_partner_username = State()
+    selecting_card_to_trade = State()
     viewing_partner_cards = State()
-    selecting_own_cards = State()
-    selecting_partner_cards = State()
-    confirming_trade = State()
 
 
 DB_PATH = "database/users.db"
@@ -78,8 +76,8 @@ async def handle_trade_button(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data == "trade_create_new")
 async def handle_trade_create_new(callback: CallbackQuery, state: FSMContext):
-    """Начать создание нового обмена - запрос ID партнера."""
-    await state.set_state(TradeState.waiting_for_partner)
+    """Начать создание нового обмена - запрос username партнера."""
+    await state.set_state(TradeState.waiting_for_partner_username)
     
     builder = InlineKeyboardBuilder()
     builder.row(
@@ -88,64 +86,54 @@ async def handle_trade_create_new(callback: CallbackQuery, state: FSMContext):
     
     await callback.message.edit_text(
         text="✏️ <b>Создание обмена</b>\n\n"
-             "Введите ID партнера или @username:\n\n"
-             "Примеры:\n"
-             "• 123456789\n"
-             "• @username\n\n"
-             "ID пользователя можно узнать в его профиле.",
+             "Введите @username партнера:\n\n"
+             "Пример: @username\n\n"
+             "Обмен по ID больше не поддерживается.",
         reply_markup=builder.as_markup(),
         parse_mode="HTML"
     )
     await callback.answer()
 
 
-@router.message(TradeState.waiting_for_partner)
+@router.message(TradeState.waiting_for_partner_username)
 async def process_partner_input(message: Message, state: FSMContext):
-    """Обработка ввода ID партнера для создания обмена."""
+    """Обработка ввода username партнера для создания обмена."""
     user_id = message.from_user.id
     text = message.text.strip()
     
     if not text:
-        await message.answer("❌ Введите корректный ID или username.")
+        await message.answer("❌ Введите корректный username.")
         return
     
-    # Пытаемся определить partner_id
-    partner_id = None
+    # Проверяем формат username
+    if not text.startswith("@"):
+        await message.answer("❌ Username должен начинаться с @. Пример: @username")
+        return
     
-    if text.startswith("@"):
-        # Это username - ищем пользователя в базе по username
-        username = text[1:]  # убираем @
-        conn = connect()
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-        cursor.execute("SELECT user_id FROM users WHERE username = ?", (username,))
-        user_row = cursor.fetchone()
-        conn.close()
-        
-        if not user_row:
-            await message.answer(f"❌ Пользователь @{username} не найден.")
-            return
-        
-        partner_id = user_row["user_id"]
-    else:
-        try:
-            partner_id = int(text)
-        except ValueError:
-            await message.answer("❌ Неверный формат ID. Используйте числовое значение или @username.")
-            return
+    username = text[1:]  # убираем @
+    
+    # Ищем пользователя в базе по username
+    conn = connect()
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT user_id, username FROM users WHERE username = ?", (username,))
+    user_row = cursor.fetchone()
+    conn.close()
+    
+    if not user_row:
+        await message.answer(f"❌ Пользователь @{username} не найден.")
+        return
+    
+    partner_id = user_row["user_id"]
+    partner_username = user_row["username"]
     
     if partner_id == user_id:
         await message.answer("❌ Нельзя начать обмен с самим собой.")
         await state.clear()
         return
     
-    if not user_exists(partner_id):
-        await message.answer("❌ Пользователь с таким ID не найден.")
-        await state.clear()
-        return
-    
     # Импортируем create_trade из handlers.trade
-    from handlers.trade import create_trade as trade_create, get_trade_main_keyboard
+    from handlers.trade import create_trade as trade_create, get_trade_main_keyboard_with_username
     
     # Создаем обмен
     trade_id = await trade_create(user_id, partner_id)
@@ -161,33 +149,33 @@ async def process_partner_input(message: Message, state: FSMContext):
     )
     await state.clear()
     
-    # Отправляем уведомление партнеру
+    # Отправляем уведомление партнеру с кнопками принятия/отклонения
     try:
+        builder = InlineKeyboardBuilder()
+        builder.row(
+            InlineKeyboardButton(text="✅ Принять обмен", callback_data=f"trade_accept_request:{user_id}"),
+            InlineKeyboardButton(text="❌ Отклонить обмен", callback_data=f"trade_decline_request:{user_id}")
+        )
+        
+        initiator_username = message.from_user.username or "не указан"
         await message.bot.send_message(
             chat_id=partner_id,
             text=f"🔄 <b>Вам предложили обмен!</b>\n\n"
-                 f"Пользователь {message.from_user.username or message.from_user.first_name} "
+                 f"Пользователь: @{initiator_username}\n"
                  f"хочет обменяться карточками.\n\n"
-                 f"Нажмите кнопку 'Принять обмен' в меню обмена.",
+                 f"Выберите действие:",
+            reply_markup=builder.as_markup(),
             parse_mode="HTML"
         )
     except Exception as e:
         print(f"Не удалось отправить уведомление партнеру {partner_id}: {e}")
     
     # Показываем меню обмена инициатору
-    builder = InlineKeyboardBuilder()
-    builder.row(
-        InlineKeyboardButton(text="↪️ Назад", callback_data="main_trade")
-    )
-    
     await message.answer(
         text=f"✅ <b>Обмен создан!</b>\n\n"
-             f"Партнер: <code>{partner_id}</code>\n\n"
-             f"Теперь вы можете:\n"
-             f"• Посмотреть карты партнера\n"
-             f"• Предложить свои карты\n"
-             f"• Завершить или отклонить обмен",
-        reply_markup=get_trade_main_keyboard(partner_id),
+             f"Партнер: @{partner_username}\n\n"
+             f"Ожидаете ответа партнера...",
+        reply_markup=get_trade_main_keyboard_with_username(partner_id, partner_username),
         parse_mode="HTML"
     )
 
@@ -392,7 +380,7 @@ from database.db import user_exists
 
 @router.message(Command("trade"))
 async def start_trade_command(message: Message, state: FSMContext):
-    """Команда /trade для начала обмена."""
+    """Команда /trade для начала обмена через username."""
     user_id = message.from_user.id
     
     # Парсим аргументы команды
@@ -401,49 +389,42 @@ async def start_trade_command(message: Message, state: FSMContext):
     
     if not args:
         await message.answer(
-            "❌ Укажите ID партнера или username.\n\n"
+            "❌ Укажите username партнера.\n\n"
             "Пример:\n"
-            "<code>/trade @username</code>\n"
-            "<code>/trade 123456789</code>",
+            "<code>/trade @username</code>\n\n"
+            "Обмен по ID больше не поддерживается.",
             parse_mode="HTML"
         )
         return
     
-    # Пытаемся определить partner_id
-    partner_id = None
+    # Проверяем формат username
+    if not args.startswith("@"):
+        await message.answer("❌ Username должен начинаться с @. Пример: @username")
+        return
     
-    if args.startswith("@"):
-        # Это username - ищем пользователя в базе по username
-        username = args[1:]  # убираем @
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-        cursor.execute("SELECT user_id FROM users WHERE username = ?", (username,))
-        user_row = cursor.fetchone()
-        conn.close()
-        
-        if not user_row:
-            await message.answer(f"❌ Пользователь @{username} не найден.")
-            return
-        
-        partner_id = user_row["user_id"]
-    else:
-        try:
-            partner_id = int(args)
-        except ValueError:
-            await message.answer("❌ Неверный формат ID. Используйте числовое значение или @username.")
-            return
+    username = args[1:]  # убираем @
+    
+    # Ищем пользователя в базе по username
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT user_id, username FROM users WHERE username = ?", (username,))
+    user_row = cursor.fetchone()
+    conn.close()
+    
+    if not user_row:
+        await message.answer(f"❌ Пользователь @{username} не найден.")
+        return
+    
+    partner_id = user_row["user_id"]
+    partner_username = user_row["username"]
     
     if partner_id == user_id:
         await message.answer("❌ Нельзя начать обмен с самим собой.")
         return
     
-    if not user_exists(partner_id):
-        await message.answer("❌ Пользователь с таким ID не найден.")
-        return
-    
     # Импортируем create_trade из handlers.trade
-    from handlers.trade import create_trade as trade_create, get_trade_main_keyboard
+    from handlers.trade import create_trade as trade_create, get_trade_request_keyboard
     
     # Создаем обмен
     trade_id = await trade_create(user_id, partner_id)
@@ -457,14 +438,16 @@ async def start_trade_command(message: Message, state: FSMContext):
         trade_mode=True
     )
     
-    # Отправляем уведомление партнеру
+    # Отправляем уведомление партнеру с кнопками принятия/отклонения
     try:
+        initiator_username = message.from_user.username or "не указан"
         await message.bot.send_message(
             chat_id=partner_id,
             text=f"🔄 <b>Вам предложили обмен!</b>\n\n"
-                 f"Пользователь {message.from_user.username or message.from_user.first_name} "
+                 f"Пользователь: @{initiator_username}\n"
                  f"хочет обменяться карточками.\n\n"
-                 f"Используйте команду <code>/trademenu</code> для управления обменом.",
+                 f"Выберите действие:",
+            reply_markup=get_trade_request_keyboard(user_id),
             parse_mode="HTML"
         )
     except Exception as e:
@@ -472,13 +455,10 @@ async def start_trade_command(message: Message, state: FSMContext):
     
     # Показываем меню обмена инициатору
     await message.answer(
-        text=f"🔄 <b>Обмен создан!</b>\n\n"
-             f"Партнер: <code>{partner_id}</code>\n\n"
-             f"Вы можете:\n"
-             f"• Посмотреть карты партнера\n"
-             f"• Предложить свои карты\n"
-             f"• Завершить или отменить обмен",
-        reply_markup=get_trade_main_keyboard(partner_id),
+        text=f"✅ <b>Обмен создан!</b>\n\n"
+             f"Партнер: @{partner_username}\n\n"
+             f"Ожидаете ответа партнера...",
+        reply_markup=None,
         parse_mode="HTML"
     )
 

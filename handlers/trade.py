@@ -10,6 +10,7 @@
 
 import logging
 import json
+import sqlite3
 from datetime import datetime
 from typing import Optional, Dict, Any, List
 
@@ -25,6 +26,13 @@ from database.db import get_member_cards, get_skill_cards
 logger = logging.getLogger(__name__)
 
 router = Router()
+
+DB_PATH = "database/users.db"
+
+def connect():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 
 # ====== FSM States ======
@@ -154,6 +162,57 @@ def get_trade_main_keyboard(partner_id: int) -> types.InlineKeyboardMarkup:
     )
     builder.row(
         types.InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu")
+    )
+    
+    return builder.as_markup()
+
+
+def get_trade_main_keyboard_with_username(partner_id: int, partner_username: str) -> types.InlineKeyboardMarkup:
+    """Главное меню обмена с username."""
+    builder = InlineKeyboardBuilder()
+    
+    builder.row(
+        types.InlineKeyboardButton(
+            text="📋 Карты партнера",
+            callback_data=f"trade_show_partner:{partner_id}"
+        )
+    )
+    builder.row(
+        types.InlineKeyboardButton(
+            text="🎁 Предложить свои карты",
+            callback_data=f"trade_select_own:{partner_id}"
+        )
+    )
+    builder.row(
+        types.InlineKeyboardButton(
+            text="✅ Принять обмен",
+            callback_data=f"trade_accept:{partner_id}"
+        ),
+        types.InlineKeyboardButton(
+            text="❌ Отклонить обмен",
+            callback_data=f"trade_decline:{partner_id}"
+        )
+    )
+    builder.row(
+        types.InlineKeyboardButton(text="↪️ Назад", callback_data="main_trade")
+    )
+    
+    return builder.as_markup()
+
+
+def get_trade_request_keyboard(initiator_id: int) -> types.InlineKeyboardMarkup:
+    """Клавиатура для принятия/отклонения запроса на обмен."""
+    builder = InlineKeyboardBuilder()
+    
+    builder.row(
+        types.InlineKeyboardButton(
+            text="✅ Принять обмен",
+            callback_data=f"trade_accept_request:{initiator_id}"
+        ),
+        types.InlineKeyboardButton(
+            text="❌ Отклонить обмен",
+            callback_data=f"trade_decline_request:{initiator_id}"
+        )
     )
     
     return builder.as_markup()
@@ -914,6 +973,87 @@ async def decline_trade_handler(callback: CallbackQuery, state: FSMContext):
     await callback.answer("Обмен отклонен")
 
 
+@router.callback_query(F.data.startswith("trade_accept_request:"))
+async def accept_trade_request_handler(callback: CallbackQuery, state: FSMContext):
+    """Принять запрос на обмен от инициатора."""
+    try:
+        initiator_id = int(callback.data.split(":")[1])
+    except (ValueError, IndexError):
+        await callback.answer("❌ Ошибка", show_alert=True)
+        return
+    
+    user_id = callback.from_user.id
+    
+    # Создаем обмен (если еще не создан)
+    trade_id = await create_trade(initiator_id, user_id)
+    if not trade_id:
+        await callback.answer("❌ Не удалось создать обмен", show_alert=True)
+        return
+    
+    await state.update_data(
+        trade_id=trade_id,
+        partner_id=initiator_id,
+        trade_mode=True
+    )
+    
+    # Получаем username инициатора
+    conn = connect()
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT username FROM users WHERE user_id = ?", (initiator_id,))
+    user_row = cursor.fetchone()
+    conn.close()
+    
+    initiator_username = user_row["username"] if user_row else "неизвестно"
+    
+    await callback.message.edit_text(
+        text=f"✅ <b>Обмен принят!</b>\n\n"
+             f"Партнер: @{initiator_username}\n\n"
+             f"Теперь вы можете:\n"
+             f"• Посмотреть карты партнера\n"
+             f"• Предложить свои карты\n"
+             f"• Отклонить обмен",
+        reply_markup=get_trade_main_keyboard(initiator_id),
+        parse_mode="HTML"
+    )
+    
+    # Уведомляем инициатора
+    try:
+        await callback.bot.send_message(
+            chat_id=initiator_id,
+            text=f"✅ Пользователь принял ваш запрос на обмен!"
+        )
+    except Exception:
+        pass
+    
+    await callback.answer("Обмен принят!")
+
+
+@router.callback_query(F.data.startswith("trade_decline_request:"))
+async def decline_trade_request_handler(callback: CallbackQuery, state: FSMContext):
+    """Отклонить запрос на обмен от инициатора."""
+    try:
+        initiator_id = int(callback.data.split(":")[1])
+    except (ValueError, IndexError):
+        await callback.answer("❌ Ошибка", show_alert=True)
+        return
+    
+    # Уведомляем инициатора
+    try:
+        await callback.bot.send_message(
+            chat_id=initiator_id,
+            text=f"❌ Пользователь отклонил ваш запрос на обмен."
+        )
+    except Exception:
+        pass
+    
+    await callback.message.edit_text(
+        text="❌ Обмен отклонен.",
+        reply_markup=None
+    )
+    await callback.answer("Обмен отклонен")
+
+
 @router.callback_query(F.data == "main_trade")
 async def back_to_trade_from_menu(callback: CallbackQuery, state: FSMContext):
     """Возврат в меню обмена из других разделов."""
@@ -959,5 +1099,7 @@ __all__ = [
     "create_trade",
     "get_active_trade_for_user",
     "get_trade_main_keyboard",
+    "get_trade_main_keyboard_with_username",
+    "get_trade_request_keyboard",
     "get_partner_id",
 ]
