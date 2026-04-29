@@ -14,6 +14,14 @@ from database.db import add_user, user_exists, add_bonus, update_referral_bonuse
 from utils.helpers import get_timer_status
 
 
+# Состояния FSM для системы обмена (должны быть определены до использования)
+class TradeState(StatesGroup):
+    waiting_for_partner = State()
+    viewing_partner_cards = State()
+    selecting_own_cards = State()
+    selecting_partner_cards = State()
+    confirming_trade = State()
+
 
 DB_PATH = "database/users.db"
 def connect():
@@ -375,15 +383,6 @@ async def handle_card_collection(callback: CallbackQuery):
         "📦 Коллекцию каких карточек вы хотите посмотреть?",
         get_card_collection_ui_keyboard()
     )
-
-
-# Состояния FSM для системы обмена
-class TradeState(StatesGroup):
-    waiting_for_partner = State()
-    viewing_partner_cards = State()
-    selecting_own_cards = State()
-    selecting_partner_cards = State()
-    confirming_trade = State()
 
 
 from aiogram import F as FilterF

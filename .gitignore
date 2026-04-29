@@ -1,12 +1,12 @@
 ```
-# Compiled and build artifacts
-*.pyc
+# Python
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
 
-# Dependencies
-.venv/
-venv/
-node_modules/
+# Database
+*.db
 
 # Logs and temp files
 *.log
@@ -22,6 +22,12 @@ node_modules/
 .vscode/
 .idea/
 
-# Original rules preserved
-*.log
+# Coverage
+.coverage
+coverage/
+htmlcov/
+
+# Testing
+.pytest_cache/
+.mypy_cache/
 ```
