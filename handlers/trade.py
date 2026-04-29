@@ -29,6 +29,71 @@ router = Router()
 
 DB_PATH = "database/users.db"
 
+# Глобальное хранилище активных обменов: {(user_id, partner_id): trade_data}
+user_pair_trades: Dict[tuple, dict] = {}
+
+
+async def safe_edit_or_replace(
+    callback: CallbackQuery,
+    text: str,
+    reply_markup=None,
+    parse_mode: str = "HTML",
+    photo_path: str = None
+):
+    """
+    Безопасное редактирование сообщения или отправка нового,
+    если редактирование невозможно (например, сообщение с фото).
+    """
+    try:
+        if photo_path:
+            # Если есть фото, используем edit_media
+            from aiogram.types import InputMediaPhoto
+            media = InputMediaPhoto(media=FSInputFile(photo_path), caption=text, parse_mode=parse_mode)
+            await callback.message.edit_media(media=media, reply_markup=reply_markup)
+        else:
+            await safe_edit_or_replace(
+        callback,
+        text=text,
+        reply_markup=reply_markup,
+        parse_mode=parse_mode
+    )
+    except TelegramBadRequest as e:
+        error_msg = str(e)
+        if "there is no text in the message to edit" in error_msg or "message is not modified" in error_msg:
+            # Если сообщение без текста (только фото) или не изменилось - отправляем новое
+            if photo_path:
+                await callback.message.answer_photo(
+                    photo=FSInputFile(photo_path),
+                    caption=text,
+                    reply_markup=reply_markup,
+                    parse_mode=parse_mode
+                )
+            else:
+                await callback.message.answer(
+                    text=text,
+                    reply_markup=reply_markup,
+                    parse_mode=parse_mode
+                )
+        elif "message is not modified" in error_msg:
+            # Сообщение не изменилось - игнорируем
+            pass
+        else:
+            logger.error(f"Ошибка при редактировании сообщения: {e}")
+            # В случае других ошибок тоже отправляем новое сообщение
+            if photo_path:
+                await callback.message.answer_photo(
+                    photo=FSInputFile(photo_path),
+                    caption=text,
+                    reply_markup=reply_markup,
+                    parse_mode=parse_mode
+                )
+            else:
+                await callback.message.answer(
+                    text=text,
+                    reply_markup=reply_markup,
+                    parse_mode=parse_mode
+                )
+
 def connect():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -362,15 +427,11 @@ async def start_trade_handler(callback: CallbackQuery, state: FSMContext):
     except Exception as e:
         logger.error(f"Не удалось отправить уведомление партнеру {partner_id}: {e}")
     
-    await callback.message.edit_text(
-        text=f"🔄 <b>Обмен создан!</b>\n\n"
-             f"Партнер: <code>{partner_id}</code>\n\n"
-             f"Вы можете:\n"
-             f"• Посмотреть карты партнера\n"
-             f"• Предложить свои карты\n"
-             f"• Завершить или отменить обмен",
-        reply_markup=get_trade_main_keyboard(partner_id),
-        parse_mode="HTML"
+    text = f"🔄 <b>Обмен создан!</b>\n\nПартнер: <code>{partner_id}</code>\n\nВы можете:\n• Посмотреть карты партнера\n• Предложить свои карты\n• Завершить или отменить обмен"
+    await safe_edit_or_replace(
+        callback,
+        text=text,
+        reply_markup=get_trade_main_keyboard(partner_id)
     )
     await callback.answer()
 
@@ -424,9 +485,10 @@ async def show_partner_cards_handler(callback: CallbackQuery, state: FSMContext)
     partner_card_names = [name for name in partner_cards_dict if not name.startswith("_")]
     
     if not partner_card_names:
-        await callback.message.edit_text(
-            text="📭 У партнера пока нет карточек участников.",
-            reply_markup=get_trade_cancel_keyboard(partner_id)
+        await safe_edit_or_replace(
+        callback,
+        text="📭 У партнера пока нет карточек участников.",
+        reply_markup=get_trade_cancel_keyboard(partner_id)
         )
         await callback.answer()
         return
@@ -477,15 +539,12 @@ async def show_partner_card_page(
     
     photo = FSInputFile(image_path)
     
-    try:
-        await callback.message.edit_media(
-            media=types.InputMediaPhoto(media=photo, caption=caption),
-            reply_markup=keyboard
-        )
-    except TelegramBadRequest as e:
-        if "message is not modified" not in str(e):
-            logger.error(f"Ошибка при редактировании медиа: {e}")
-            await callback.message.answer_photo(photo=photo, caption=caption, reply_markup=keyboard)
+    await safe_edit_or_replace(
+        callback,
+        text=caption,
+        reply_markup=keyboard,
+        photo_path=image_path
+    )
     
     await callback.answer()
 
@@ -522,10 +581,12 @@ async def back_to_trade_menu_handler(callback: CallbackQuery, state: FSMContext)
     
     await state.update_data(viewing_partner_cards=False)
     
-    await callback.message.edit_text(
-        text="🔄 <b>Меню обмена</b>\n\nВыберите действие:",
-        reply_markup=get_trade_main_keyboard(partner_id),
-        parse_mode="HTML"
+    text = "🔄 <b>Меню обмена</b>\n\nВыберите действие:"
+    
+    await safe_edit_or_replace(
+        callback,
+        text=text,
+        reply_markup=get_trade_main_keyboard(partner_id)
     )
     await callback.answer()
 
@@ -567,7 +628,8 @@ async def cancel_trade_handler(callback: CallbackQuery, state: FSMContext):
             
             await state.clear()
     
-    await callback.message.edit_text(
+    await safe_edit_or_replace(
+        callback,
         text="❌ Обмен отменен.",
         reply_markup=None
     )
@@ -604,9 +666,11 @@ async def finish_trade_handler(callback: CallbackQuery, state: FSMContext):
         types.InlineKeyboardButton(text="↪️ Назад", callback_data="main_trade")
     )
     
-    await callback.message.edit_text(
+    await safe_edit_or_replace(
+        callback,
         text="✅ Обмен успешно завершен!",
-        reply_markup=builder.as_markup()
+        reply_markup=builder.as_markup(
+    )
     )
     await callback.answer("Обмен завершен")
 
@@ -647,9 +711,11 @@ async def select_own_cards_handler(callback: CallbackQuery, state: FSMContext):
     )
     
     # Сначала показываем выбор типа карт
-    await callback.message.edit_text(
+    await safe_edit_or_replace(
+        callback,
         text="🃏 <b>Выберите тип карт для предложения:</b>",
-        reply_markup=get_trade_card_type_keyboard(partner_id),
+        reply_markup=get_trade_card_type_keyboard(partner_id
+    ),
         parse_mode="HTML"
     )
     await callback.answer()
@@ -681,9 +747,10 @@ async def select_card_type_handler(callback: CallbackQuery, state: FSMContext):
     
     if not card_names:
         card_type_name = "участников" if card_type == "members" else "суперспособностей"
-        await callback.message.edit_text(
-            text=f"📭 У вас нет карт {card_type_name}.",
-            reply_markup=get_trade_cancel_keyboard(partner_id)
+        await safe_edit_or_replace(
+        callback,
+        text=f"📭 У вас нет карт {card_type_name}.",
+        reply_markup=get_trade_cancel_keyboard(partner_id)
         )
         await callback.answer()
         return
@@ -739,15 +806,12 @@ async def show_own_card_page(
     
     photo = FSInputFile(image_path)
     
-    try:
-        await callback.message.edit_media(
-            media=types.InputMediaPhoto(media=photo, caption=caption),
-            reply_markup=keyboard
-        )
-    except TelegramBadRequest as e:
-        if "message is not modified" not in str(e):
-            logger.error(f"Ошибка при редактировании медиа: {e}")
-            await callback.message.answer_photo(photo=photo, caption=caption, reply_markup=keyboard)
+    await safe_edit_or_replace(
+        callback,
+        text=caption,
+        reply_markup=keyboard,
+        photo_path=image_path
+    )
     
     await callback.answer()
 
@@ -794,11 +858,12 @@ async def show_own_skill_card_page(
     
     # Для навыков пока без изображения
     try:
-        await callback.message.edit_text(
-            text=caption,
-            reply_markup=keyboard,
-            parse_mode="HTML"
-        )
+        await safe_edit_or_replace(
+        callback,
+        text=caption,
+        reply_markup=keyboard,
+        parse_mode="HTML"
+    )
     except TelegramBadRequest as e:
         if "message is not modified" not in str(e):
             logger.error(f"Ошибка при редактировании: {e}")
@@ -875,7 +940,8 @@ async def select_own_card_for_trade_handler(callback: CallbackQuery, state: FSMC
     await callback.answer(f"✅ Карта '{card_name}' выбрана для обмена")
     
     # Возвращаемся к главному меню обмена
-    await callback.message.edit_text(
+    await safe_edit_or_replace(
+        callback,
         text=f"🔄 <b>Меню обмена</b>\\n\\n"
              f"Вы выбрали карту: <b>{card_name}</b>\\n\\n"
              f"Теперь выберите карту партнера или подтвердите обмен.",
@@ -917,7 +983,8 @@ async def accept_trade_handler(callback: CallbackQuery, state: FSMContext):
         return
     
     # Показываем подтверждение
-    await callback.message.edit_text(
+    await safe_edit_or_replace(
+        callback,
         text=f"✅ <b>Подтверждение обмена</b>\\n\\n"
              f"Вы предлагаете: <b>{own_card}</b>\\n\\n"
              f"Партнер: <code>{partner_id}</code>\\n\\n"
@@ -975,7 +1042,8 @@ async def confirm_trade_handler(callback: CallbackQuery, state: FSMContext):
         types.InlineKeyboardButton(text="↪️ Назад в меню", callback_data="go_back_menu")
     )
     
-    await callback.message.edit_text(
+    await safe_edit_or_replace(
+        callback,
         text=f"✅ <b>Обмен успешно завершен!</b>\\n\\n"
              f"Вы отдали: <b>{own_card}</b>\\n"
              f"Получатель: <code>{partner_id}</code>\\n\\n"
@@ -1022,7 +1090,8 @@ async def decline_trade_handler(callback: CallbackQuery, state: FSMContext):
         types.InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu")
     )
     
-    await callback.message.edit_text(
+    await safe_edit_or_replace(
+        callback,
         text="❌ Обмен отклонен.",
         reply_markup=builder.as_markup()
     )
@@ -1062,14 +1131,16 @@ async def accept_trade_request_handler(callback: CallbackQuery, state: FSMContex
     
     initiator_username = user_row["username"] if user_row else "неизвестно"
     
-    await callback.message.edit_text(
+    await safe_edit_or_replace(
+        callback,
         text=f"✅ <b>Обмен принят!</b>\n\n"
              f"Партнер: @{initiator_username}\n\n"
              f"Теперь вы можете:\n"
              f"• Посмотреть карты партнера\n"
              f"• Предложить свои карты\n"
              f"• Отклонить обмен",
-        reply_markup=get_trade_main_keyboard(initiator_id),
+        reply_markup=get_trade_main_keyboard(initiator_id
+    ),
         parse_mode="HTML"
     )
     
@@ -1103,7 +1174,8 @@ async def decline_trade_request_handler(callback: CallbackQuery, state: FSMConte
     except Exception:
         pass
     
-    await callback.message.edit_text(
+    await safe_edit_or_replace(
+        callback,
         text="❌ Обмен отклонен.",
         reply_markup=None
     )
@@ -1125,8 +1197,8 @@ async def back_to_trade_from_menu(callback: CallbackQuery, state: FSMContext):
                 callback,
                 "🔄 <b>Меню обмена</b>\n\nВыберите действие:",
                 reply_markup=get_trade_main_keyboard(partner_id),
-                parse_mode="HTML"
-            )
+        parse_mode="HTML"
+    )
             return
     
     builder = InlineKeyboardBuilder()
