@@ -90,6 +90,18 @@ async def create_trade(initiator_id: int, partner_id: int) -> Optional[int]:
     return trade_id
 
 
+def get_active_trade_for_pair(user1: int, user2: int) -> Optional[Dict[str, Any]]:
+    """Получить активный обмен для пары пользователей."""
+    trade_key = get_trade_key(user1, user2)
+    trade_id = user_pair_trades.get(trade_key)
+    
+    if trade_id and trade_id in active_trades:
+        trade = active_trades[trade_id]
+        if trade.get("status") == "active":
+            return trade
+    return None
+
+
 def get_active_trade_for_user(user_id: int) -> Optional[Dict[str, Any]]:
     """Получить активный обмен для пользователя."""
     for trade_id, trade in active_trades.items():
@@ -378,14 +390,13 @@ async def show_partner_cards_handler(callback: CallbackQuery, state: FSMContext)
     
     user_id = callback.from_user.id
     
-    state_data = await state.get_data()
-    trade_id = state_data.get("trade_id")
+    # Ищем обмен для пары пользователей
+    trade = get_active_trade_for_pair(user_id, partner_id)
     
-    if not trade_id or trade_id not in active_trades:
-        await callback.answer("❌ Обмен не найден или завершен", show_alert=True)
+    if not trade:
+        await callback.answer("❌ Обмен не найден или завершен. Создайте новый обмен.", show_alert=True)
         return
     
-    trade = active_trades[trade_id]
     if trade.get("status") != "active":
         await callback.answer("❌ Обмен уже завершен или отменен", show_alert=True)
         return
@@ -394,7 +405,15 @@ async def show_partner_cards_handler(callback: CallbackQuery, state: FSMContext)
         await callback.answer("❌ Вы не участник этого обмена", show_alert=True)
         return
     
+    # Обновляем state с актуальными данными
+    trade_id = None
+    for tid, t in active_trades.items():
+        if t is trade:
+            trade_id = tid
+            break
+    
     await state.update_data(
+        trade_id=trade_id,
         viewing_partner_cards=True,
         current_partner_id=partner_id,
         trade_mode=True
@@ -520,8 +539,12 @@ async def cancel_trade_handler(callback: CallbackQuery, state: FSMContext):
         return
     
     user_id = callback.from_user.id
-    trade = get_active_trade_for_user(user_id)
+    # Ищем обмен для пары пользователей
+    trade = get_active_trade_for_pair(user_id, partner_id)
     
+    if not trade:
+        # Пробуем найти любой активный обмен для пользователя
+        trade = get_active_trade_for_user(user_id)
     if trade:
         trade_id = None
         for tid, t in active_trades.items():
@@ -560,11 +583,15 @@ async def finish_trade_handler(callback: CallbackQuery, state: FSMContext):
         return
     
     user_id = callback.from_user.id
-    trade = get_active_trade_for_user(user_id)
+    # Ищем обмен для пары пользователей
+    trade = get_active_trade_for_pair(user_id, partner_id)
     
     if not trade:
-        await callback.answer("❌ Активный обмен не найден", show_alert=True)
-        return
+        # Пробуем найти любой активный обмен для пользователя
+        trade = get_active_trade_for_user(user_id)
+        if not trade:
+            await callback.answer("❌ Активный обмен не найден", show_alert=True)
+            return
     
     trade["status"] = "completed"
     trade_key = get_trade_key(user_id, partner_id)
@@ -595,19 +622,29 @@ async def select_own_cards_handler(callback: CallbackQuery, state: FSMContext):
     
     user_id = callback.from_user.id
     
-    state_data = await state.get_data()
-    trade_id = state_data.get("trade_id")
+    # Ищем обмен для пары пользователей
+    trade = get_active_trade_for_pair(user_id, partner_id)
     
-    if not trade_id or trade_id not in active_trades:
-        await callback.answer("❌ Обмен не найден или завершен", show_alert=True)
+    if not trade:
+        await callback.answer("❌ Обмен не найден или завершен. Создайте новый обмен.", show_alert=True)
         return
     
-    trade = active_trades[trade_id]
     if trade.get("status") != "active":
         await callback.answer("❌ Обмен уже завершен или отменен", show_alert=True)
         return
     
-    await state.update_data(selecting_own_cards=True, current_partner_id=partner_id)
+    # Обновляем state с актуальными данными
+    trade_id = None
+    for tid, t in active_trades.items():
+        if t is trade:
+            trade_id = tid
+            break
+    
+    await state.update_data(
+        trade_id=trade_id,
+        selecting_own_cards=True, 
+        current_partner_id=partner_id
+    )
     
     # Сначала показываем выбор типа карт
     await callback.message.edit_text(
@@ -857,10 +894,18 @@ async def accept_trade_handler(callback: CallbackQuery, state: FSMContext):
         return
     
     user_id = callback.from_user.id
-    trade = get_active_trade_for_user(user_id)
+    # Ищем обмен для пары пользователей
+    trade = get_active_trade_for_pair(user_id, partner_id)
     
     if not trade:
-        await callback.answer("❌ Активный обмен не найден", show_alert=True)
+        # Пробуем найти любой активный обмен для пользователя
+        trade = get_active_trade_for_user(user_id)
+        if not trade:
+            await callback.answer("❌ Активный обмен не найден", show_alert=True)
+            return
+    
+    if trade.get("status") != "active":
+        await callback.answer("❌ Обмен уже завершен или отменен", show_alert=True)
         return
     
     # Проверяем, есть ли выбранные карты
@@ -893,12 +938,19 @@ async def confirm_trade_handler(callback: CallbackQuery, state: FSMContext):
         return
     
     user_id = callback.from_user.id
-    trade = get_active_trade_for_user(user_id)
+    # Ищем обмен для пары пользователей
+    trade = get_active_trade_for_pair(user_id, partner_id)
     
     if not trade:
-        await callback.answer("❌ Активный обмен не найден", show_alert=True)
-        return
+        # Пробуем найти любой активный обмен для пользователя
+        trade = get_active_trade_for_user(user_id)
+        if not trade:
+            await callback.answer("❌ Активный обмен не найден", show_alert=True)
+            return
     
+    if trade.get("status") != "active":
+        await callback.answer("❌ Обмен уже завершен или отменен", show_alert=True)
+        return
     state_data = await state.get_data()
     own_card = state_data.get("own_selected_card")
     own_card_type = state_data.get("own_card_type", "members")
@@ -944,8 +996,12 @@ async def decline_trade_handler(callback: CallbackQuery, state: FSMContext):
         return
     
     user_id = callback.from_user.id
-    trade = get_active_trade_for_user(user_id)
+    # Ищем обмен для пары пользователей
+    trade = get_active_trade_for_pair(user_id, partner_id)
     
+    if not trade:
+        # Пробуем найти любой активный обмен для пользователя
+        trade = get_active_trade_for_user(user_id)
     if trade:
         trade["status"] = "declined"
         trade_key = get_trade_key(user_id, partner_id)

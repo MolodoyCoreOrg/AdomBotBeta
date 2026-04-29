@@ -87,8 +87,7 @@ async def handle_trade_create_new(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text(
         text="✏️ <b>Создание обмена</b>\n\n"
              "Введите @username партнера:\n\n"
-             "Пример: @username\n\n"
-             "Обмен по ID больше не поддерживается.",
+             "Пример: @username",
         reply_markup=builder.as_markup(),
         parse_mode="HTML"
     )
@@ -147,7 +146,7 @@ async def process_partner_input(message: Message, state: FSMContext):
         partner_id=partner_id,
         trade_mode=True
     )
-    await state.clear()
+    # НЕ очищаем состояние здесь, оно нужно для работы с обменом
     
     # Отправляем уведомление партнеру с кнопками принятия/отклонения
     try:
@@ -391,8 +390,7 @@ async def start_trade_command(message: Message, state: FSMContext):
         await message.answer(
             "❌ Укажите username партнера.\n\n"
             "Пример:\n"
-            "<code>/trade @username</code>\n\n"
-            "Обмен по ID больше не поддерживается.",
+            "<code>/trade @username</code>",
             parse_mode="HTML"
         )
         return
