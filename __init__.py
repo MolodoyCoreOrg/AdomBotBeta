@@ -17,7 +17,7 @@ from test_handlers.test_handlers import router as test_router
 from handlers.shop import router as shop_router
 from handlers.motivation import router as motivation_router
 from handlers.presave import router as presave_router
-from handlers.trade import router as trade_router
+from handlers.exchange import router as exchange_router
 
 routers = [
     menu_router,
@@ -39,5 +39,5 @@ routers = [
     shop_router,
     motivation_router,
     presave_router,
-    trade_router,
+    exchange_router,
 ]

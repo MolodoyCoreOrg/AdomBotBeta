@@ -729,3 +729,71 @@ def shop_ui():
         InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
     )
     return builder.as_markup()
+
+
+# === СИСТЕМА ОБМЕНА ===
+def get_exchange_main_keyboard():
+    """Главное меню обмена."""
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="➕ Создать обмен", callback_data="create_exchange"),
+    )
+    builder.row(
+        InlineKeyboardButton(text="📤 Мои предложения", callback_data="view_my_offers"),
+        InlineKeyboardButton(text="📥 Входящие предложения", callback_data="view_incoming_offers"),
+    )
+    builder.row(
+        InlineKeyboardButton(text="↪️ Назад", callback_data="main_menu"),
+    )
+    return builder.as_markup()
+
+
+def get_exchange_card_type_keyboard(prefix: str = "exchange"):
+    """Выбор типа карты (участники/суперспособности)."""
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="👥 Карточки участников", callback_data=f"{prefix}_type:member"),
+    )
+    builder.row(
+        InlineKeyboardButton(text="🃏 Суперспособности", callback_data=f"{prefix}_type:skill"),
+    )
+    builder.row(
+        InlineKeyboardButton(text="↪️ Назад", callback_data="exchange_menu"),
+    )
+    return builder.as_markup()
+
+
+def get_exchange_member_cards_keyboard(cards: list, prefix: str = "select_my"):
+    """Клавиатура с карточками участников."""
+    builder = InlineKeyboardBuilder()
+    for card_name in cards:
+        builder.row(
+            InlineKeyboardButton(text=f"👥 {card_name}", callback_data=f"{prefix}_card:member:{card_name}"),
+        )
+    builder.row(
+        InlineKeyboardButton(text="↪️ Назад", callback_data="exchange_menu"),
+    )
+    return builder.as_markup()
+
+
+def get_exchange_skill_cards_keyboard(cards: list, prefix: str = "select_my"):
+    """Клавиатура с суперспособностями."""
+    builder = InlineKeyboardBuilder()
+    for card_name in cards:
+        builder.row(
+            InlineKeyboardButton(text=f"🃏 {card_name}", callback_data=f"{prefix}_card:skill:{card_name}"),
+        )
+    builder.row(
+        InlineKeyboardButton(text="↪️ Назад", callback_data="exchange_menu"),
+    )
+    return builder.as_markup()
+
+
+def get_exchange_offer_keyboard(offer_id: int):
+    """Клавиатура для ответа на предложение обмена (Принять/Отклонить)."""
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="✅ Принять", callback_data=f"accept_exchange:{offer_id}"),
+        InlineKeyboardButton(text="❌ Отклонить", callback_data=f"reject_exchange:{offer_id}"),
+    )
+    return builder.as_markup()

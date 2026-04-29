@@ -143,6 +143,7 @@ def init_db():
     create_roulette_tables()
     create_user_card_drops_table()
     create_presave_table()   # добавлено
+    init_exchange_tables()   # инициализация таблиц системы обмена
 
 def get_user_timezone(user_id: int) -> str:
     """Return user's timezone string (IANA), default 'UTC' if not set."""
@@ -677,3 +678,207 @@ def get_unrewarded_presave_actions() -> list[dict]:
         cur.execute("SELECT user_id, pressed_at FROM presave_actions WHERE rewarded = 0")
         rows = cur.fetchall()
         return [{"user_id": row[0], "pressed_at": row[1]} for row in rows]
+
+
+# ==================== ФУНКЦИИ ДЛЯ СИСТЕМЫ ОБМЕНА ====================
+
+def find_user_by_username(username: str) -> dict | None:
+    """Ищет пользователя по username (без @)."""
+    username = username.lstrip('@')
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT user_id, username FROM users WHERE username = ?", (username,))
+        row = cur.fetchone()
+        if row:
+            return {"user_id": row[0], "username": row[1]}
+        return None
+
+
+def create_exchange_offer(
+    from_user_id: int,
+    to_user_id: int,
+    from_user_username: str,
+    to_user_username: str,
+    offered_card_type: str,
+    offered_card_name: str,
+    requested_card_type: str,
+    requested_card_name: str
+) -> int:
+    """Создает предложение обмена и возвращает его ID."""
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO exchange_offers (
+                from_user_id, to_user_id, from_user_username, to_user_username,
+                offered_card_type, offered_card_name,
+                requested_card_type, requested_card_name,
+                status, created_at, expires_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now'), datetime('now', '+1 day'))
+        """, (
+            from_user_id, to_user_id, from_user_username, to_user_username,
+            offered_card_type, offered_card_name,
+            requested_card_type, requested_card_name
+        ))
+        conn.commit()
+        return cur.lastrowid
+
+
+def get_exchange_offer(offer_id: int) -> dict | None:
+    """Получает предложение обмена по ID."""
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT * FROM exchange_offers WHERE id = ?
+        """, (offer_id,))
+        row = cur.fetchone()
+        if row:
+            return dict(row)
+        return None
+
+
+def get_pending_offers_to_user(user_id: int) -> list[dict]:
+    """Получает все активные входящие предложения для пользователя."""
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT * FROM exchange_offers 
+            WHERE to_user_id = ? AND status = 'pending' 
+            ORDER BY created_at DESC
+        """, (user_id,))
+        rows = cur.fetchall()
+        return [dict(row) for row in rows]
+
+
+def get_pending_offers_from_user(user_id: int) -> list[dict]:
+    """Получает все активные исходящие предложения от пользователя."""
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT * FROM exchange_offers 
+            WHERE from_user_id = ? AND status = 'pending' 
+            ORDER BY created_at DESC
+        """, (user_id,))
+        rows = cur.fetchall()
+        return [dict(row) for row in rows]
+
+
+def update_exchange_offer_status(offer_id: int, status: str) -> None:
+    """Обновляет статус предложения обмена."""
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            UPDATE exchange_offers SET status = ? WHERE id = ?
+        """, (status, offer_id))
+        conn.commit()
+
+
+def set_exchange_offer_message_id(offer_id: int, message_id: int) -> None:
+    """Сохраняет ID сообщения с предложением обмена."""
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            UPDATE exchange_offers SET message_id = ? WHERE id = ?
+        """, (message_id, offer_id))
+        conn.commit()
+
+
+def add_exchange_to_history(
+    offer_id: int,
+    from_user_id: int,
+    to_user_id: int,
+    from_user_username: str,
+    to_user_username: str,
+    exchanged_card_type: str,
+    exchanged_card_name: str,
+    received_card_type: str,
+    received_card_name: str
+) -> None:
+    """Добавляет запись об успешном обмене в историю."""
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO exchange_history (
+                offer_id, from_user_id, to_user_id, from_user_username, to_user_username,
+                exchanged_card_type, exchanged_card_name,
+                received_card_type, received_card_name,
+                exchanged_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+        """, (
+            offer_id, from_user_id, to_user_id, from_user_username, to_user_username,
+            exchanged_card_type, exchanged_card_name,
+            received_card_type, received_card_name
+        ))
+        conn.commit()
+
+
+def get_user_exchange_history(user_id: int, limit: int = 10) -> list[dict]:
+    """Получает историю обменов пользователя."""
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT * FROM exchange_history 
+            WHERE from_user_id = ? OR to_user_id = ?
+            ORDER BY exchanged_at DESC
+            LIMIT ?
+        """, (user_id, user_id, limit))
+        rows = cur.fetchall()
+        return [dict(row) for row in rows]
+
+
+def cleanup_expired_exchange_offers() -> int:
+    """Удаляет просроченные предложения обмена. Возвращает количество удаленных."""
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            DELETE FROM exchange_offers 
+            WHERE status = 'pending' AND expires_at < datetime('now')
+        """)
+        conn.commit()
+        return cur.rowcount
+
+
+def init_exchange_tables():
+    """Инициализирует таблицы для системы обмена."""
+    with connect() as conn:
+        cur = conn.cursor()
+        
+        # Таблица предложений обмена
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS exchange_offers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                from_user_id INTEGER NOT NULL,
+                to_user_id INTEGER NOT NULL,
+                from_user_username TEXT NOT NULL,
+                to_user_username TEXT NOT NULL,
+                offered_card_type TEXT NOT NULL,
+                offered_card_name TEXT NOT NULL,
+                requested_card_type TEXT NOT NULL,
+                requested_card_name TEXT NOT NULL,
+                status TEXT DEFAULT 'pending',
+                message_id INTEGER,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                expires_at TIMESTAMP,
+                FOREIGN KEY (from_user_id) REFERENCES users(user_id),
+                FOREIGN KEY (to_user_id) REFERENCES users(user_id)
+            )
+        """)
+        
+        # Таблица истории обменов
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS exchange_history (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                offer_id INTEGER,
+                from_user_id INTEGER NOT NULL,
+                to_user_id INTEGER NOT NULL,
+                from_user_username TEXT NOT NULL,
+                to_user_username TEXT NOT NULL,
+                exchanged_card_type TEXT NOT NULL,
+                exchanged_card_name TEXT NOT NULL,
+                received_card_type TEXT NOT NULL,
+                received_card_name TEXT NOT NULL,
+                exchanged_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (offer_id) REFERENCES exchange_offers(id)
+            )
+        """)
+        
+        conn.commit()

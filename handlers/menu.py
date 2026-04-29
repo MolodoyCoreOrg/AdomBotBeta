@@ -33,42 +33,45 @@ router = Router()
 @router.callback_query(F.data == "main_trade")
 async def handle_trade_button(callback: CallbackQuery, state: FSMContext):
     """Показать главное меню обмена с кнопками."""
-    from handlers.trade import get_active_trade_for_user, get_partner_id, get_trade_main_keyboard
-    
     user_id = callback.from_user.id
-    trade = get_active_trade_for_user(user_id)
     
-    if trade and trade.get("status") == "active":
-        # Если есть активный обмен - показываем меню обмена
-        partner_id = get_partner_id(trade, user_id)
-        if partner_id:
-            await safe_edit_or_replace(
-                callback,
-                "🔄 <b>Активный обмен</b>\n\n"
-                f"Партнер: <code>{partner_id}</code>\n\n"
-                "Выберите действие:",
-                reply_markup=get_trade_main_keyboard(partner_id),
-                parse_mode="HTML"
-            )
-            return
+    # Проверяем есть ли активные предложения
+    from database.db import get_pending_offers_to_user, get_pending_offers_from_user
+    incoming = get_pending_offers_to_user(user_id)
+    outgoing = get_pending_offers_from_user(user_id)
     
-    # Если нет активного обмена - показываем меню создания
     builder = InlineKeyboardBuilder()
+    
+    if incoming:
+        builder.row(
+            InlineKeyboardButton(text=f"📥 Входящие предложения ({len(incoming)})", callback_data="view_incoming_offers")
+        )
+    if outgoing:
+        builder.row(
+            InlineKeyboardButton(text=f"📤 Исходящие предложения ({len(outgoing)})", callback_data="view_my_offers")
+        )
+    
     builder.row(
-        InlineKeyboardButton(text="➕ Создать обмен", callback_data="trade_create_new")
+        InlineKeyboardButton(text="➕ Создать новый обмен", callback_data="create_exchange")
     )
     builder.row(
         InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu")
     )
     
+    text = (
+        "🔄 <b>Обмен карточками</b>\n\n"
+        "Здесь вы можете обмениваться карточками с другими игроками.\n\n"
+        "Процесс обмена:\n"
+        "1️⃣ Выберите карту, которую хотите отдать\n"
+        "2️⃣ Введите @username партнера\n"
+        "3️⃣ Выберите карту, которую хотите получить\n"
+        "4️⃣ Отправьте предложение\n\n"
+        "Партнер получит сообщение с кнопками \"Принять\" или \"Отклонить\"."
+    )
+    
     await safe_edit_or_replace(
         callback,
-        "🔄 <b>Обмен карточками</b>\n\n"
-        "У вас нет активного обмена.\n\n"
-        "Вы можете:\n"
-        "• Создать новый обмен с пользователем\n"
-        "• Принять входящий обмен\n\n"
-        "Для создания обмена нажмите кнопку ниже.",
+        text,
         reply_markup=builder.as_markup(),
         parse_mode="HTML"
     )
@@ -77,21 +80,17 @@ async def handle_trade_button(callback: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "trade_create_new")
 async def handle_trade_create_new(callback: CallbackQuery, state: FSMContext):
     """Начать создание нового обмена - запрос username партнера."""
-    await state.set_state(TradeState.waiting_for_partner_username)
-    
-    builder = InlineKeyboardBuilder()
-    builder.row(
-        InlineKeyboardButton(text="↪️ Назад", callback_data="main_trade")
-    )
-    
+    # Перенаправляем на create_exchange в handlers/exchange.py
     await callback.message.edit_text(
-        text="✏️ <b>Создание обмена</b>\n\n"
-             "Введите @username партнера:\n\n"
-             "Пример: @username",
-        reply_markup=builder.as_markup(),
+        text="🔄 <b>Создание обмена</b>\n\n"
+             "Выберите тип карты, которую хотите предложить для обмена:",
+        reply_markup=None,
         parse_mode="HTML"
     )
     await callback.answer()
+    # Вызываем функцию из exchange.py
+    from handlers.exchange import create_exchange
+    await create_exchange(callback, state)
 
 
 @router.message(TradeState.waiting_for_partner_username)
@@ -131,8 +130,8 @@ async def process_partner_input(message: Message, state: FSMContext):
         await state.clear()
         return
     
-    # Импортируем create_trade из handlers.trade
-    from handlers.trade import create_trade as trade_create, get_trade_main_keyboard_with_username
+    # Импортируем create_trade из handlers.exchange
+    from handlers.exchange import create_trade as trade_create, get_trade_main_keyboard_with_username
     
     # Создаем обмен
     trade_id = await trade_create(user_id, partner_id)
@@ -152,8 +151,8 @@ async def process_partner_input(message: Message, state: FSMContext):
     try:
         builder = InlineKeyboardBuilder()
         builder.row(
-            InlineKeyboardButton(text="✅ Принять обмен", callback_data=f"trade_accept_request:{user_id}"),
-            InlineKeyboardButton(text="❌ Отклонить обмен", callback_data=f"trade_decline_request:{user_id}")
+            InlineKeyboardButton(text="✅ Принять обмен", callback_data=f"accept_exchange:{user_id}"),
+            InlineKeyboardButton(text="❌ Отклонить обмен", callback_data=f"reject_exchange:{user_id}")
         )
         
         initiator_username = message.from_user.username or "не указан"
@@ -421,23 +420,14 @@ async def start_trade_command(message: Message, state: FSMContext):
         await message.answer("❌ Нельзя начать обмен с самим собой.")
         return
     
-    # Импортируем create_trade из handlers.trade
-    from handlers.trade import create_trade as trade_create, get_trade_request_keyboard
-    
-    # Создаем обмен
-    trade_id = await trade_create(user_id, partner_id)
-    if not trade_id:
-        await message.answer("❌ Не удалось создать обмен.")
-        return
-    
-    await state.update_data(
-        trade_id=trade_id,
-        partner_id=partner_id,
-        trade_mode=True
-    )
-    
     # Отправляем уведомление партнеру с кнопками принятия/отклонения
     try:
+        builder = InlineKeyboardBuilder()
+        builder.row(
+            InlineKeyboardButton(text="✅ Принять обмен", callback_data=f"accept_exchange:{user_id}"),
+            InlineKeyboardButton(text="❌ Отклонить обмен", callback_data=f"reject_exchange:{user_id}")
+        )
+        
         initiator_username = message.from_user.username or "не указан"
         await message.bot.send_message(
             chat_id=partner_id,
@@ -445,7 +435,7 @@ async def start_trade_command(message: Message, state: FSMContext):
                  f"Пользователь: @{initiator_username}\n"
                  f"хочет обменяться карточками.\n\n"
                  f"Выберите действие:",
-            reply_markup=get_trade_request_keyboard(user_id),
+            reply_markup=builder.as_markup(),
             parse_mode="HTML"
         )
     except Exception as e:
@@ -464,7 +454,7 @@ async def start_trade_command(message: Message, state: FSMContext):
 @router.message(Command("trademenu"))
 async def show_trade_menu(message: Message, state: FSMContext):
     """Показать меню текущего активного обмена."""
-    from handlers.trade import get_active_trade_for_user, get_trade_main_keyboard, get_partner_id
+    from handlers.exchange import get_active_trade_for_user, get_trade_main_keyboard, get_partner_id
     
     user_id = message.from_user.id
     trade = get_active_trade_for_user(user_id)
@@ -504,8 +494,8 @@ async def start_trade_callback_handler(callback: CallbackQuery, state: FSMContex
         await callback.answer("❌ Пользователь не найден", show_alert=True)
         return
     
-    # Импортируем create_trade из handlers.trade
-    from handlers.trade import create_trade as trade_create, get_trade_main_keyboard
+    # Импортируем create_trade из handlers.exchange
+    from handlers.exchange import create_trade as trade_create, get_trade_main_keyboard
     
     trade_id = await trade_create(user_id, partner_id)
     if not trade_id:
