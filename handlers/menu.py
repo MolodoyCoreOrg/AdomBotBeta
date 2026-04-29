@@ -3,10 +3,11 @@ from datetime import datetime, timezone
 
 from aiogram import Router, F
 from aiogram.filters import Command
-from aiogram.types import Message, CallbackQuery, ContentType
+from aiogram.types import Message, CallbackQuery, ContentType, InlineKeyboardButton
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
 from .keyboard import get_main_keyboard, get_card_open_ui_keyboard, get_card_collection_ui_keyboard, profile_ui, support_ui, donate_ui, top_menu_ui, get_persistent_bottom_keyboard, shop_ui
@@ -35,8 +36,6 @@ router = Router()
 async def handle_trade_button(callback: CallbackQuery, state: FSMContext):
     """Показать главное меню обмена с кнопками."""
     from handlers.trade import get_active_trade_for_user, get_partner_id, get_trade_main_keyboard
-    from aiogram.utils.keyboard import InlineKeyboardBuilder
-    from aiogram.types import InlineKeyboardButton
     
     user_id = callback.from_user.id
     trade = get_active_trade_for_user(user_id)
