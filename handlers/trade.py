@@ -51,12 +51,12 @@ async def safe_edit_or_replace(
             media = InputMediaPhoto(media=FSInputFile(photo_path), caption=text, parse_mode=parse_mode)
             await callback.message.edit_media(media=media, reply_markup=reply_markup)
         else:
-            await safe_edit_or_replace(
-        callback,
-        text=text,
-        reply_markup=reply_markup,
-        parse_mode=parse_mode
-    )
+            # Прямое редактирование текста без рекурсии
+            await callback.message.edit_text(
+                text=text,
+                reply_markup=reply_markup,
+                parse_mode=parse_mode
+            )
     except TelegramBadRequest as e:
         error_msg = str(e)
         if "there is no text in the message to edit" in error_msg or "message is not modified" in error_msg:
