@@ -317,10 +317,10 @@ async def select_request_card(callback: CallbackQuery, state: FSMContext):
     # Отправляем уведомление целевому пользователю
     try:
         offer_text = (
-            f"🔄 <b>Новое предложение обмена!</b>\n\n"
+            f"🔄 <b>Новое предложение обмена!</b>\n"
             f"👤 От: @{from_user_username}\n"
             f"💎 Предлагает: <b>{my_card_name}</b> ({'👥 участник' if my_card_type == 'member' else '🃏 способность'})\n"
-            f"🎯 Просит: <b>{card_name}</b> ({'👥 участник' if card_type == 'member' else '🃏 способность'})\n\n"
+            f"🎯 Просит: <b>{card_name}</b> ({'👥 участник' if card_type == 'member' else '🃏 способность'})\n"
             f"⏳ Предложение действительно 24 часа"
         )
         
@@ -494,7 +494,9 @@ async def accept_exchange(callback: CallbackQuery):
         return
     
     # Проверяем, есть ли еще у пользователей нужные карты
+    # from_user должен иметь offered_card (то, что он предлагает)
     from_user_cards = get_member_cards(offer["from_user_id"]) if offer["offered_card_type"] == "member" else get_skill_cards(offer["from_user_id"])
+    # to_user должен иметь requested_card (то, что у него просят)
     to_user_cards = get_member_cards(offer["to_user_id"]) if offer["requested_card_type"] == "member" else get_skill_cards(offer["to_user_id"])
     
     if offer["offered_card_name"] not in from_user_cards:
@@ -509,22 +511,26 @@ async def accept_exchange(callback: CallbackQuery):
     # Выполняем обмен
     try:
         # Удаляем карты у пользователей
+        # from_user отдает offered_card
         if offer["offered_card_type"] == "member":
             remove_member_card(offer["from_user_id"], offer["offered_card_name"])
         else:
             remove_skill_card(offer["from_user_id"], offer["offered_card_name"])
         
+        # to_user отдает requested_card
         if offer["requested_card_type"] == "member":
             remove_member_card(offer["to_user_id"], offer["requested_card_name"])
         else:
             remove_skill_card(offer["to_user_id"], offer["requested_card_name"])
         
         # Добавляем карты пользователям
+        # to_user получает offered_card (то, что предложил from_user)
         if offer["offered_card_type"] == "member":
             add_member_card(offer["to_user_id"], offer["offered_card_name"])
         else:
             add_skill_card(offer["to_user_id"], offer["offered_card_name"])
         
+        # from_user получает requested_card (то, что он просил)
         if offer["requested_card_type"] == "member":
             add_member_card(offer["from_user_id"], offer["requested_card_name"])
         else:
