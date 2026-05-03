@@ -603,10 +603,10 @@ async def reject_exchange(callback: CallbackQuery):
     # Уведомляем отправителя
     try:
         reject_text = (
-            f"❌ <b>Ваше предложение обмена отклонено</b>\n\n"
+            f"❌ Ваше предложение обмена отклонено\n\n"
             f"👤 Пользователь: @{offer['to_user_username']}\n"
-            f"💎 Предлагали: <b>{offer['offered_card_name']}</b>\n"
-            f"🎯 Просили: <b>{offer['requested_card_name']}</b>"
+            f"💎 Предлагали: {offer['offered_card_name']}\n"
+            f"🎯 Просили: {offer['requested_card_name']}"
         )
         await bot.send_message(offer["from_user_id"], reject_text)
     except Exception as e:
