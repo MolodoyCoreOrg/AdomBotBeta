@@ -39,7 +39,7 @@ class ExchangeStates(StatesGroup):
 async def exchange_menu(callback: CallbackQuery):
     """Главное меню обмена."""
     text = (
-        "🔄 <b>Система обмена карточками</b>\n\n"
+        "🔄 Система обмена карточками\n\n"
         "Здесь вы можете обмениваться карточками с другими игроками:\n"
         "• Карточки участников 👥\n"
         "• Суперспособности 🃏\n\n"
@@ -87,7 +87,7 @@ async def inline_exchange_start(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text(
         f"🔄 Вы выбрали для обмена:\n"
         f"💎 Тип: {'👥 Карта участника' if card_type == 'member' else '🃏 Суперспособность'}\n"
-        f"📝 Название: <b>{card_name}</b>\n\n"
+        f"📝 Название: {card_name}\n\n"
         f"Теперь введите @username пользователя, с которым хотите обменяться:"
     )
 
@@ -146,9 +146,13 @@ async def select_exchange_type(callback: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data.startswith("select_my_card:"))
 async def select_my_card(callback: CallbackQuery, state: FSMContext):
     """Выбор конкретной карты для обмена."""
-    data = callback.data.split(":")
+    data = callback.data.split(":", 2)  # Разделяем только на 3 части
+    if len(data) < 3:
+        await callback.answer("❌ Ошибка формата данных!", show_alert=True)
+        return
+    
     card_type = data[1]
-    card_name = data[2]
+    card_name = data[2]  # Всё остальное после второго двоеточия
     user_id = callback.from_user.id
     
     # Сохраняем данные в состоянии
@@ -157,7 +161,7 @@ async def select_my_card(callback: CallbackQuery, state: FSMContext):
     text = (
         f"🔄 Вы выбрали для обмена:\n"
         f"💎 Тип: {'👥 Карта участника' if card_type == 'member' else '🃏 Суперспособность'}\n"
-        f"📝 Название: <b>{card_name}</b>\n\n"
+        f"📝 Название: {card_name}\n\n"
         f"Теперь введите @username пользователя, с которым хотите обменяться:"
     )
     
@@ -216,7 +220,7 @@ async def enter_username(message: Message, state: FSMContext):
     # Запрашиваем тип карты, которую хотим получить
     text = (
         f"🎯 Пользователь: @{target_username}\n"
-        f"💎 Ваша карта: <b>{my_card_name}</b>\n\n"
+        f"💎 Ваша карта: {my_card_name}\n\n"
         f"Выберите тип карты, которую хотите получить взамен:"
     )
     
@@ -263,9 +267,13 @@ async def select_request_type(callback: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data.startswith("request_card:"))
 async def select_request_card(callback: CallbackQuery, state: FSMContext):
     """Выбор конкретной карты для запроса."""
-    data = callback.data.split(":")
+    data = callback.data.split(":", 2)  # Разделяем только на 3 части
+    if len(data) < 3:
+        await callback.answer("❌ Ошибка формата данных!", show_alert=True)
+        return
+    
     card_type = data[1]
-    card_name = data[2]
+    card_name = data[2]  # Всё остальное после второго двоеточия
     user_id = callback.from_user.id
     
     # Получаем все данные из состояния
@@ -317,10 +325,10 @@ async def select_request_card(callback: CallbackQuery, state: FSMContext):
     # Отправляем уведомление целевому пользователю
     try:
         offer_text = (
-            f"🔄 <b>Новое предложение обмена!</b>\n"
+            f"🔄 Новое предложение обмена!\n"
             f"👤 От: @{from_user_username}\n"
-            f"💎 Предлагает: <b>{my_card_name}</b> ({'👥 участник' if my_card_type == 'member' else '🃏 способность'})\n"
-            f"🎯 Просит: <b>{card_name}</b> ({'👥 участник' if card_type == 'member' else '🃏 способность'})\n"
+            f"💎 Предлагает: {my_card_name} ({'👥 участник' if my_card_type == 'member' else '🃏 способность'})\n"
+            f"🎯 Просит: {card_name} ({'👥 участник' if card_type == 'member' else '🃏 способность'})\n"
             f"⏳ Предложение действительно 24 часа"
         )
         
@@ -339,10 +347,10 @@ async def select_request_card(callback: CallbackQuery, state: FSMContext):
     
     # Подтверждение пользователю
     success_text = (
-        f"✅ <b>Предложение обмена отправлено!</b>\n\n"
+        f"✅ Предложение обмена отправлено!\n\n"
         f"👤 Кому: @{target_username}\n"
-        f"💎 Вы предлагаете: <b>{my_card_name}</b>\n"
-        f"🎯 Вы просите: <b>{card_name}</b>\n\n"
+        f"💎 Вы предлагаете: {my_card_name}\n"
+        f"🎯 Вы просите: {card_name}\n\n"
         f"Ожидайте ответа. Вы можете отслеживать статус в разделе 'Мои предложения'"
     )
     
@@ -367,14 +375,14 @@ async def view_my_offers(callback: CallbackQuery):
         await safe_edit_message(callback.message, text, reply_markup=builder.as_markup())
         return
     
-    text = "📤 <b>Ваши исходящие предложения обмена:</b>\n\n"
+    text = "📤 Ваши исходящие предложения обмена:\n\n"
     
     for i, offer in enumerate(offers, 1):
         status_emoji = "⏳"
         text += (
             f"{i}. {status_emoji} Для: @{offer['to_user_username']}\n"
-            f"   💎 Предлагаете: <b>{offer['offered_card_name']}</b>\n"
-            f"   🎯 Просите: <b>{offer['requested_card_name']}</b>\n\n"
+            f"   💎 Предлагаете: {offer['offered_card_name']}\n"
+            f"   🎯 Просите: {offer['requested_card_name']}\n\n"
         )
     
     # Создаем клавиатуру с кнопкой "Назад"
@@ -409,14 +417,14 @@ async def view_incoming_offers(callback: CallbackQuery):
         await safe_edit_message(callback.message, text, reply_markup=builder.as_markup())
         return
     
-    text = "📥 <b>Входящие предложения обмена:</b>\n\n"
+    text = "📥 Входящие предложения обмена:\n\n"
     
     for i, offer in enumerate(offers, 1):
         status_emoji = "⏳"
         text += (
             f"{i}. {status_emoji} От: @{offer['from_user_username']}\n"
-            f"   💎 Предлагает: <b>{offer['offered_card_name']}</b>\n"
-            f"   🎯 Просит: <b>{offer['requested_card_name']}</b>\n\n"
+            f"   💎 Предлагает: {offer['offered_card_name']}\n"
+            f"   🎯 Просит: {offer['requested_card_name']}\n\n"
         )
     
     # Создаем клавиатуру с кнопкой "Назад"
@@ -456,10 +464,10 @@ async def respond_exchange(callback: CallbackQuery):
         return
     
     text = (
-        f"🔄 <b>Предложение обмена</b>\n\n"
+        f"🔄 Предложение обмена\n\n"
         f"👤 От: @{offer['from_user_username']}\n"
-        f"💎 Предлагает: <b>{offer['offered_card_name']}</b> ({'👥 участник' if offer['offered_card_type'] == 'member' else '🃏 способность'})\n"
-        f"🎯 Просит: <b>{offer['requested_card_name']}</b> ({'👥 участник' if offer['requested_card_type'] == 'member' else '🃏 способность'})\n\n"
+        f"💎 Предлагает: {offer['offered_card_name']} ({'👥 участник' if offer['offered_card_type'] == 'member' else '🃏 способность'})\n"
+        f"🎯 Просит: {offer['requested_card_name']} ({'👥 участник' if offer['requested_card_type'] == 'member' else '🃏 способность'})\n\n"
         f"⏳ Предложение действительно до: {offer['expires_at']}"
     )
     
@@ -555,10 +563,10 @@ async def accept_exchange(callback: CallbackQuery):
         # Уведомляем отправителя
         try:
             success_text = (
-                f"✅ <b>Ваше предложение обмена принято!</b>\n\n"
+                f"✅ Ваше предложение обмена принято!\n\n"
                 f"👤 Пользователь: @{offer['to_user_username']}\n"
-                f"💎 Вы получили: <b>{offer['requested_card_name']}</b>\n"
-                f"🎯 Вы отдали: <b>{offer['offered_card_name']}</b>"
+                f"💎 Вы получили: {offer['requested_card_name']}\n"
+                f"🎯 Вы отдали: {offer['offered_card_name']}"
             )
             await bot.send_message(offer["from_user_id"], success_text)
         except Exception as e:
@@ -566,10 +574,10 @@ async def accept_exchange(callback: CallbackQuery):
         
         # Уведомление текущему пользователю
         success_text = (
-            f"✅ <b>Обмен выполнен успешно!</b>\n\n"
+            f"✅ Обмен выполнен успешно!\n\n"
             f"👤 Пользователь: @{offer['from_user_username']}\n"
-            f"💎 Вы получили: <b>{offer['offered_card_name']}</b>\n"
-            f"🎯 Вы отдали: <b>{offer['requested_card_name']}</b>"
+            f"💎 Вы получили: {offer['offered_card_name']}\n"
+            f"🎯 Вы отдали: {offer['requested_card_name']}"
         )
         
         await safe_edit_message(callback.message, success_text)

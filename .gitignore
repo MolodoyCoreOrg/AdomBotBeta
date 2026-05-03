@@ -6,36 +6,18 @@ __pycache__/
 *.pyd
 
 # Database
-*.db
-
-# Logs
-*.log
+database/*.db
 
 # Environment
 .env
 .env.local
 *.env.*
 
-# Dependencies
-.venv/
-venv/
-node_modules/
+# Logs
+*.log
 
-# Build artifacts
-dist/
-build/
-target/
-
-# Editors
-.vscode/
-.idea/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Coverage
-.coverage
-htmlcov/
-coverage/
+# Temporary files
+*.tmp
+*.swp
+*~
 ```
