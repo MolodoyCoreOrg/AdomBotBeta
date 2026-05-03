@@ -38,4 +38,6 @@ Thumbs.db
 .coverage
 htmlcov/
 coverage/
-```
+```__pycache__/
+*.pyc
+database/users.db
