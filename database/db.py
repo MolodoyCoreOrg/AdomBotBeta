@@ -431,33 +431,40 @@ def update_skill_cards(user_id: int, skill_cards: dict):
 def add_member_card(user_id: int, card_name: str):
     """Добавляет карту участника пользователю."""
     cards = get_member_cards(user_id)
-    cards[card_name] = cards.get(card_name, 0) + 1
+    # Если карты еще нет или она имеет простую структуру, добавляем с rank
+    if card_name not in cards:
+        cards[card_name] = {'rank': 1}
+    else:
+        # Если карта уже есть, просто увеличиваем счетчик (если он есть)
+        card_data = cards[card_name]
+        if isinstance(card_data, dict):
+            count = card_data.get('count', 1)
+            cards[card_name]['count'] = count + 1
+        elif isinstance(card_data, int):
+            cards[card_name] = card_data + 1
+        else:
+            cards[card_name] = {'rank': 1, 'count': 2}
     update_member_cards(user_id, cards)
 
 def remove_member_card(user_id: int, card_name: str):
     """Удаляет одну карту участника у пользователя."""
     cards = get_member_cards(user_id)
     if card_name in cards:
-        if cards[card_name] > 1:
-            cards[card_name] -= 1
-        else:
-            del cards[card_name]
+        del cards[card_name]
         update_member_cards(user_id, cards)
 
 def add_skill_card(user_id: int, card_name: str):
     """Добавляет карту суперспособности пользователю."""
     cards = get_skill_cards(user_id)
-    cards[card_name] = cards.get(card_name, 0) + 1
+    # Просто добавляем карту с базовой структурой
+    cards[card_name] = {'rank': 1}
     update_skill_cards(user_id, cards)
 
 def remove_skill_card(user_id: int, card_name: str):
     """Удаляет одну карту суперспособности у пользователя."""
     cards = get_skill_cards(user_id)
     if card_name in cards:
-        if cards[card_name] > 1:
-            cards[card_name] -= 1
-        else:
-            del cards[card_name]
+        del cards[card_name]
         update_skill_cards(user_id, cards)
 
 
