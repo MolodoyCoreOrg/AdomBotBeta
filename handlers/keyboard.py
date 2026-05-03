@@ -763,28 +763,82 @@ def get_exchange_card_type_keyboard(prefix: str = "exchange"):
     return builder.as_markup()
 
 
-def get_exchange_member_cards_keyboard(cards: dict, prefix: str = "select_my"):
-    """Клавиатура с карточками участников."""
+def get_exchange_member_cards_keyboard(cards: dict, prefix: str = "select_my", page: int = 0):
+    """Клавиатура с карточками участников с пагинацией."""
     builder = InlineKeyboardBuilder()
-    for card_name in cards.keys():
+    cards_list = list(cards.keys())
+    
+    # Пагинация: по 10 карт на страницу (чтобы не превышать лимит Telegram)
+    items_per_page = 10
+    total_pages = (len(cards_list) + items_per_page - 1) // items_per_page
+    
+    # Убеждаемся, что page в допустимых пределах
+    if page < 0:
+        page = 0
+    if page >= total_pages:
+        page = max(0, total_pages - 1)
+    
+    start_idx = page * items_per_page
+    end_idx = min(start_idx + items_per_page, len(cards_list))
+    page_cards = cards_list[start_idx:end_idx]
+    
+    for card_name in page_cards:
         builder.row(
             InlineKeyboardButton(text=f"👥 {card_name}", callback_data=f"{prefix}_card:member:{card_name}"),
         )
+    
+    # Кнопки навигации
+    nav_buttons = []
+    if page > 0:
+        nav_buttons.append(InlineKeyboardButton(text="⬅️ Назад", callback_data=f"{prefix}_page:member:{page-1}"))
+    if page < total_pages - 1:
+        nav_buttons.append(InlineKeyboardButton(text="➡️ Вперед", callback_data=f"{prefix}_page:member:{page+1}"))
+    
+    if nav_buttons:
+        builder.row(*nav_buttons)
+    
     builder.row(
-        InlineKeyboardButton(text="↪️ Назад", callback_data="exchange_menu"),
+        InlineKeyboardButton(text="↪️ Назад в меню", callback_data="exchange_menu"),
     )
     return builder.as_markup()
 
 
-def get_exchange_skill_cards_keyboard(cards: dict, prefix: str = "select_my"):
-    """Клавиатура с суперспособностями."""
+def get_exchange_skill_cards_keyboard(cards: dict, prefix: str = "select_my", page: int = 0):
+    """Клавиатура с суперспособностями с пагинацией."""
     builder = InlineKeyboardBuilder()
-    for card_name in cards.keys():
+    cards_list = list(cards.keys())
+    
+    # Пагинация: по 10 карт на страницу (чтобы не превышать лимит Telegram)
+    items_per_page = 10
+    total_pages = (len(cards_list) + items_per_page - 1) // items_per_page
+    
+    # Убеждаемся, что page в допустимых пределах
+    if page < 0:
+        page = 0
+    if page >= total_pages:
+        page = max(0, total_pages - 1)
+    
+    start_idx = page * items_per_page
+    end_idx = min(start_idx + items_per_page, len(cards_list))
+    page_cards = cards_list[start_idx:end_idx]
+    
+    for card_name in page_cards:
         builder.row(
             InlineKeyboardButton(text=f"🃏 {card_name}", callback_data=f"{prefix}_card:skill:{card_name}"),
         )
+    
+    # Кнопки навигации
+    nav_buttons = []
+    if page > 0:
+        nav_buttons.append(InlineKeyboardButton(text="⬅️ Назад", callback_data=f"{prefix}_page:skill:{page-1}"))
+    if page < total_pages - 1:
+        nav_buttons.append(InlineKeyboardButton(text="➡️ Вперед", callback_data=f"{prefix}_page:skill:{page+1}"))
+    
+    if nav_buttons:
+        builder.row(*nav_buttons)
+    
     builder.row(
-        InlineKeyboardButton(text="↪️ Назад", callback_data="exchange_menu"),
+        InlineKeyboardButton(text="↪️ Назад в меню", callback_data="exchange_menu"),
     )
     return builder.as_markup()
 

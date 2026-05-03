@@ -1,27 +1,31 @@
+```
 # Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 
-# Database
-database/*.db
-database/users.db
+# Logs and temp files
+*.log
+*.tmp
+*.swp
 
 # Environment
 .env
 .env.local
 *.env.*
 
-# Logs
-*.log
+# Editors
+.vscode/
+.idea/
 
-# Temporary files
-*.tmp
-*.swp
-*~
+# Dependencies
+.venv/
+venv/
+node_modules/
 
-# Coverage
-.coverage
-htmlcov/
-coverage/
+# Build artifacts
+dist/
+build/
+target/
+```

@@ -118,7 +118,7 @@ async def select_exchange_type(callback: CallbackQuery, state: FSMContext):
     card_type = callback.data.split(":")[1]  # 'member' или 'skill'
     user_id = callback.from_user.id
     
-    await state.update_data(card_type=card_type)
+    await state.update_data(card_type=card_type, current_page=0)
     
     if card_type == "member":
         cards = get_member_cards(user_id)
@@ -127,7 +127,7 @@ async def select_exchange_type(callback: CallbackQuery, state: FSMContext):
             return
         
         text = "👥 Выберите карту участника, которую хотите предложить для обмена:"
-        await safe_edit_message(callback.message, text, reply_markup=get_exchange_member_cards_keyboard(cards))
+        await safe_edit_message(callback.message, text, reply_markup=get_exchange_member_cards_keyboard(cards, page=0))
         
     else:  # skill
         cards = get_skill_cards(user_id)
@@ -136,7 +136,7 @@ async def select_exchange_type(callback: CallbackQuery, state: FSMContext):
             return
         
         text = "🃏 Выберите суперспособность, которую хотите предложить для обмена:"
-        await safe_edit_message(callback.message, text, reply_markup=get_exchange_skill_cards_keyboard(cards))
+        await safe_edit_message(callback.message, text, reply_markup=get_exchange_skill_cards_keyboard(cards, page=0))
     
     await state.set_state(ExchangeStates.selecting_my_card)
     
@@ -240,7 +240,7 @@ async def select_request_type(callback: CallbackQuery, state: FSMContext):
     target_user_id = state_data.get("target_user_id")
     target_username = state_data.get("target_username")
     
-    await state.update_data(requested_card_type=card_type)
+    await state.update_data(requested_card_type=card_type, request_page=0)
     
     # Получаем карты целевого пользователя
     if card_type == "member":
@@ -250,7 +250,7 @@ async def select_request_type(callback: CallbackQuery, state: FSMContext):
             return
         
         text = f"👥 Выберите карту участника, которую хотите получить от @{target_username}:"
-        await safe_edit_message(callback.message, text, reply_markup=get_exchange_member_cards_keyboard(cards, prefix="request"))
+        await safe_edit_message(callback.message, text, reply_markup=get_exchange_member_cards_keyboard(cards, prefix="request", page=0))
         
     else:  # skill
         cards = get_skill_cards(target_user_id)
@@ -259,7 +259,7 @@ async def select_request_type(callback: CallbackQuery, state: FSMContext):
             return
         
         text = f"🃏 Выберите суперспособность, которую хотите получить от @{target_username}:"
-        await safe_edit_message(callback.message, text, reply_markup=get_exchange_skill_cards_keyboard(cards, prefix="request"))
+        await safe_edit_message(callback.message, text, reply_markup=get_exchange_skill_cards_keyboard(cards, prefix="request", page=0))
     
     # Отвечаем на callback, чтобы убрать часики загрузки
     await callback.answer()
@@ -358,6 +358,62 @@ async def select_request_card(callback: CallbackQuery, state: FSMContext):
     await state.clear()
     
     # Отвечаем на callback, чтобы убрать часики загрузки
+    await callback.answer()
+
+@router.callback_query(F.data.startswith("select_my_page:"))
+async def handle_my_card_pagination(callback: CallbackQuery, state: FSMContext):
+    """Обработка навигации по страницам при выборе своей карты."""
+    data = callback.data.split(":")
+    if len(data) != 3:
+        await callback.answer("❌ Ошибка pagination", show_alert=True)
+        return
+    
+    card_type = data[1]  # 'member' или 'skill'
+    page = int(data[2])
+    
+    user_id = callback.from_user.id
+    
+    # Сохраняем текущую страницу в state
+    await state.update_data(current_page=page)
+    
+    if card_type == "member":
+        cards = get_member_cards(user_id)
+        text = "👥 Выберите карту участника, которую хотите предложить для обмена:"
+        await safe_edit_message(callback.message, text, reply_markup=get_exchange_member_cards_keyboard(cards, prefix="select_my", page=page))
+    else:
+        cards = get_skill_cards(user_id)
+        text = "🃏 Выберите суперспособность, которую хотите предложить для обмена:"
+        await safe_edit_message(callback.message, text, reply_markup=get_exchange_skill_cards_keyboard(cards, prefix="select_my", page=page))
+    
+    await callback.answer()
+
+@router.callback_query(F.data.startswith("request_page:"))
+async def handle_request_card_pagination(callback: CallbackQuery, state: FSMContext):
+    """Обработка навигации по страницам при выборе карты партнера."""
+    data = callback.data.split(":")
+    if len(data) != 3:
+        await callback.answer("❌ Ошибка pagination", show_alert=True)
+        return
+    
+    card_type = data[1]  # 'member' или 'skill'
+    page = int(data[2])
+    
+    state_data = await state.get_data()
+    target_user_id = state_data.get("target_user_id")
+    target_username = state_data.get("target_username")
+    
+    # Сохраняем текущую страницу в state
+    await state.update_data(request_page=page)
+    
+    if card_type == "member":
+        cards = get_member_cards(target_user_id)
+        text = f"👥 Выберите карту участника, которую хотите получить от @{target_username}:"
+        await safe_edit_message(callback.message, text, reply_markup=get_exchange_member_cards_keyboard(cards, prefix="request", page=page))
+    else:
+        cards = get_skill_cards(target_user_id)
+        text = f"🃏 Выберите суперспособность, которую хотите получить от @{target_username}:"
+        await safe_edit_message(callback.message, text, reply_markup=get_exchange_skill_cards_keyboard(cards, prefix="request", page=page))
+    
     await callback.answer()
 
 @router.callback_query(F.data == "view_my_offers")
