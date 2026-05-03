@@ -763,10 +763,10 @@ def get_exchange_card_type_keyboard(prefix: str = "exchange"):
     return builder.as_markup()
 
 
-def get_exchange_member_cards_keyboard(cards: list, prefix: str = "select_my"):
+def get_exchange_member_cards_keyboard(cards: dict, prefix: str = "select_my"):
     """Клавиатура с карточками участников."""
     builder = InlineKeyboardBuilder()
-    for card_name in cards:
+    for card_name in cards.keys():
         builder.row(
             InlineKeyboardButton(text=f"👥 {card_name}", callback_data=f"{prefix}_card:member:{card_name}"),
         )
@@ -776,10 +776,10 @@ def get_exchange_member_cards_keyboard(cards: list, prefix: str = "select_my"):
     return builder.as_markup()
 
 
-def get_exchange_skill_cards_keyboard(cards: list, prefix: str = "select_my"):
+def get_exchange_skill_cards_keyboard(cards: dict, prefix: str = "select_my"):
     """Клавиатура с суперспособностями."""
     builder = InlineKeyboardBuilder()
-    for card_name in cards:
+    for card_name in cards.keys():
         builder.row(
             InlineKeyboardButton(text=f"🃏 {card_name}", callback_data=f"{prefix}_card:skill:{card_name}"),
         )
