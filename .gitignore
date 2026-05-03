@@ -1,4 +1,3 @@
-```
 # Python
 __pycache__/
 *.pyc
@@ -7,6 +6,7 @@ __pycache__/
 
 # Database
 database/*.db
+database/users.db
 
 # Environment
 .env
@@ -20,4 +20,8 @@ database/*.db
 *.tmp
 *.swp
 *~
-```
+
+# Coverage
+.coverage
+htmlcov/
+coverage/
