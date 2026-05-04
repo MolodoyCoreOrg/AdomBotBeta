@@ -1,13 +1,14 @@
 import os
 import json
 import logging
+import html
 
 from aiogram import Router, F, types
 from aiogram.types import CallbackQuery, FSInputFile, Message
 from aiogram.filters import Command
 from aiogram.exceptions import TelegramBadRequest
 
-from database.db import get_member_cards, get_user_timezone, connect, update_member_cards
+from database.db import get_member_cards, get_user_timezone, connect, update_member_cards, add_balance
 from ..keyboard import get_member_card_navigation_keyboard, get_card_member_ui, get_back_menu_colletion_button
 from ..picture import find_image_file
 from utils.helpers import get_member_card_image_path, format_iso_utc_to_user_tz, safe_delete
@@ -44,13 +45,19 @@ def format_card_text(card_name: str, card_data: dict, rarity: str, work: str, us
     if rank == 1:
         skills_text = "\n\n<b>Навык: Появится при достижении 2 ранга.</b>\n"
     else:
-        skills = "\n".join(f"— {skill}" for skill in card_data.get("skills", []))
+        # Экранируем каждый навык перед формированием текста
+        skills = "\n".join(f"— {html.escape(skill)}" for skill in card_data.get("skills", []))
         skills_text = f"\n\n<b>Навык:</b>\n{skills}" if skills else ""
 
+    # Экранируем специальные символы в названиях и текстах для HTML
+    safe_card_name = html.escape(card_name)
+    safe_work = html.escape(work)
+    safe_rarity = html.escape(rarity)
+
     base = (
-        f"<b>{card_name}</b>\n"
-        f"⭐ Редкость: <i>{rarity}</i>\n"
-        f"🥇 Звание: <i>{work}</i>\n"
+        f"<b>{safe_card_name}</b>\n"
+        f"⭐ Редкость: <i>{safe_rarity}</i>\n"
+        f"🥇 Звание: <i>{safe_work}</i>\n"
         f"🔰 Ранг: <b>{rank}</b>"
         f"{skills_text}"
     )
@@ -132,7 +139,8 @@ async def show_my_cards(event: CallbackQuery | Message):
 
     photo = FSInputFile(image_path)
     work = card_info.get("work", "неизвестно")
-    caption = format_card_text(card_name, card_data, card_info["rarity"], work, user_id=event.from_user.id if hasattr(event, 'from_user') else None)
+    rarity = card_info.get("rarity", "Обычная")
+    caption = format_card_text(card_name, card_data, rarity, work, user_id=event.from_user.id if hasattr(event, 'from_user') else None)
     keyboard = get_member_card_navigation_keyboard(index, len(owned_card_names), prefix="my_member_cards")
 
     if isinstance(event, CallbackQuery):
@@ -209,7 +217,8 @@ async def navigate_my_member_cards(event: CallbackQuery):
 
     photo = FSInputFile(image_path)
     work = card_info.get("work", "неизвестно")
-    caption = format_card_text(card_name, card_data, card_info["rarity"], work, user_id=event.from_user.id if hasattr(event, 'from_user') else None)
+    rarity = card_info.get("rarity", "Обычная")
+    caption = format_card_text(card_name, card_data, rarity, work, user_id=event.from_user.id if hasattr(event, 'from_user') else None)
     keyboard = get_member_card_navigation_keyboard(index, len(owned_card_names), prefix="my_member_cards")
 
     try:
@@ -219,7 +228,13 @@ async def navigate_my_member_cards(event: CallbackQuery):
         )
     except TelegramBadRequest as e:
         if "message is not modified" not in str(e):
-            raise
+            logging.warning(f"TelegramBadRequest при навигации по картам участников: {e}")
+            # Пробуем отправить как новое сообщение, если edit не удался
+            try:
+                await event.message.answer_photo(photo=photo, caption=caption, reply_markup=keyboard)
+            except Exception as fallback_error:
+                logging.exception(f"Ошибка при отправке фото участника: {fallback_error}")
+                await event.message.answer(text=caption, reply_markup=keyboard)
     await event.answer()
 
 async def sell_member_card(event: CallbackQuery):
@@ -261,7 +276,8 @@ async def sell_member_card(event: CallbackQuery):
 
     photo = FSInputFile(image_path)
     work = card_info.get("work", "неизвестно")
-    caption = format_card_text(card_name, card_data, card_info["rarity"], work, user_id=event.from_user.id if hasattr(event, 'from_user') else None)
+    rarity = card_info.get("rarity", "Обычная")
+    caption = format_card_text(card_name, card_data, rarity, work, user_id=event.from_user.id if hasattr(event, 'from_user') else None)
     keyboard = get_member_card_navigation_keyboard(index, len(owned_card_names), prefix="my_member_cards")
 
     try:
@@ -303,14 +319,15 @@ async def sell_member_card(event: CallbackQuery):
 
         # Удаляем карту из коллекции пользователя
         del user_cards[card_name]
-        from database.db import update_member_cards, add_balance
         update_member_cards(user_id, user_cards)
 
         # Добавляем баланс
         new_balance = add_balance(user_id, amount)
 
+        # Экранируем название карты для текста
+        safe_card_name = html.escape(card_name)
         text = (
-        f"✅ Карточка '{card_name}' продана за {amount} 🔥.\n Твой новый баланс: {new_balance} 🔥"
+        f"✅ Карточка '{safe_card_name}' продана за {amount} 🔥.\n Твой новый баланс: {new_balance} 🔥"
         )
 
         try:
@@ -323,15 +340,15 @@ async def sell_member_card(event: CallbackQuery):
         logging.exception("Ошибка при продаже карты:")
         await event.message.answer("❌ Ошибка при продаже карты. Попробуйте позже.")
 
-# 📥 Обработка кнопки
+# 📥 Обработка кнопки продажи карты
 @router.callback_query(F.data.startswith("sell_member_card"))
-async def handle_draw_member_button(callback: CallbackQuery):
+async def handle_sell_member_card(callback: CallbackQuery):
     await sell_member_card(callback)
 
-# 📥 Обработка кнопки
+# 📥 Обработка кнопки "Мои участники"
 @router.callback_query(F.data == "my_member_cards")
-async def handle_draw_member_button(callback: CallbackQuery):
-    await navigate_my_member_cards(callback)
+async def handle_my_member_cards(callback: CallbackQuery):
+    await show_my_cards(callback)
 
 # 📥 Обработка команды
 @router.message(lambda message: message.text == "📦 Мои участники")
@@ -404,15 +421,16 @@ async def upgrade_member_card(event: CallbackQuery):
         return
 
     # Списываем баланс
-    from database.db import add_balance
     new_balance = add_balance(user_id, -upgrade_cost)
 
     # Повышаем ранг карты
     user_cards[card_name]["rank"] = current_rank + 1
     update_member_cards(user_id, user_cards)
 
+    # Экранируем название карты для текста
+    safe_card_name = html.escape(card_name)
     text = (
-        f"✅ Карточка '{card_name}' улучшена до ранга {current_rank + 1}!\n"
+        f"✅ Карточка '{safe_card_name}' улучшена до ранга {current_rank + 1}!\n"
         f"Списано: {upgrade_cost} 🔥\n"
         f"Твой новый баланс: {new_balance} 🔥"
     )
