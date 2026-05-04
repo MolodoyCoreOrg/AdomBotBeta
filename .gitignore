@@ -1,27 +1,4 @@
-# Python
+```
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-
-# Database
-database/*.db
-database/users.db
-
-# Environment
-.env
-.env.local
-*.env.*
-
-# Logs
-*.log
-
-# Temporary files
-*.tmp
-*.swp
-*~
-
-# Coverage
-.coverage
-htmlcov/
-coverage/
+```
