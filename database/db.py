@@ -45,6 +45,21 @@ def create_roulette_tables():
             dopa_bet INTEGER NOT NULL DEFAULT 0
         )
         """)
+        
+        # Миграция: добавляем новые колонки если они отсутствуют
+        columns_to_add = [
+            ("fire_points", "INTEGER NOT NULL DEFAULT 0"),
+            ("upgrade_timer_reduce", "INTEGER NOT NULL DEFAULT 0"),
+            ("has_double_casino", "INTEGER NOT NULL DEFAULT 0"),
+            ("has_fast_spin", "INTEGER NOT NULL DEFAULT 0"),
+            ("dopa_bet", "INTEGER NOT NULL DEFAULT 0")
+        ]
+        
+        existing_columns = [row[1] for row in cur.execute("PRAGMA table_info(roulette_user)").fetchall()]
+        
+        for col_name, col_def in columns_to_add:
+            if col_name not in existing_columns:
+                cur.execute(f"ALTER TABLE roulette_user ADD COLUMN {col_name} {col_def}")
         cur.execute("""
         CREATE TABLE IF NOT EXISTS roulette_history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
