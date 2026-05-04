@@ -7,7 +7,7 @@ from aiogram.types import CallbackQuery, FSInputFile, Message
 from aiogram.filters import Command
 from aiogram.exceptions import TelegramBadRequest
 
-from database.db import get_member_cards, get_user_timezone, connect
+from database.db import get_member_cards, get_user_timezone, connect, update_member_cards
 from ..keyboard import get_member_card_navigation_keyboard, get_card_member_ui, get_back_menu_colletion_button
 from ..picture import find_image_file
 from utils.helpers import get_member_card_image_path, format_iso_utc_to_user_tz, safe_delete
