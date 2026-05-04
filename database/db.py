@@ -37,7 +37,12 @@ def create_roulette_tables():
             meow_count INTEGER NOT NULL DEFAULT 0,
             meow_count_all INTEGER NOT NULL DEFAULT 0,
             jopa_count INTEGER NOT NULL DEFAULT 0,
-            kazino_upgrades TEXT DEFAULT ''
+            kazino_upgrades TEXT DEFAULT '{}',
+            fire_points INTEGER NOT NULL DEFAULT 0,
+            upgrade_timer_reduce INTEGER NOT NULL DEFAULT 0,
+            has_double_casino INTEGER NOT NULL DEFAULT 0,
+            has_fast_spin INTEGER NOT NULL DEFAULT 0,
+            dopa_bet INTEGER NOT NULL DEFAULT 0
         )
         """)
         cur.execute("""
@@ -567,8 +572,8 @@ def load_roulette_data(user_id: int) -> dict:
         if not row:
             now = datetime.datetime.utcnow().isoformat()
             cur.execute("""
-                INSERT INTO roulette_user (user_id, roulette_count, opened_today, total_opened, last_reset, last_increment, notified_max, meow_count, meow_count_all, jopa_count, kazino_upgrades)
-                VALUES (?, 5, 0, 0, '', ?, 0, 0, 0, 0, '')
+                INSERT INTO roulette_user (user_id, roulette_count, opened_today, total_opened, last_reset, last_increment, notified_max, meow_count, meow_count_all, jopa_count, kazino_upgrades, fire_points, upgrade_timer_reduce, has_double_casino, has_fast_spin, dopa_bet)
+                VALUES (?, 5, 0, 0, '', ?, 0, 0, 0, 0, '{}', 0, 0, 0, 0, 0)
             """, (user_id, now))
             conn.commit()
             row = cur.execute("SELECT * FROM roulette_user WHERE user_id = ?", (user_id,)).fetchone()
@@ -585,15 +590,20 @@ def load_roulette_data(user_id: int) -> dict:
             "meow_count_all": row["meow_count_all"],
             "jopa_count": row["jopa_count"],
             "kazino_upgrades": json.loads(row["kazino_upgrades"]) if row["kazino_upgrades"] else {},
-            "history": [r["entry"] for r in history.fetchall()]
+            "history": [r["entry"] for r in history.fetchall()],
+            "fire_points": row["fire_points"],
+            "upgrade_timer_reduce": row["upgrade_timer_reduce"],
+            "has_double_casino": bool(row["has_double_casino"]),
+            "has_fast_spin": bool(row["has_fast_spin"]),
+            "dopa_bet": row["dopa_bet"]
         }
 
 def save_roulette_data(user_id: int, data: dict):
     with connect() as conn:
         cur = conn.cursor()
         cur.execute("""
-            INSERT INTO roulette_user (user_id, roulette_count, opened_today, total_opened, last_reset, last_increment, notified_max, meow_count, meow_count_all, jopa_count, kazino_upgrades)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO roulette_user (user_id, roulette_count, opened_today, total_opened, last_reset, last_increment, notified_max, meow_count, meow_count_all, jopa_count, kazino_upgrades, fire_points, upgrade_timer_reduce, has_double_casino, has_fast_spin, dopa_bet)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(user_id) DO UPDATE SET
                 roulette_count = excluded.roulette_count,
                 opened_today = excluded.opened_today,
@@ -604,7 +614,12 @@ def save_roulette_data(user_id: int, data: dict):
                 meow_count = excluded.meow_count,
                 meow_count_all = excluded.meow_count_all,
                 jopa_count = excluded.jopa_count,
-                kazino_upgrades = excluded.kazino_upgrades
+                kazino_upgrades = excluded.kazino_upgrades,
+                fire_points = excluded.fire_points,
+                upgrade_timer_reduce = excluded.upgrade_timer_reduce,
+                has_double_casino = excluded.has_double_casino,
+                has_fast_spin = excluded.has_fast_spin,
+                dopa_bet = excluded.dopa_bet
         """, (
             user_id,
             int(data.get("roulette_count", 5)),
@@ -616,7 +631,12 @@ def save_roulette_data(user_id: int, data: dict):
             int(data.get("meow_count", 0)),
             int(data.get("meow_count_all", 0)),
             int(data.get("jopa_count", 0)),
-            json.dumps(data.get("kazino_upgrades", {}))
+            json.dumps(data.get("kazino_upgrades", {})),
+            int(data.get("fire_points", 0)),
+            int(data.get("upgrade_timer_reduce", 0)),
+            1 if data.get("has_double_casino", False) else 0,
+            1 if data.get("has_fast_spin", False) else 0,
+            int(data.get("dopa_bet", 0))
         )
         )
         conn.commit()
