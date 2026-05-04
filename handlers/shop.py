@@ -23,7 +23,7 @@ KAZINO_FILE = os.path.join("data", "cards", "kazino_upgrades.json")
 def shop_menu_kb():
     kb = InlineKeyboardBuilder()
     kb.row(
-        types.InlineKeyboardButton(text="❇️ Улучшение казика. Цена: 30🔥", callback_data="shop_upgrade_kazino")
+        types.InlineKeyboardButton(text="❇️ Улучшение казика. Цена: 100🔥", callback_data="shop_upgrade_kazino")
     )
     kb.row(
         types.InlineKeyboardButton(text="🎰 Покупка спинов. Цена: 10🔥 = 5🎰", callback_data="shop_buy_spins")
@@ -36,7 +36,7 @@ def shop_menu_kb():
 def kazino_upgrades_menu_kb():
     kb = InlineKeyboardBuilder()
     kb.row(
-        types.InlineKeyboardButton(text="❇️ Улучшение казика. Цена: 30🔥", callback_data="shop_upgrade_kazino")
+        types.InlineKeyboardButton(text="❇️ Улучшение казика. Цена: 100🔥", callback_data="shop_upgrade_kazino")
     )
     kb.row(
         types.InlineKeyboardButton(text="🎰 Покупка спинов. Цена: 10🔥 = 5🎰", callback_data="shop_buy_spins")
@@ -66,30 +66,37 @@ def load_kazino_upgrades():
         return []
 
 
-def pick_upgrade(upgrades: list):
-    # Determine weights from 'rarity' field. If rarity is numeric, use it; otherwise map known strings.
-    mapping = {
-        "common": 70,
-        "uncommon": 20,
-        "rare": 8,
-        "epic": 2,
-        "legendary": 0.5,
-    }
-    weights = []
+def pick_upgrade(upgrades: list, user_upgrades: dict = None):
+    """Выбирает случайное улучшение с учётом весов и ограничений max_count"""
+    if user_upgrades is None:
+        user_upgrades = {}
+    
+    # Фильтруем улучшения, которые уже достигли максимума
+    available = []
     for u in upgrades:
-        r = u.get("rarity")
-        try:
-            w = float(r)
-        except Exception:
-            w = mapping.get(str(r).lower(), 1.0)
-        weights.append(max(0.0, w))
-
-    if not upgrades:
+        upgrade_id = u.get("id")
+        max_count = u.get("max_count")
+        current_count = user_upgrades.get(upgrade_id, 0) if upgrade_id else 0
+        
+        # Если есть ограничение и оно достигнуто - пропускаем
+        if max_count is not None and current_count >= max_count:
+            continue
+        
+        available.append(u)
+    
+    if not available:
         return None
+    
+    # Используем веса из JSON или дефолтные
+    weights = []
+    for u in available:
+        w = u.get("weight", 1.0)
+        weights.append(max(0.0, float(w)))
+    
     try:
-        return random.choices(upgrades, weights=weights, k=1)[0]
+        return random.choices(available, weights=weights, k=1)[0]
     except Exception:
-        return random.choice(upgrades)
+        return random.choice(available)
 
 
 def ensure_purchase_log_table():
@@ -136,14 +143,10 @@ async def shop_menu(callback: CallbackQuery):
 @router.callback_query(F.data == "shop_upgrade_kazino")
 async def shop_upgrade_kazino(callback: CallbackQuery):
     text = (
-    "В данный момент улучшения для казино временно недоступны.\n"
+        "После покупки вы получите случайное улучшение для казино.\n"
+        "Вы точно хотите купить?\n\nЦена: 100🔥"
     )
-#    text = (
-#        "После покупки вы получите случайное улучшение для казино.\n"
-#        "Вы точно хотите купить?\n\nЦена: 30🔥"
-#    )
-    await safe_edit_message(callback.message, text, reply_markup=get_back_menu_button())
-# confirm_kb("shop_confirm_buy_upgrade", "shop_menu")
+    await safe_edit_message(callback.message, text, reply_markup=confirm_kb("shop_confirm_buy_upgrade", "shop_menu"))
 
 @router.callback_query(F.data == "shop_confirm_buy_upgrade")
 async def shop_confirm_buy_upgrade(callback: CallbackQuery):
@@ -160,12 +163,12 @@ async def shop_confirm_buy_upgrade(callback: CallbackQuery):
             return
         balance = row[0]
 
-        if balance < 30:
-            await callback.answer("❌ Недостаточно средств (нужно 30).", show_alert=True)
+        if balance < 100:
+            await callback.answer("❌ Недостаточно средств (нужно 100).", show_alert=True)
             return
 
         # debit
-        cur.execute("UPDATE users SET balance = balance - 30 WHERE user_id = ?", (user_id,))
+        cur.execute("UPDATE users SET balance = balance - 100 WHERE user_id = ?", (user_id,))
 
         # ensure roulette_user exists
         cur.execute("SELECT user_id, kazino_upgrades, roulette_count FROM roulette_user WHERE user_id = ?", (user_id,))
@@ -180,16 +183,24 @@ async def shop_confirm_buy_upgrade(callback: CallbackQuery):
             kazino_list = json.loads(ru[1]) if ru[1] else []
             roulette_count = ru[2] or 0
 
-        # pick upgrade
+        # pick upgrade с учётом уже купленных улучшений
         upgrades = load_kazino_upgrades()
-        chosen = pick_upgrade(upgrades)
+        # Преобразуем список купленных улучшений в словарь {id: count}
+        user_upgrades_dict = {}
+        for item in kazino_list:
+            item_id = item.get("id")
+            if item_id:
+                user_upgrades_dict[item_id] = user_upgrades_dict.get(item_id, 0) + 1
+        
+        chosen = pick_upgrade(upgrades, user_upgrades_dict)
         if not chosen:
             await callback.answer("❌ В магазине пока нет улучшений.", show_alert=True)
             conn.commit()
             return
 
-        # append chosen (store name/effect/rarity and timestamp)
+        # append chosen (store name/effect/rarity/id and timestamp)
         entry = {
+            "id": chosen.get("id"),
             "name": chosen.get("name"),
             "effect": chosen.get("effect"),
             "rarity": chosen.get("rarity"),
@@ -207,7 +218,7 @@ async def shop_confirm_buy_upgrade(callback: CallbackQuery):
 
         conn.commit()
 
-    await safe_edit_message(callback.message, f"🎉 Куплено: {entry['name']} ({entry['effect']}).\nСтоимость: 30🔥", reply_markup=shop_menu_kb())
+    await safe_edit_message(callback.message, f"🎉 Куплено: {entry['name']} ({entry['effect']}).\nСтоимость: 100🔥", reply_markup=shop_menu_kb())
 
 
 @router.callback_query(F.data == "shop_buy_spins")
