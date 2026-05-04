@@ -629,19 +629,9 @@ async def spin_roulette(callback: CallbackQuery):
         
                     save_roulette_data(user_id, data)
                     update_stats("JOPA")
-                    reward_text = f"💣 Поджопник ^_^{fire_text}"
+                    fire_text = " (+2🔥)" if "jopa_fire_2" in upgrades else ""
                     await slot_msg.edit_text(f"💣 Ты чертовски крут! Ты выиграл поджопник!{fire_text}\n"
                                             f"🎰 У тебя осталось {data['roulette_count']} круток.", reply_markup=get_roulette_again_keyboard(data))
-
-                    else:
-                        fire_text = ""
-                    
-                    save_roulette_data(user_id, data)
-                    update_stats("JOPA")
-                    reward_text = f"💣 Поджопник ^_^{fire_text}"
-                    await slot_msg.edit_text(f"💣 Ты чертовски крут! Ты выиграл поджопник!{fire_text}\n"
-                                            f"🎰 У тебя осталось {data['roulette_count']} круток.\n"
-                                            f"😺 Вы мяукнули {stats['count']} раз", reply_markup=get_roulette_again_keyboard(data))
 
                 elif symbol == "💋":
                     # Пранк: ничего не удаляем, но сначала пугаем пользователя, затем успокаиваем и даём небольшую компенсацию
