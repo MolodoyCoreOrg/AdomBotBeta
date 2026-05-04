@@ -7,7 +7,7 @@ from aiogram.types import CallbackQuery, FSInputFile, Message
 from aiogram.filters import Command
 from aiogram.exceptions import TelegramBadRequest
 
-from database.db import get_member_cards, get_user_timezone
+from database.db import get_member_cards, get_user_timezone, connect
 from ..keyboard import get_member_card_navigation_keyboard, get_card_member_ui, get_back_menu_colletion_button
 from ..picture import find_image_file
 from utils.helpers import get_member_card_image_path, format_iso_utc_to_user_tz, safe_delete
@@ -22,6 +22,14 @@ RARITY_PRICES_MEMBER = {
     "Редкая": 10,
     "Эпическая": 20,
     "Легендарная": 50,
+}
+
+# Upgrade costs for member cards by rarity
+UPGRADE_COSTS_MEMBER = {
+    "Обычная": 50,
+    "Редкая": 100,
+    "Эпическая": 200,
+    "Легендарная": 500,
 }
 
 # Rank multipliers used when calculating sell price (rank 1..4)
@@ -334,3 +342,85 @@ async def handle_draw_member_command(message: Message):
 @router.callback_query(F.data.startswith("my_member_cards:"))
 async def handle_card_navigation(callback: CallbackQuery):
     await navigate_my_member_cards(callback)
+
+# 📥 Обработка кнопки апгрейда карты
+@router.callback_query(F.data.startswith("upgrade_member_card:"))
+async def handle_upgrade_member_card(callback: CallbackQuery):
+    await upgrade_member_card(callback)
+
+async def upgrade_member_card(event: CallbackQuery):
+    user_id = event.from_user.id
+    user_cards = get_member_cards(user_id)
+    owned_card_names = [name for name in user_cards if not name.startswith("_")]
+
+    if not owned_card_names:
+        await event.answer("У тебя нет карточек", show_alert=True)
+        return
+
+    # Determine which card to upgrade
+    index = 0
+    if event.data and event.data.startswith("upgrade_member_card:"):
+        try:
+            index = int(event.data.split(":")[1]) % len(owned_card_names)
+        except Exception:
+            index = 0
+
+    card_name = owned_card_names[index]
+    card_data = user_cards[card_name]
+
+    card_info = next(
+        (c for c in MEMBER_CARDS if c["name"].strip().lower() == card_name.strip().lower()),
+        None
+    )
+
+    if card_info is None:
+        msg = "❌ Ошибка: карточка не найдена."
+        await event.message.answer(msg)
+        await event.answer()
+        return
+
+    # Получаем текущий ранг и редкость
+    current_rank = int(card_data.get("rank", 1))
+    rarity = card_info.get("rarity", "Обычная")
+
+    # Максимальный ранг - 4
+    if current_rank >= 4:
+        await event.answer("⛔ Этот ранг максимальный!", show_alert=True)
+        return
+
+    # Получаем стоимость апгрейда
+    upgrade_cost = UPGRADE_COSTS_MEMBER.get(rarity, 50)
+
+    # Проверяем баланс пользователя
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("SELECT balance FROM users WHERE user_id = ?", (user_id,))
+    row = cur.fetchone()
+    user_balance = int(row[0]) if row and row[0] is not None else 0
+    conn.close()
+
+    if user_balance < upgrade_cost:
+        await event.answer(f"❌ Недостаточно 🔥! Нужно {upgrade_cost} 🔥", show_alert=True)
+        return
+
+    # Списываем баланс
+    from database.db import add_balance
+    new_balance = add_balance(user_id, -upgrade_cost)
+
+    # Повышаем ранг карты
+    user_cards[card_name]["rank"] = current_rank + 1
+    update_member_cards(user_id, user_cards)
+
+    text = (
+        f"✅ Карточка '{card_name}' улучшена до ранга {current_rank + 1}!\n"
+        f"Списано: {upgrade_cost} 🔥\n"
+        f"Твой новый баланс: {new_balance} 🔥"
+    )
+
+    try:
+        await event.message.edit_text(text, reply_markup=get_card_member_ui())
+    except TelegramBadRequest:
+        await event.message.delete()
+        await event.message.answer(text, reply_markup=get_card_member_ui())
+
+    await event.answer()

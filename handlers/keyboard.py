@@ -190,6 +190,9 @@ def get_member_card_navigation_keyboard(index: int, total: int, prefix: str = "m
         InlineKeyboardButton(text="🔥 Продать карту", callback_data=f"sell_member_card:{index}"),
     )
     builder.row(
+        InlineKeyboardButton(text="🆙 Апгрейд карты", callback_data=f"upgrade_member_card:{index}"),
+    )
+    builder.row(
         InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
     )
     return builder.as_markup()
