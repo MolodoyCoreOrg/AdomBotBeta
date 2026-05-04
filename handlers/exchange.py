@@ -244,22 +244,32 @@ async def select_request_type(callback: CallbackQuery, state: FSMContext):
     
     # Получаем карты целевого пользователя
     if card_type == "member":
-        cards = get_member_cards(target_user_id)
-        if not cards:
-            await callback.answer(f"❌ У @{target_username} нет карт участников для обмена!", show_alert=True)
+        target_cards = get_member_cards(target_user_id)
+        my_cards = get_member_cards(user_id)
+        
+        # Фильтруем карты: показываем только те, которых нет у текущего пользователя
+        available_cards = {name: count for name, count in target_cards.items() if name not in my_cards}
+        
+        if not available_cards:
+            await callback.answer(f"❌ У @{target_username} нет карт участников, которых у вас ещё нет!", show_alert=True)
             return
         
         text = f"👥 Выберите карту участника, которую хотите получить от @{target_username}:"
-        await safe_edit_message(callback.message, text, reply_markup=get_exchange_member_cards_keyboard(cards, prefix="request", page=0))
+        await safe_edit_message(callback.message, text, reply_markup=get_exchange_member_cards_keyboard(available_cards, prefix="request", page=0))
         
     else:  # skill
-        cards = get_skill_cards(target_user_id)
-        if not cards:
-            await callback.answer(f"❌ У @{target_username} нет суперспособностей для обмена!", show_alert=True)
+        target_cards = get_skill_cards(target_user_id)
+        my_cards = get_skill_cards(user_id)
+        
+        # Фильтруем карты: показываем только те, которых нет у текущего пользователя
+        available_cards = {name: count for name, count in target_cards.items() if name not in my_cards}
+        
+        if not available_cards:
+            await callback.answer(f"❌ У @{target_username} нет суперспособностей, которых у вас ещё нет!", show_alert=True)
             return
         
         text = f"🃏 Выберите суперспособность, которую хотите получить от @{target_username}:"
-        await safe_edit_message(callback.message, text, reply_markup=get_exchange_skill_cards_keyboard(cards, prefix="request", page=0))
+        await safe_edit_message(callback.message, text, reply_markup=get_exchange_skill_cards_keyboard(available_cards, prefix="request", page=0))
     
     # Отвечаем на callback, чтобы убрать часики загрузки
     await callback.answer()
@@ -295,16 +305,28 @@ async def select_request_card(callback: CallbackQuery, state: FSMContext):
             await callback.answer("❌ У вас больше нет этой карты!", show_alert=True)
             return
     
-    # Проверяем, есть ли у оппонента выбранная карта
+    # Проверяем, есть ли у оппонента выбранная карта И нет ли её у текущего пользователя
     if card_type == "member":
         target_cards = get_member_cards(target_user_id)
+        my_cards = get_member_cards(user_id)
+        
         if card_name not in target_cards:
             await callback.answer(f"❌ У @{target_username} больше нет этой карты!", show_alert=True)
             return
+        
+        if card_name in my_cards:
+            await callback.answer(f"❌ У вас уже есть эта карта! Выберите другую.", show_alert=True)
+            return
     else:
         target_cards = get_skill_cards(target_user_id)
+        my_cards = get_skill_cards(user_id)
+        
         if card_name not in target_cards:
             await callback.answer(f"❌ У @{target_username} больше нет этой карты!", show_alert=True)
+            return
+        
+        if card_name in my_cards:
+            await callback.answer(f"❌ У вас уже есть эта карта! Выберите другую.", show_alert=True)
             return
     
     # Создаем предложение обмена
@@ -401,18 +423,29 @@ async def handle_request_card_pagination(callback: CallbackQuery, state: FSMCont
     state_data = await state.get_data()
     target_user_id = state_data.get("target_user_id")
     target_username = state_data.get("target_username")
+    user_id = callback.from_user.id
     
     # Сохраняем текущую страницу в state
     await state.update_data(request_page=page)
     
     if card_type == "member":
-        cards = get_member_cards(target_user_id)
+        target_cards = get_member_cards(target_user_id)
+        my_cards = get_member_cards(user_id)
+        
+        # Фильтруем карты: показываем только те, которых нет у текущего пользователя
+        available_cards = {name: count for name, count in target_cards.items() if name not in my_cards}
+        
         text = f"👥 Выберите карту участника, которую хотите получить от @{target_username}:"
-        await safe_edit_message(callback.message, text, reply_markup=get_exchange_member_cards_keyboard(cards, prefix="request", page=page))
+        await safe_edit_message(callback.message, text, reply_markup=get_exchange_member_cards_keyboard(available_cards, prefix="request", page=page))
     else:
-        cards = get_skill_cards(target_user_id)
+        target_cards = get_skill_cards(target_user_id)
+        my_cards = get_skill_cards(user_id)
+        
+        # Фильтруем карты: показываем только те, которых нет у текущего пользователя
+        available_cards = {name: count for name, count in target_cards.items() if name not in my_cards}
+        
         text = f"🃏 Выберите суперспособность, которую хотите получить от @{target_username}:"
-        await safe_edit_message(callback.message, text, reply_markup=get_exchange_skill_cards_keyboard(cards, prefix="request", page=page))
+        await safe_edit_message(callback.message, text, reply_markup=get_exchange_skill_cards_keyboard(available_cards, prefix="request", page=page))
     
     await callback.answer()
 
