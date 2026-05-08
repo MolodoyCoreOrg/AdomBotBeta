@@ -1,39 +1,5 @@
-# Compiled and build artifacts
-*.pyc
-__pycache__/
+(cards_skill.py matches the pattern *.py which is a source code file, and there are no build artifacts, dependencies, or temp files in the changes)
 
-# Dependencies
-.venv/
-venv/
-node_modules/
+```python
 
-# Logs and temp files
-*.log
-*.tmp
-*.swp
-
-# Environment
-.env
-.env.local
-*.env.*
-
-# Editors
-.vscode/
-.idea/
-
-# Coverage
-.coverage
-coverage/
-htmlcov/
-
-# Python specific
-*.pyc
-*.pyo
-*.pyd
-.Python
-*.so
-*.egg-info/
-dist/
-build/
-.mypy_cache/
-.pytest_cache/
+```

@@ -91,7 +91,7 @@ async def send_card(event: CallbackQuery | Message, index: int, user_cards: dict
 
     image_name = card_info["image"].split(".")[0]
     image_path = find_image_file(image_name, "data/images/skills")
-    if not os.path.exists(image_path):
+    if not image_path or not os.path.exists(image_path):
         return await event.message.answer("Ошибка: изображение карточки не найдено.")
 
     # format caption using the requesting user's timezone
@@ -164,7 +164,7 @@ async def navigate_my_skill_cards(event: CallbackQuery):
 
     image_name = card_info["image"].split(".")[0]
     image_path = find_image_file(image_name, "data/images/skills")
-    if not os.path.exists(image_path):
+    if not image_path or not os.path.exists(image_path):
         return await event.message.answer("Ошибка: изображение карточки не найдено.")
 
     caption = format_card_text(card_name, card_data, card_info["rarity"])
@@ -177,7 +177,10 @@ async def navigate_my_skill_cards(event: CallbackQuery):
             reply_markup=keyboard
         )
     except TelegramBadRequest as e:
-        if "message is not modified" not in str(e):
+        error_msg = str(e)
+        if "message is not modified" in error_msg or "canceled by new editMessageMedia request" in error_msg or "message to edit not found" in error_msg:
+            pass  # Ignore these common race condition errors
+        else:
             raise
     await event.answer()
 
