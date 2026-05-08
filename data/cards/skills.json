@@ -531,9 +531,69 @@
         "rarity": "Обычная",
         "image": "Утречко.jpg"
     },
-	{
-    "name": "Яйцо",
-    "rarity": "Легендарная",
-    "image": "yaica.jpg"
+    {
+        "name": "Яйцо",
+        "rarity": "Легендарная",
+        "image": "yaica.jpg"
+    },
+    {
+        "number": "101",
+        "name": "БРАТАН ТЫ ЧОТКИЙ",
+        "rarity": "Эпическая",
+        "image": "bratan_ty_chotkiy.jpg"
+    },
+    {
+        "number": "102",
+        "name": "УРААА",
+        "rarity": "Легендарная",
+        "image": "uraaa.jpg"
+    },
+    {
+        "number": "103",
+        "name": "БАБКИ НЕ ПРОБЛЕМА",
+        "rarity": "Легендарная",
+        "image": "babki_ne_problema.jpg"
+    },
+    {
+        "number": "104",
+        "name": "ВСЕ В АЖУРЕ",
+        "rarity": "Эпическая",
+        "image": "vse_v_azhure.jpg"
+    },
+    {
+        "number": "105",
+        "name": "ХИХИКС",
+        "rarity": "Эпическая",
+        "image": "hihiks.jpg"
+    },
+    {
+        "number": "106",
+        "name": "ХМММ",
+        "rarity": "Эпическая",
+        "image": "hmmm.jpg"
+    },
+    {
+        "number": "107",
+        "name": "МЕГАЛУДИК",
+        "rarity": "Эпическая",
+        "image": "megaludik.jpg"
+    },
+    {
+        "number": "108",
+        "name": "КРУТАЧКИ",
+        "rarity": "Эпическая",
+        "image": "krutachki.jpg"
+    },
+    {
+        "number": "109",
+        "name": "ОУ ДА БЕБИ",
+        "rarity": "Эпическая",
+        "image": "ou_da_bebi.jpg"
+    },
+    {
+        "number": "110",
+        "name": "ВЫГОДНАЯ СДЕЛКА",
+        "rarity": "Эпическая",
+        "image": "vygodnaya_sdelka.jpg"
     }
 ]
