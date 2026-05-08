@@ -197,7 +197,7 @@ def get_member_card_navigation_keyboard(index: int, total: int, prefix: str = "m
     )
     return builder.as_markup()
 
-def get_skill_card_navigation_keyboard(index: int, total: int, prefix: str = "my_skill_cards"):
+def get_skill_card_navigation_keyboard(index: int, total: int, prefix: str = "my_skill_cards", card_name: str = None, card_rarity: str = None):
     builder = InlineKeyboardBuilder()
 
     # Стрелка влево
@@ -223,6 +223,18 @@ def get_skill_card_navigation_keyboard(index: int, total: int, prefix: str = "my
             callback_data=f"{prefix}:{next_index}"
         )
     )
+    
+    # Кнопка "Использовать" только для эпических карт с номерами 101-110
+    epic_card_names = [
+        "БРАТАН ТЫ ЧОТКИЙ", "УРААА", "БАБКИ НЕ ПРОБЛЕМА", "ВСЕ В АЖУРЕ",
+        "ХИХИКС", "ХМММ", "МЕГАЛУДИК", "КРУТАЧКИ", "ОУ ДА БЕБИ", "ВЫГОДНАЯ СДЕЛКА"
+    ]
+    
+    if card_name in epic_card_names:
+        builder.row(
+            InlineKeyboardButton(text="✨ Использовать", callback_data=f"use_epic_card:{card_name}"),
+        )
+    
     builder.row(
         InlineKeyboardButton(text="🔥 Продать карту", callback_data=f"sell_skill_card:{index}"),
     )
