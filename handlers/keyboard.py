@@ -8,11 +8,19 @@ router = Router()
 
 DB_FILE = "database/users.db"
 
+from utils.config import ADMINS_LIST
+
 
 def connect():
     conn = sqlite3.connect(DB_FILE)
     conn.row_factory = sqlite3.Row  # Позволяет обращаться по ключам, а не по индексам
     return conn
+
+
+def is_admin(user_id: int) -> bool:
+    """Check if user is an admin."""
+    return user_id in ADMINS_LIST
+
 
 async def get_main_keyboard(spins, user_id) -> InlineKeyboardMarkup:
 
@@ -56,6 +64,13 @@ async def get_main_keyboard(spins, user_id) -> InlineKeyboardMarkup:
     builder.row(
         InlineKeyboardButton(text="🙏 Мотивация", callback_data="motivation_menu"),
     )
+    
+    # Добавляем кнопку "Админам" только для админов
+    if is_admin(user_id):
+        builder.row(
+            InlineKeyboardButton(text="🔐 Админам", callback_data="admin_menu"),
+        )
+    
     return builder.as_markup()
 
 def get_back_menu_button():
@@ -727,6 +742,22 @@ def shop_ui():
     )
     builder.row(
         InlineKeyboardButton(text="🎰 Бонусные крутки. Цена: 10🔥", callback_data="shop_bonus_spins"),
+    )
+    builder.row(
+        InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
+    )
+    return builder.as_markup()
+
+
+# === АДМИН МЕНЮ ===
+def admin_menu_ui():
+    """Меню администратора с кнопками для выдачи всех карт и валюты."""
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="🃏 Выдать все суперспособности", callback_data="admin_give_all_skills"),
+    )
+    builder.row(
+        InlineKeyboardButton(text="🔥 Выдать 1000 огонечков", callback_data="admin_give_1000_currency"),
     )
     builder.row(
         InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),

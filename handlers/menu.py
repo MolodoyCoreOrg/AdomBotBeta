@@ -652,3 +652,109 @@ async def go_back(callback: CallbackQuery):
         except Exception:
             pass
         await callback.message.answer(text, reply_markup=reply_markup, parse_mode="HTML")
+
+# === АДМИН МЕНЮ ===
+@router.callback_query(F.data == "admin_menu")
+async def handle_admin_menu(callback: CallbackQuery):
+    """Показать админ-меню только для админов."""
+    from utils.config import ADMINS_LIST
+    
+    user_id = callback.from_user.id
+    
+    if user_id not in ADMINS_LIST:
+        await callback.answer("❌ Нет доступа", show_alert=True)
+        return
+    
+    text = (
+        "🔐 <b>Админ-панель</b>\n\n"
+        "Выберите действие:"
+    )
+    
+    from handlers.keyboard import admin_menu_ui
+    await safe_edit_or_replace(
+        callback,
+        text,
+        reply_markup=admin_menu_ui(),
+        parse_mode="HTML"
+    )
+
+
+@router.callback_query(F.data == "admin_give_all_skills")
+async def handle_admin_give_all_skills(callback: CallbackQuery):
+    """Выдать все карты суперспособностей пользователю."""
+    from utils.config import ADMINS_LIST
+    from database.db import get_skill_cards, update_skill_cards
+    import json
+    
+    user_id = callback.from_user.id
+    
+    if user_id not in ADMINS_LIST:
+        await callback.answer("❌ Нет доступа", show_alert=True)
+        return
+    
+    # Загружаем все карты из каталога
+    with open("data/cards/skills.json", "r", encoding="utf-8") as f:
+        all_cards = json.load(f)
+    
+    # Получаем текущие карты пользователя
+    user_cards = get_skill_cards(user_id)
+    
+    # Добавляем все карты, которых ещё нет
+    added_count = 0
+    for card in all_cards:
+        card_name = card["name"]
+        if card_name not in user_cards:
+            user_cards[card_name] = {"rank": 1, "received_at": datetime.utcnow().isoformat()}
+            added_count += 1
+    
+    # Сохраняем обновлённые карты
+    update_skill_cards(user_id, user_cards)
+    
+    await callback.answer(f"✅ Выдано {added_count} карт суперспособностей!", show_alert=True)
+    
+    # Обновляем сообщение с админ-меню
+    text = (
+        "🔐 <b>Админ-панель</b>\n\n"
+        "Выберите действие:"
+    )
+    
+    from handlers.keyboard import admin_menu_ui
+    await safe_edit_or_replace(
+        callback,
+        text,
+        reply_markup=admin_menu_ui(),
+        parse_mode="HTML"
+    )
+
+
+@router.callback_query(F.data == "admin_give_1000_currency")
+async def handle_admin_give_1000_currency(callback: CallbackQuery):
+    """Выдать 1000 огонечков пользователю."""
+    from utils.config import ADMINS_LIST
+    from database.db import add_balance
+    
+    user_id = callback.from_user.id
+    
+    if user_id not in ADMINS_LIST:
+        await callback.answer("❌ Нет доступа", show_alert=True)
+        return
+    
+    # Выдаём 1000 огонечков
+    new_balance = add_balance(user_id, 1000)
+    
+    await callback.answer(f"✅ Выдано 1000 🔥! Новый баланс: {new_balance}", show_alert=True)
+    
+    # Обновляем сообщение с админ-меню
+    text = (
+        "🔐 <b>Админ-панель</b>\n\n"
+        "Выберите действие:"
+    )
+    
+    from handlers.keyboard import admin_menu_ui
+    await safe_edit_or_replace(
+        callback,
+        text,
+        reply_markup=admin_menu_ui(),
+        parse_mode="HTML"
+    )
+
