@@ -181,6 +181,9 @@ async def shop_confirm_buy_upgrade(callback: CallbackQuery):
             roulette_count = 0
         else:
             kazino_list = json.loads(ru[1]) if ru[1] else []
+            # Ensure kazino_list is a list, not a dict
+            if isinstance(kazino_list, dict):
+                kazino_list = []
             roulette_count = ru[2] or 0
 
         # pick upgrade с учётом уже купленных улучшений
