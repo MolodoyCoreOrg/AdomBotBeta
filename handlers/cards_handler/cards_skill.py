@@ -96,7 +96,7 @@ async def send_card(event: CallbackQuery | Message, index: int, user_cards: dict
 
     # format caption using the requesting user's timezone
     caption = format_card_text(card_name, card_data, card_info["rarity"], user_id=event.from_user.id if hasattr(event, 'from_user') else None)
-    keyboard = get_skill_card_navigation_keyboard(index, len(owned_card_names), prefix="my_skill_cards")
+    keyboard = get_skill_card_navigation_keyboard(index, len(owned_card_names), prefix="my_skill_cards", card_name=card_name)
     photo = FSInputFile(image_path)
 
     if isinstance(event, CallbackQuery):
@@ -168,7 +168,7 @@ async def navigate_my_skill_cards(event: CallbackQuery):
         return await event.message.answer("Ошибка: изображение карточки не найдено.")
 
     caption = format_card_text(card_name, card_data, card_info["rarity"])
-    keyboard = get_skill_card_navigation_keyboard(index, len(owned_card_names), prefix="my_skill_cards")
+    keyboard = get_skill_card_navigation_keyboard(index, len(owned_card_names), prefix="my_skill_cards", card_name=card_name)
     photo = FSInputFile(image_path)
 
     try:
