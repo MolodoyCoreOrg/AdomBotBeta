@@ -27,6 +27,7 @@ class MediaBroadcastState(StatesGroup):
     waiting_for_text = State()
     waiting_for_gif = State()
     waiting_for_video = State()
+    waiting_for_photo = State()
 
 
 def shop_menu_kb():
@@ -45,6 +46,9 @@ def shop_menu_kb():
     )
     kb.row(
         types.InlineKeyboardButton(text="🎥 Опубликовать видео. Цена: 150🔥", callback_data="shop_broadcast_video")
+    )
+    kb.row(
+        types.InlineKeyboardButton(text="🖼️ Опубликовать фото. Цена: 75🔥", callback_data="shop_broadcast_photo")
     )
     kb.row(
         types.InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu")
@@ -377,6 +381,9 @@ async def broadcast_media_to_all_users(media_type: str, file_id: str = None, tex
             elif media_type == "video":
                 caption = f"🎥 <b>Видео от {sender_name}</b>"
                 await bot.send_video(chat_id=uid, video=file_id, caption=caption, parse_mode="HTML")
+            elif media_type == "photo":
+                caption = f"🖼️ <b>Фото от {sender_name}</b>"
+                await bot.send_photo(chat_id=uid, photo=file_id, caption=caption, parse_mode="HTML")
             sent_count += 1
         except Exception as e:
             # Игнорируем ошибки отправки (бот заблокирован и т.д.)
@@ -430,10 +437,11 @@ async def process_broadcast_text(message: Message, state: FSMContext):
         cur.execute("UPDATE users SET balance = balance - 50 WHERE user_id = ?", (user_id,))
         conn.commit()
     
+    await state.clear()
+    await message.answer("⏳ Ваше сообщение будет разослано всем пользователям в течение 10 минут.")
+    
     sent_count = await broadcast_media_to_all_users("text", text=text, sender_id=user_id)
     
-    await state.clear()
-    await message.answer(f"✅ Сообщение отправлено всем пользователям! Получателей: {sent_count}\nСписано: 50🔥")
 
 
 # ====== ОБРАБОТЧИКИ ДЛЯ ОТПРАВКИ GIF ======
@@ -476,10 +484,11 @@ async def process_broadcast_gif(message: Message, state: FSMContext):
         cur.execute("UPDATE users SET balance = balance - 100 WHERE user_id = ?", (user_id,))
         conn.commit()
     
+    await state.clear()
+    await message.answer("⏳ Ваш GIF будет разослан всем пользователям в течение 10 минут.")
+    
     sent_count = await broadcast_media_to_all_users("gif", file_id=gif_file_id, sender_id=user_id)
     
-    await state.clear()
-    await message.answer(f"✅ GIF отправлен всем пользователям! Получателей: {sent_count}\nСписано: 100🔥")
 
 
 # ====== ОБРАБОТЧИКИ ДЛЯ ОТПРАВКИ ВИДЕО ======
@@ -522,10 +531,58 @@ async def process_broadcast_video(message: Message, state: FSMContext):
         cur.execute("UPDATE users SET balance = balance - 150 WHERE user_id = ?", (user_id,))
         conn.commit()
     
+    await state.clear()
+    await message.answer("⏳ Ваше видео будет разослано всем пользователям в течение 10 минут.")
+    
     sent_count = await broadcast_media_to_all_users("video", file_id=video_file_id, sender_id=user_id)
     
+
+
+# ====== ОБРАБОТЧИКИ ДЛЯ ОТПРАВКИ ФОТО ======
+
+@router.callback_query(F.data == "shop_broadcast_photo")
+async def shop_broadcast_photo(callback: CallbackQuery, state: FSMContext):
+    user_id = int(callback.from_user.id)
+    
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT balance FROM users WHERE user_id = ?", (user_id,))
+        row = cur.fetchone()
+        if not row:
+            await callback.answer("❌ Профиль не найден.", show_alert=True)
+            return
+        balance = row[0]
+    
+    if balance < 75:
+        await callback.answer("❌ Недостаточно средств (нужно 75🔥).", show_alert=True)
+        return
+    
+    await state.set_state(MediaBroadcastState.waiting_for_photo)
+    await safe_edit_message(callback.message, "🖼️ Отправьте фото, которое вы хотите показать всем пользователям бота:\n\nЦена: 75🔥\n\nИспользуйте /cancel для отмены.")
+
+
+@router.message(MediaBroadcastState.waiting_for_photo, F.photo)
+async def process_broadcast_photo(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    photo_file_id = message.photo[-1].file_id  # Берём фото в наилучшем качестве
+    
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT balance FROM users WHERE user_id = ?", (user_id,))
+        row = cur.fetchone()
+        if not row or row[0] < 75:
+            await message.answer("❌ Недостаточно средств (нужно 75🔥).")
+            await state.clear()
+            return
+        
+        cur.execute("UPDATE users SET balance = balance - 75 WHERE user_id = ?", (user_id,))
+        conn.commit()
+    
     await state.clear()
-    await message.answer(f"✅ Видео отправлено всем пользователям! Получателей: {sent_count}\nСписано: 150🔥")
+    await message.answer("⏳ Ваше фото будет разослано всем пользователям в течение 10 минут.")
+    
+    sent_count = await broadcast_media_to_all_users("photo", file_id=photo_file_id, sender_id=user_id)
+    
 
 
 # ====== ОТМЕНА ======
@@ -536,3 +593,11 @@ async def cancel_handler(message: Message, state: FSMContext):
     if current_state:
         await state.clear()
         await message.answer("❌ Действие отменено.")
+
+
+@router.message(MediaBroadcastState.waiting_for_gif, ~F.animation)
+@router.message(MediaBroadcastState.waiting_for_video, ~F.video)
+@router.message(MediaBroadcastState.waiting_for_photo, ~F.photo)
+async def handle_wrong_media_type(message: Message, state: FSMContext):
+    """Обработчик для случаев, когда пользователь отправил не тот тип медиа"""
+    await message.answer("⚠️ Пожалуйста, отправьте корректный формат медиа или используйте /cancel для отмены.")
