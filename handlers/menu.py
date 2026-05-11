@@ -1,7 +1,7 @@
 import sqlite3, json
 from datetime import datetime, timezone
 
-from aiogram import Router, F
+from aiogram import Router, F, Bot
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery, ContentType, InlineKeyboardButton
 from aiogram.exceptions import TelegramBadRequest
@@ -755,6 +755,100 @@ async def handle_admin_give_1000_currency(callback: CallbackQuery):
         callback,
         text,
         reply_markup=admin_menu_ui(),
+        parse_mode="HTML"
+    )
+
+
+# === АДМИН: СОЗДАТЬ ПРЕСЕЙВ ===
+from aiogram.fsm.state import State, StatesGroup
+from aiogram.fsm.context import FSMContext
+
+class PresaveCreateState(StatesGroup):
+    waiting_for_link = State()
+    waiting_for_card_image = State()
+
+
+@router.callback_query(F.data == "admin_create_presave")
+async def handle_admin_create_presave(callback: CallbackQuery, state: FSMContext):
+    """Админ нажимает кнопку 'Создать пресейв' - запрос ссылки на band link."""
+    from utils.config import ADMINS_LIST
+    
+    user_id = callback.from_user.id
+    
+    if user_id not in ADMINS_LIST:
+        await callback.answer("❌ Нет доступа", show_alert=True)
+        return
+    
+    await state.set_state(PresaveCreateState.waiting_for_link)
+    await callback.message.edit_text(
+        "🎵 <b>Создание пресейва</b>\n\n"
+        "Отправьте ссылку на Band Link для пресейва:",
+        parse_mode="HTML"
+    )
+    await callback.answer()
+
+
+@router.message(PresaveCreateState.waiting_for_link)
+async def process_presave_link(message: Message, state: FSMContext):
+    """Обработка ссылки на Band Link от админа."""
+    from utils.config import ADMINS_LIST
+    
+    user_id = message.from_user.id
+    
+    if user_id not in ADMINS_LIST:
+        return
+    
+    link = message.text.strip()
+    if not link:
+        await message.answer("❌ Отправьте корректную ссылку.")
+        return
+    
+    await state.update_data(presave_link=link)
+    await state.set_state(PresaveCreateState.waiting_for_card_image)
+    await message.answer(
+        "✅ Ссылка сохранена.\n\n"
+        "Теперь отправьте изображение карточки, которая будет выдаваться за пресейв:",
+        parse_mode="HTML"
+    )
+
+
+@router.message(PresaveCreateState.waiting_for_card_image, F.photo)
+async def process_presave_card_image(message: Message, state: FSMContext, bot: Bot):
+    """Обработка изображения карточки от админа - сохраняем и создаем кнопку пресейва."""
+    from utils.config import ADMINS_LIST
+    from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+    import json
+    
+    user_id = message.from_user.id
+    
+    if user_id not in ADMINS_LIST:
+        return
+    
+    # Получаем лучшее качество фото
+    photo = message.photo[-1]
+    file_id = photo.file_id
+    
+    # Получаем данные из состояния
+    data = await state.get_data()
+    presave_link = data.get("presave_link")
+    
+    # Сохраняем файл ID в базу или JSON для дальнейшего использования
+    # Для простоты сохраним в JSON файл
+    presave_config = {
+        "link": presave_link,
+        "card_file_id": file_id
+    }
+    
+    with open("data/table/presave_config.json", "w", encoding="utf-8") as f:
+        json.dump(presave_config, f, ensure_ascii=False)
+    
+    await state.clear()
+    
+    await message.answer(
+        "✅ Пресейв успешно создан!\n\n"
+        f"Ссылка: {presave_link}\n"
+        "Карточка сохранена.\n\n"
+        "Теперь пользователи могут нажать кнопку 'Сделать пресейв' в главном меню.",
         parse_mode="HTML"
     )
 
