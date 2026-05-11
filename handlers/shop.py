@@ -5,19 +5,28 @@ import re
 import os
 import sqlite3
 
-from aiogram import Router, F, types
-from aiogram.types import CallbackQuery
+from aiogram import Router, F, types, Bot
+from aiogram.types import CallbackQuery, Message
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.exceptions import TelegramBadRequest
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import State, StatesGroup
 
-from database.db import connect
-from utils.config import DB_FILE
+from database.db import connect, get_all_user_ids, get_user_full_data
+from utils.config import DB_FILE, TOKEN
 from utils.helpers import safe_edit_message
 from handlers.keyboard import get_back_menu_button
 
 router = Router()
+bot = Bot(token=TOKEN)
 
 KAZINO_FILE = os.path.join("data", "cards", "kazino_upgrades.json")
+
+
+class MediaBroadcastState(StatesGroup):
+    waiting_for_text = State()
+    waiting_for_gif = State()
+    waiting_for_video = State()
 
 
 def shop_menu_kb():
@@ -27,6 +36,15 @@ def shop_menu_kb():
     )
     kb.row(
         types.InlineKeyboardButton(text="🎰 Покупка спинов. Цена: 10🔥 = 5🎰", callback_data="shop_buy_spins")
+    )
+    kb.row(
+        types.InlineKeyboardButton(text="📢 Опубликовать сообщение. Цена: 50🔥", callback_data="shop_broadcast_text")
+    )
+    kb.row(
+        types.InlineKeyboardButton(text="🎬 Опубликовать GIF. Цена: 100🔥", callback_data="shop_broadcast_gif")
+    )
+    kb.row(
+        types.InlineKeyboardButton(text="🎥 Опубликовать видео. Цена: 150🔥", callback_data="shop_broadcast_video")
     )
     kb.row(
         types.InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu")
@@ -327,3 +345,194 @@ async def shop_my_upgrades(callback: CallbackQuery):
             pass
         else:
             raise
+
+
+# ====== ФУНКЦИИ ДЛЯ ОТПРАВКИ МЕДИА ВСЕМ ПОЛЬЗОВАТЕЛЯМ ======
+
+async def broadcast_media_to_all_users(media_type: str, file_id: str = None, text: str = None, sender_id: int = None):
+    """Отправляет медиа или текст всем пользователям бота."""
+    user_ids = get_all_user_ids()
+    sent_count = 0
+    
+    sender_data = get_user_full_data(sender_id) if sender_id else None
+    sender_name = ""
+    if sender_data:
+        username = sender_data.get("username")
+        first_name = sender_data.get("first_name")
+        if username:
+            sender_name = f"@{username}"
+        elif first_name:
+            sender_name = first_name
+        else:
+            sender_name = f"пользователь {sender_id}"
+    
+    for uid in user_ids:
+        try:
+            if media_type == "text":
+                message_text = f"📢 <b>Публичное сообщение от {sender_name}</b>:\n\n{text}"
+                await bot.send_message(chat_id=uid, text=message_text, parse_mode="HTML")
+            elif media_type == "gif":
+                caption = f"🎬 <b>GIF от {sender_name}</b>"
+                await bot.send_animation(chat_id=uid, animation=file_id, caption=caption, parse_mode="HTML")
+            elif media_type == "video":
+                caption = f"🎥 <b>Видео от {sender_name}</b>"
+                await bot.send_video(chat_id=uid, video=file_id, caption=caption, parse_mode="HTML")
+            sent_count += 1
+        except Exception as e:
+            # Игнорируем ошибки отправки (бот заблокирован и т.д.)
+            pass
+    
+    return sent_count
+
+
+# ====== ОБРАБОТЧИКИ ДЛЯ ОТПРАВКИ СООБЩЕНИЯ ======
+
+@router.callback_query(F.data == "shop_broadcast_text")
+async def shop_broadcast_text(callback: CallbackQuery, state: FSMContext):
+    user_id = int(callback.from_user.id)
+    
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT balance FROM users WHERE user_id = ?", (user_id,))
+        row = cur.fetchone()
+        if not row:
+            await callback.answer("❌ Профиль не найден.", show_alert=True)
+            return
+        balance = row[0]
+    
+    if balance < 50:
+        await callback.answer("❌ Недостаточно средств (нужно 50🔥).", show_alert=True)
+        return
+    
+    await state.set_state(MediaBroadcastState.waiting_for_text)
+    await safe_edit_message(callback.message, "💬 Введите текст сообщения, которое вы хотите отправить всем пользователям бота:\n\nЦена: 50🔥\n\nИспользуйте /cancel для отмены.")
+
+
+@router.message(MediaBroadcastState.waiting_for_text)
+async def process_broadcast_text(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    text = message.text
+    
+    if text == "/cancel":
+        await state.clear()
+        await message.answer("❌ Отменено.")
+        return
+    
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT balance FROM users WHERE user_id = ?", (user_id,))
+        row = cur.fetchone()
+        if not row or row[0] < 50:
+            await message.answer("❌ Недостаточно средств (нужно 50🔥).")
+            await state.clear()
+            return
+        
+        cur.execute("UPDATE users SET balance = balance - 50 WHERE user_id = ?", (user_id,))
+        conn.commit()
+    
+    sent_count = await broadcast_media_to_all_users("text", text=text, sender_id=user_id)
+    
+    await state.clear()
+    await message.answer(f"✅ Сообщение отправлено всем пользователям! Получателей: {sent_count}\nСписано: 50🔥")
+
+
+# ====== ОБРАБОТЧИКИ ДЛЯ ОТПРАВКИ GIF ======
+
+@router.callback_query(F.data == "shop_broadcast_gif")
+async def shop_broadcast_gif(callback: CallbackQuery, state: FSMContext):
+    user_id = int(callback.from_user.id)
+    
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT balance FROM users WHERE user_id = ?", (user_id,))
+        row = cur.fetchone()
+        if not row:
+            await callback.answer("❌ Профиль не найден.", show_alert=True)
+            return
+        balance = row[0]
+    
+    if balance < 100:
+        await callback.answer("❌ Недостаточно средств (нужно 100🔥).", show_alert=True)
+        return
+    
+    await state.set_state(MediaBroadcastState.waiting_for_gif)
+    await safe_edit_message(callback.message, "🎬 Отправьте GIF, который вы хотите показать всем пользователям бота:\n\nЦена: 100🔥\n\nИспользуйте /cancel для отмены.")
+
+
+@router.message(MediaBroadcastState.waiting_for_gif, F.animation)
+async def process_broadcast_gif(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    gif_file_id = message.animation.file_id
+    
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT balance FROM users WHERE user_id = ?", (user_id,))
+        row = cur.fetchone()
+        if not row or row[0] < 100:
+            await message.answer("❌ Недостаточно средств (нужно 100🔥).")
+            await state.clear()
+            return
+        
+        cur.execute("UPDATE users SET balance = balance - 100 WHERE user_id = ?", (user_id,))
+        conn.commit()
+    
+    sent_count = await broadcast_media_to_all_users("gif", file_id=gif_file_id, sender_id=user_id)
+    
+    await state.clear()
+    await message.answer(f"✅ GIF отправлен всем пользователям! Получателей: {sent_count}\nСписано: 100🔥")
+
+
+# ====== ОБРАБОТЧИКИ ДЛЯ ОТПРАВКИ ВИДЕО ======
+
+@router.callback_query(F.data == "shop_broadcast_video")
+async def shop_broadcast_video(callback: CallbackQuery, state: FSMContext):
+    user_id = int(callback.from_user.id)
+    
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT balance FROM users WHERE user_id = ?", (user_id,))
+        row = cur.fetchone()
+        if not row:
+            await callback.answer("❌ Профиль не найден.", show_alert=True)
+            return
+        balance = row[0]
+    
+    if balance < 150:
+        await callback.answer("❌ Недостаточно средств (нужно 150🔥).", show_alert=True)
+        return
+    
+    await state.set_state(MediaBroadcastState.waiting_for_video)
+    await safe_edit_message(callback.message, "🎥 Отправьте видео, которое вы хотите показать всем пользователям бота:\n\nЦена: 150🔥\n\nИспользуйте /cancel для отмены.")
+
+
+@router.message(MediaBroadcastState.waiting_for_video, F.video)
+async def process_broadcast_video(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    video_file_id = message.video.file_id
+    
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT balance FROM users WHERE user_id = ?", (user_id,))
+        row = cur.fetchone()
+        if not row or row[0] < 150:
+            await message.answer("❌ Недостаточно средств (нужно 150🔥).")
+            await state.clear()
+            return
+        
+        cur.execute("UPDATE users SET balance = balance - 150 WHERE user_id = ?", (user_id,))
+        conn.commit()
+    
+    sent_count = await broadcast_media_to_all_users("video", file_id=video_file_id, sender_id=user_id)
+    
+    await state.clear()
+    await message.answer(f"✅ Видео отправлено всем пользователям! Получателей: {sent_count}\nСписано: 150🔥")
+
+
+# ====== ОТМЕНА ======
+
+@router.message(F.text == "/cancel")
+async def cancel_handler(message: Message, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state:
+        await state.clear()
+        await message.answer("❌ Действие отменено.")
