@@ -443,7 +443,7 @@ async def process_broadcast_text(message: Message, state: FSMContext):
     sent_count = await broadcast_media_to_all_users("text", text=text, sender_id=user_id)
     
     await state.clear()
-    await message.answer(f"✅ Сообщение отправлено всем пользователям! Получателей: {sent_count}\n\n⏱ Ваше сообщение будет разослано в течении нескольких минут.\nСписано: 50🔥")
+    await message.answer(f"✅ Сообщение отправлено всем пользователям! Получателей: {sent_count}\nСписано: 50🔥")
 
 
 # ====== ОБРАБОТЧИКИ ДЛЯ ОТПРАВКИ ФОТО ======
@@ -489,7 +489,7 @@ async def process_broadcast_photo(message: Message, state: FSMContext):
     sent_count = await broadcast_media_to_all_users("photo", file_id=photo_file_id, sender_id=user_id)
     
     await state.clear()
-    await message.answer(f"✅ Фото отправлено всем пользователям! Получателей: {sent_count}\n\n⏱ Ваше сообщение будет разослано в течении нескольких минут.\nСписано: 75🔥")
+    await message.answer(f"✅ Фото отправлено всем пользователям! Получателей: {sent_count}\nСписано: 75🔥")
 
 
 # ====== ОБРАБОТЧИКИ ДЛЯ ОТПРАВКИ GIF ======
@@ -535,7 +535,7 @@ async def process_broadcast_gif(message: Message, state: FSMContext):
     sent_count = await broadcast_media_to_all_users("gif", file_id=gif_file_id, sender_id=user_id)
     
     await state.clear()
-    await message.answer(f"✅ GIF отправлен всем пользователям! Получателей: {sent_count}\n\n⏱ Ваше сообщение будет разослано в течении нескольких минут.\nСписано: 100🔥")
+    await message.answer(f"✅ GIF отправлен всем пользователям! Получателей: {sent_count}\nСписано: 100🔥")
 
 
 # ====== ОБРАБОТЧИКИ ДЛЯ ОТПРАВКИ ВИДЕО ======
@@ -581,7 +581,7 @@ async def process_broadcast_video(message: Message, state: FSMContext):
     sent_count = await broadcast_media_to_all_users("video", file_id=video_file_id, sender_id=user_id)
     
     await state.clear()
-    await message.answer(f"✅ Видео отправлено всем пользователям! Получателей: {sent_count}\n\n⏱ Ваше сообщение будет разослано в течении нескольких минут.\nСписано: 150🔥")
+    await message.answer(f"✅ Видео отправлено всем пользователям! Получателей: {sent_count}\nСписано: 150🔥")
 
 
 # ====== ОТМЕНА ======
