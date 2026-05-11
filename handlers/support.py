@@ -115,7 +115,7 @@ async def handle_problem_text(message: Message, state: FSMContext, bot: Bot):
 
     messages_to_delete = [message.message_id - 1, message.message_id]
     await delete_messages(bot, message.chat.id, messages_to_delete)
-    await message.answer("✅ Проблема отправлена в поддержку.", reply_markup=get_back_menu_button())
+    await message.answer("✅ Проблема отправлена в поддержку.\n\nВаше сообщение будет разослано в течении 10 минут", reply_markup=get_back_menu_button())
     await message.bot.send_message(
         SUPPORT_CHAT_ID,
         text,
@@ -181,7 +181,7 @@ async def handle_idea_text(message: Message, state: FSMContext, bot: Bot):
 
     messages_to_delete = [message.message_id - 1, message.message_id]
     await delete_messages(bot, message.chat.id, messages_to_delete)
-    await message.answer("💡 Идея отправлена в поддержку.", reply_markup=get_back_menu_button())
+    await message.answer("💡 Идея отправлена в поддержку.\n\nВаше сообщение будет разослано в течении 10 минут", reply_markup=get_back_menu_button())
 
     await message.bot.send_message(
         SUPPORT_CHAT_ID,
