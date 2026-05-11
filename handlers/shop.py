@@ -4,6 +4,7 @@ import datetime
 import re
 import os
 import sqlite3
+import asyncio
 
 from aiogram import Router, F, types, Bot
 from aiogram.types import CallbackQuery, Message
@@ -25,6 +26,7 @@ KAZINO_FILE = os.path.join("data", "cards", "kazino_upgrades.json")
 
 class MediaBroadcastState(StatesGroup):
     waiting_for_text = State()
+    waiting_for_photo = State()
     waiting_for_gif = State()
     waiting_for_video = State()
 
@@ -39,6 +41,9 @@ def shop_menu_kb():
     )
     kb.row(
         types.InlineKeyboardButton(text="📢 Опубликовать сообщение. Цена: 50🔥", callback_data="shop_broadcast_text")
+    )
+    kb.row(
+        types.InlineKeyboardButton(text="🖼️ Опубликовать фото. Цена: 75🔥", callback_data="shop_broadcast_photo")
     )
     kb.row(
         types.InlineKeyboardButton(text="🎬 Опубликовать GIF. Цена: 100🔥", callback_data="shop_broadcast_gif")
@@ -350,7 +355,7 @@ async def shop_my_upgrades(callback: CallbackQuery):
 # ====== ФУНКЦИИ ДЛЯ ОТПРАВКИ МЕДИА ВСЕМ ПОЛЬЗОВАТЕЛЯМ ======
 
 async def broadcast_media_to_all_users(media_type: str, file_id: str = None, text: str = None, sender_id: int = None):
-    """Отправляет медиа или текст всем пользователям бота."""
+    """Отправляет медиа или текст всем пользователям бота (не более 30 сообщений в минуту)."""
     user_ids = get_all_user_ids()
     sent_count = 0
     
@@ -371,6 +376,9 @@ async def broadcast_media_to_all_users(media_type: str, file_id: str = None, tex
             if media_type == "text":
                 message_text = f"📢 <b>Публичное сообщение от {sender_name}</b>:\n\n{text}"
                 await bot.send_message(chat_id=uid, text=message_text, parse_mode="HTML")
+            elif media_type == "photo":
+                caption = f"🖼️ <b>Фото от {sender_name}</b>"
+                await bot.send_photo(chat_id=uid, photo=file_id, caption=caption, parse_mode="HTML")
             elif media_type == "gif":
                 caption = f"🎬 <b>GIF от {sender_name}</b>"
                 await bot.send_animation(chat_id=uid, animation=file_id, caption=caption, parse_mode="HTML")
@@ -381,6 +389,8 @@ async def broadcast_media_to_all_users(media_type: str, file_id: str = None, tex
         except Exception as e:
             # Игнорируем ошибки отправки (бот заблокирован и т.д.)
             pass
+        # Задержка 2 секунды между сообщениями = 30 сообщений в минуту
+        await asyncio.sleep(2)
     
     return sent_count
 
@@ -433,7 +443,53 @@ async def process_broadcast_text(message: Message, state: FSMContext):
     sent_count = await broadcast_media_to_all_users("text", text=text, sender_id=user_id)
     
     await state.clear()
-    await message.answer(f"✅ Сообщение отправлено всем пользователям! Получателей: {sent_count}\nСписано: 50🔥")
+    await message.answer(f"✅ Сообщение отправлено всем пользователям! Получателей: {sent_count}\n\n⏱ Ваше сообщение будет разослано в течении нескольких минут.\nСписано: 50🔥")
+
+
+# ====== ОБРАБОТЧИКИ ДЛЯ ОТПРАВКИ ФОТО ======
+
+@router.callback_query(F.data == "shop_broadcast_photo")
+async def shop_broadcast_photo(callback: CallbackQuery, state: FSMContext):
+    user_id = int(callback.from_user.id)
+    
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT balance FROM users WHERE user_id = ?", (user_id,))
+        row = cur.fetchone()
+        if not row:
+            await callback.answer("❌ Профиль не найден.", show_alert=True)
+            return
+        balance = row[0]
+    
+    if balance < 75:
+        await callback.answer("❌ Недостаточно средств (нужно 75🔥).", show_alert=True)
+        return
+    
+    await state.set_state(MediaBroadcastState.waiting_for_photo)
+    await safe_edit_message(callback.message, "🖼️ Отправьте фото, которое вы хотите показать всем пользователям бота:\n\nЦена: 75🔥\n\nИспользуйте /cancel для отмены.")
+
+
+@router.message(MediaBroadcastState.waiting_for_photo, F.photo)
+async def process_broadcast_photo(message: Message, state: FSMContext):
+    user_id = message.from_user.id
+    photo_file_id = message.photo[-1].file_id
+    
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT balance FROM users WHERE user_id = ?", (user_id,))
+        row = cur.fetchone()
+        if not row or row[0] < 75:
+            await message.answer("❌ Недостаточно средств (нужно 75🔥).")
+            await state.clear()
+            return
+        
+        cur.execute("UPDATE users SET balance = balance - 75 WHERE user_id = ?", (user_id,))
+        conn.commit()
+    
+    sent_count = await broadcast_media_to_all_users("photo", file_id=photo_file_id, sender_id=user_id)
+    
+    await state.clear()
+    await message.answer(f"✅ Фото отправлено всем пользователям! Получателей: {sent_count}\n\n⏱ Ваше сообщение будет разослано в течении нескольких минут.\nСписано: 75🔥")
 
 
 # ====== ОБРАБОТЧИКИ ДЛЯ ОТПРАВКИ GIF ======
@@ -479,7 +535,7 @@ async def process_broadcast_gif(message: Message, state: FSMContext):
     sent_count = await broadcast_media_to_all_users("gif", file_id=gif_file_id, sender_id=user_id)
     
     await state.clear()
-    await message.answer(f"✅ GIF отправлен всем пользователям! Получателей: {sent_count}\nСписано: 100🔥")
+    await message.answer(f"✅ GIF отправлен всем пользователям! Получателей: {sent_count}\n\n⏱ Ваше сообщение будет разослано в течении нескольких минут.\nСписано: 100🔥")
 
 
 # ====== ОБРАБОТЧИКИ ДЛЯ ОТПРАВКИ ВИДЕО ======
@@ -525,7 +581,7 @@ async def process_broadcast_video(message: Message, state: FSMContext):
     sent_count = await broadcast_media_to_all_users("video", file_id=video_file_id, sender_id=user_id)
     
     await state.clear()
-    await message.answer(f"✅ Видео отправлено всем пользователям! Получателей: {sent_count}\nСписано: 150🔥")
+    await message.answer(f"✅ Видео отправлено всем пользователям! Получателей: {sent_count}\n\n⏱ Ваше сообщение будет разослано в течении нескольких минут.\nСписано: 150🔥")
 
 
 # ====== ОТМЕНА ======
