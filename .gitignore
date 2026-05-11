@@ -1,31 +1,50 @@
 ```
-# Compiled Python files
+# Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-
-# Logs and temp files
-*.log
-*.tmp
-*.swp
-
-# Environment files
+.Python
+env/
+venv/
+.venv/
+.ENV
+.ENV.local
 .env
 .env.local
+.env.
 *.env.*
 
-# Editors
+# Database
+*.db
+*.db-journal
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+
+# Coverage
+.coverage
+coverage/
+htmlcov/
+
+# IDE
 .vscode/
 .idea/
+*.sublime-project
+*.sublime-workspace
 
-# Dependencies
-.venv/
-venv/
-node_modules/
+# OS
+.DS_Store
+Thumbs.db
 
 # Build artifacts
-dist/
 build/
+dist/
+*.egg-info/
 target/
 ```
