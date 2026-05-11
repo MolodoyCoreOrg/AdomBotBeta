@@ -1,18 +1,16 @@
 ```
-# Compiled and build artifacts
-*.pyc
+# Compiled Python files
 __pycache__/
-
-# Dependencies
-.venv/
-venv/
+*.pyc
+*.pyo
+*.pyd
 
 # Logs and temp files
 *.log
 *.tmp
 *.swp
 
-# Environment
+# Environment files
 .env
 .env.local
 *.env.*
@@ -21,5 +19,13 @@ venv/
 .vscode/
 .idea/
 
-# Original rules preserved
+# Dependencies
+.venv/
+venv/
+node_modules/
+
+# Build artifacts
+dist/
+build/
+target/
 ```
