@@ -4,17 +4,28 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-
-# Dependencies
-.venv/
-venv/
+.Python
 env/
+venv/
+.venv/
+.ENV
+.ENV.local
 .env
 .env.local
-.env.*
+.env.
+*.env.*
+
+# Database
+*.db
+*.db-journal
 
 # Logs
 *.log
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
 
 # Coverage
 .coverage
@@ -24,12 +35,16 @@ htmlcov/
 # IDE
 .vscode/
 .idea/
-*.swp
-*.swo
-*.tmp
+*.sublime-project
+*.sublime-workspace
 
-# Build
-dist/
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
 build/
+dist/
+*.egg-info/
 target/
 ```
