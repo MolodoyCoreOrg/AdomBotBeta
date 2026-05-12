@@ -64,6 +64,9 @@ async def get_main_keyboard(spins, user_id) -> InlineKeyboardMarkup:
     builder.row(
         InlineKeyboardButton(text="🙏 Мотивация", callback_data="motivation_menu"),
     )
+    builder.row(
+        InlineKeyboardButton(text="🎵 Сделать пресейв", callback_data="presave_click"),
+    )
     
     # Добавляем кнопку "Админам" только для админов
     if is_admin(user_id):
@@ -212,7 +215,7 @@ def get_member_card_navigation_keyboard(index: int, total: int, prefix: str = "m
     )
     return builder.as_markup()
 
-def get_skill_card_navigation_keyboard(index: int, total: int, prefix: str = "my_skill_cards"):
+def get_skill_card_navigation_keyboard(index: int, total: int, prefix: str = "my_skill_cards", card_name: str = None, card_rarity: str = None):
     builder = InlineKeyboardBuilder()
 
     # Стрелка влево
@@ -238,6 +241,18 @@ def get_skill_card_navigation_keyboard(index: int, total: int, prefix: str = "my
             callback_data=f"{prefix}:{next_index}"
         )
     )
+    
+    # Кнопка "Использовать" только для эпических карт с номерами 101-110
+    epic_card_names = [
+        "БРАТАН ТЫ ЧОТКИЙ", "УРААА", "БАБКИ НЕ ПРОБЛЕМА", "ВСЕ В АЖУРЕ",
+        "ХИХИКС", "ХМММ", "МЕГАЛУДИК", "КРУТАЧКИ", "ОУ ДА БЕБИ", "ВЫГОДНАЯ СДЕЛКА"
+    ]
+    
+    if card_name in epic_card_names:
+        builder.row(
+            InlineKeyboardButton(text="✨ Использовать", callback_data=f"use_epic_card:{card_name}"),
+        )
+    
     builder.row(
         InlineKeyboardButton(text="🔥 Продать карту", callback_data=f"sell_skill_card:{index}"),
     )
@@ -758,6 +773,9 @@ def admin_menu_ui():
     )
     builder.row(
         InlineKeyboardButton(text="🔥 Выдать 1000 огонечков", callback_data="admin_give_1000_currency"),
+    )
+    builder.row(
+        InlineKeyboardButton(text="🎵 Создать пресейв", callback_data="admin_create_presave"),
     )
     builder.row(
         InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),

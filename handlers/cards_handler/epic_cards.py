@@ -190,7 +190,7 @@ async def use_babki_ne_problema(callback: CallbackQuery, bot):
     # Удаляем карту
     remove_skill_card(user_id, "БАБКИ НЕ ПРОБЛЕМА")
     
-    await callback.answer(f"Все пользователи ({len(user_ids)}) получили по 1🔥", show_alert=True)
+    await callback.answer("💸 Раздаем баксы всем...", show_alert=False)
 
 
 # === КАРТА 4: ВСЕ В АЖУРЕ ===
@@ -215,7 +215,7 @@ async def use_vse_v_azhure(callback: CallbackQuery, bot):
     # Удаляем карту
     remove_skill_card(user_id, "ВСЕ В АЖУРЕ")
     
-    await callback.answer(f"Все пользователи ({len(user_ids)}) получили по 2 крутки", show_alert=True)
+    await callback.answer("🎡 Раздаем крутки всем...", show_alert=False)
 
 
 # === КАРТА 5: ХИХИКС ===
@@ -240,7 +240,7 @@ async def use_hihiks(callback: CallbackQuery, bot):
     # Удаляем карту
     remove_skill_card(user_id, "ХИХИКС")
     
-    await callback.answer(f"Все пользователи ({len(user_ids)}) получили по поджопнику", show_alert=True)
+    await callback.answer("😄 Все получили поджопник!", show_alert=False)
 
 
 # === КАРТА 6: ХМММ (цепочка) ===
