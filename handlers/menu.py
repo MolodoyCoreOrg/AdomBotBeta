@@ -759,6 +759,86 @@ async def handle_admin_give_1000_currency(callback: CallbackQuery):
     )
 
 
+@router.callback_query(F.data == "admin_give_10000_currency")
+async def handle_admin_give_10000_currency(callback: CallbackQuery):
+    """Выдать 10000 огонечков пользователю."""
+    from utils.config import ADMINS_LIST
+    from database.db import add_balance
+    
+    user_id = callback.from_user.id
+    
+    if user_id not in ADMINS_LIST:
+        await callback.answer("❌ Нет доступа", show_alert=True)
+        return
+    
+    # Выдаём 10000 огонечков
+    new_balance = add_balance(user_id, 10000)
+    
+    await callback.answer(f"✅ Выдано 10000 🔥! Новый баланс: {new_balance}", show_alert=True)
+    
+    # Обновляем сообщение с админ-меню
+    text = (
+        "🔐 <b>Админ-панель</b>\n\n"
+        "Выберите действие:"
+    )
+    
+    from handlers.keyboard import admin_menu_ui
+    await safe_edit_or_replace(
+        callback,
+        text,
+        reply_markup=admin_menu_ui(),
+        parse_mode="HTML"
+    )
+
+
+@router.callback_query(F.data == "admin_give_all_members")
+async def handle_admin_give_all_members(callback: CallbackQuery):
+    """Выдать все карты участников пользователю."""
+    from utils.config import ADMINS_LIST
+    from database.db import get_member_cards, update_member_cards
+    import json
+    
+    user_id = callback.from_user.id
+    
+    if user_id not in ADMINS_LIST:
+        await callback.answer("❌ Нет доступа", show_alert=True)
+        return
+    
+    # Загружаем все карты из каталога
+    with open("data/cards/members.json", "r", encoding="utf-8") as f:
+        all_cards = json.load(f)
+    
+    # Получаем текущие карты пользователя
+    user_cards = get_member_cards(user_id)
+    
+    # Добавляем все карты, которых ещё нет
+    added_count = 0
+    for card in all_cards:
+        card_name = card["name"]
+        if card_name not in user_cards:
+            user_cards[card_name] = {"rank": 1, "received_at": datetime.utcnow().isoformat()}
+            added_count += 1
+    
+    # Сохраняем обновлённые карты
+    update_member_cards(user_id, user_cards)
+    
+    await callback.answer(f"✅ Выдано {added_count} карт участников!", show_alert=True)
+    
+    # Обновляем сообщение с админ-меню
+    text = (
+        "🔐 <b>Админ-панель</b>\n\n"
+        "Выберите действие:"
+    )
+    
+    from handlers.keyboard import admin_menu_ui
+    await safe_edit_or_replace(
+        callback,
+        text,
+        reply_markup=admin_menu_ui(),
+        parse_mode="HTML"
+    )
+
+
 # === АДМИН: СОЗДАТЬ ПРЕСЕЙВ ===
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
