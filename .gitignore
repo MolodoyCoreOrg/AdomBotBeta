@@ -1,25 +1,4 @@
 ```
-# Compiled and build artifacts
-*.pyc
 __pycache__/
-
-# Dependencies
-.venv/
-venv/
-
-# Logs and temp files
-*.log
-*.tmp
-*.swp
-
-# Environment
-.env
-.env.local
-*.env.*
-
-# Editors
-.vscode/
-.idea/
-
-# Original rules preserved
+*.pyc
 ```
