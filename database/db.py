@@ -152,7 +152,8 @@ def create_presave_table():
             CREATE TABLE IF NOT EXISTS presave_actions (
                 user_id INTEGER PRIMARY KEY,
                 pressed_at INTEGER NOT NULL,      -- unix timestamp
-                rewarded BOOLEAN DEFAULT 0
+                rewarded BOOLEAN DEFAULT 0,
+                screenshot_file_id TEXT           -- file_id скриншота
             )
         """)
         conn.commit()
@@ -716,7 +717,7 @@ def add_presave_action(user_id: int, pressed_at: int) -> None:
     with connect() as conn:
         cur = conn.cursor()
         cur.execute(
-            "INSERT OR REPLACE INTO presave_actions (user_id, pressed_at, rewarded) VALUES (?, ?, 0)",
+            "INSERT OR REPLACE INTO presave_actions (user_id, pressed_at, rewarded, screenshot_file_id) VALUES (?, ?, 0, NULL)",
             (user_id, pressed_at)
         )
         conn.commit()
@@ -725,11 +726,18 @@ def get_presave_action(user_id: int) -> dict | None:
     """Возвращает информацию о действии пресейва пользователя."""
     with connect() as conn:
         cur = conn.cursor()
-        cur.execute("SELECT pressed_at, rewarded FROM presave_actions WHERE user_id = ?", (user_id,))
+        cur.execute("SELECT pressed_at, rewarded, screenshot_file_id FROM presave_actions WHERE user_id = ?", (user_id,))
         row = cur.fetchone()
         if row:
-            return {"pressed_at": row[0], "rewarded": bool(row[1])}
+            return {"pressed_at": row[0], "rewarded": bool(row[1]), "screenshot_file_id": row[2]}
         return None
+
+def update_presave_screenshot(user_id: int, screenshot_file_id: str) -> None:
+    """Сохраняет file_id скриншота для пользователя."""
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("UPDATE presave_actions SET screenshot_file_id = ? WHERE user_id = ?", (screenshot_file_id, user_id))
+        conn.commit()
 
 def mark_presave_rewarded(user_id: int) -> None:
     """Отмечает, что награда за пресейв уже выдана."""
@@ -749,9 +757,9 @@ def get_unrewarded_presave_actions() -> list[dict]:
     """Возвращает список пользователей, которые нажали кнопку, но ещё не получили награду."""
     with connect() as conn:
         cur = conn.cursor()
-        cur.execute("SELECT user_id, pressed_at FROM presave_actions WHERE rewarded = 0")
+        cur.execute("SELECT user_id, pressed_at, screenshot_file_id FROM presave_actions WHERE rewarded = 0 AND screenshot_file_id IS NOT NULL")
         rows = cur.fetchall()
-        return [{"user_id": row[0], "pressed_at": row[1]} for row in rows]
+        return [{"user_id": row[0], "pressed_at": row[1], "screenshot_file_id": row[2]} for row in rows]
 
 
 # ==================== ФУНКЦИИ ДЛЯ СИСТЕМЫ ОБМЕНА ====================
