@@ -1,1 +1,40 @@
+<<<<<<< Updated upstream
 Nothing should be ignored since only source code files (.py) were modified.
+=======
+```
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+
+# Dependencies
+.venv/
+venv/
+node_modules/
+
+# Build artifacts
+dist/
+build/
+target/
+```
+# Данные бота (карточки, база данных)
+*.db
+*.sqlite
+*.json
+data/
+cards/
+>>>>>>> Stashed changes
