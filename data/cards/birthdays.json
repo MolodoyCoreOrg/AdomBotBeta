@@ -1,0 +1,580 @@
+{
+    "birthdays": [
+        {
+            "id": 1,
+            "nickname": "нига204vip",
+            "real_name": "Адамчик",
+            "date": "01.11",
+            "year": 1998,
+            "status": "Готово",
+            "greeting": "🎉 Адамчик, с днём рождения! Ты как выдержанный винишко — с годами только круче!",
+            "image": "birthday_1.jpg"
+        },
+        {
+            "id": 2,
+            "nickname": "@раzгон",
+            "real_name": "Вадим",
+            "date": "27.11",
+            "year": 2005,
+            "status": "Готово",
+            "greeting": "🚀 Вадим, твой разгон только начинается! Лети к звёздам!",
+            "image": "birthday_2.jpg"
+        },
+        {
+            "id": 3,
+            "nickname": "TONI STARK",
+            "real_name": "Костян 444",
+            "date": "04.01",
+            "year": 2005,
+            "status": "Готово",
+            "greeting": "⚡ Костян, ты наш Железный Человек! Пусть броня будет крепкой, а реактор — мощным!",
+            "image": "birthday_3.jpg"
+        },
+        {
+            "id": 4,
+            "nickname": "Dr. Perc Hunter",
+            "real_name": "Валера",
+            "date": "30.09",
+            "year": 2005,
+            "status": "Готово",
+            "greeting": "💊 Валера, доктор знает толк в праздниках! Лечи этот мир своим позитивом!",
+            "image": "birthday_4.jpg"
+        },
+        {
+            "id": 5,
+            "nickname": "MR.HOTKEY",
+            "real_name": "Ярик",
+            "date": "20.01",
+            "year": 2007,
+            "status": "Готово",
+            "greeting": "⌨️ Ярик, жми на газ и не отпускай! Горячие клавиши — горячие тусовки!",
+            "image": "birthday_5.jpg"
+        },
+        {
+            "id": 6,
+            "nickname": "gpo4u~MHE~\\/~TeMHoTe",
+            "real_name": "Егаш",
+            "date": "17.05",
+            "year": 2005,
+            "status": "Готово",
+            "greeting": "🌑 Егаш, даже в темноте ты светишь ярче всех! Продолжай гореть!",
+            "image": "birthday_6.jpg"
+        },
+        {
+            "id": 7,
+            "nickname": "Клубничный Vjlink",
+            "real_name": "Ашот",
+            "date": "22.01",
+            "year": 2005,
+            "status": "Готово",
+            "greeting": "🍓 Ашот, сладкий как клубничка, острый как перчинка! С днюхой!",
+            "image": "birthday_7.jpg"
+        },
+        {
+            "id": 8,
+            "nickname": "skibidisigma",
+            "real_name": "Дрюс",
+            "date": "17.07",
+            "year": 2001,
+            "status": "Готово",
+            "greeting": "🚽 Дрюс, скибиди-туалет отдыхает! Ты настоящий сигма-мейн!",
+            "image": "birthday_8.jpg"
+        },
+        {
+            "id": 9,
+            "nickname": "DJ BLOOD HAMSTER",
+            "real_name": "Слава",
+            "date": "20.09",
+            "year": 2003,
+            "status": "Готово",
+            "greeting": "🐹🎧 Слава, хомяк крутит пластинки! Зацени этот бит!",
+            "image": "birthday_9.jpg"
+        },
+        {
+            "id": 10,
+            "nickname": "гуфи коксаскер",
+            "real_name": "Серый",
+            "date": "16.11",
+            "year": 2003,
+            "status": "Готово",
+            "greeting": "🐕 Серый, гуфи стиль — это навсегда! Лай громче, живи ярче!",
+            "image": "birthday_10.jpg"
+        },
+        {
+            "id": 11,
+            "nickname": "BakuganVK",
+            "real_name": "Юра",
+            "date": "11.03",
+            "year": 2001,
+            "status": "Готово",
+            "greeting": "⚡ Юра, бакуган в деле! Битва начинается прямо сейчас!",
+            "image": "birthday_11.jpg"
+        },
+        {
+            "id": 12,
+            "nickname": "HALAL CAFE",
+            "real_name": "Влад",
+            "date": "04.10",
+            "year": 1998,
+            "status": "Готово",
+            "greeting": "☪️ Влад, халяль кафе открыто! Угощайся и празднуй!",
+            "image": "birthday_12.jpg"
+        },
+        {
+            "id": 13,
+            "nickname": "DJ pupok",
+            "real_name": "Паша",
+            "date": "21.04",
+            "year": 1998,
+            "status": "Готово",
+            "greeting": "🎵 Паша, пупок земли — это про тебя! Крути вертушки!",
+            "image": "birthday_13.jpg"
+        },
+        {
+            "id": 14,
+            "nickname": "lil jordan",
+            "real_name": "Степан",
+            "date": "26.01",
+            "year": 2001,
+            "status": "Готово",
+            "greeting": "🏀 Степан, литл Джордан на площадке! Забивай по полной!",
+            "image": "birthday_14.jpg"
+        },
+        {
+            "id": 15,
+            "nickname": "RaZzDaVashKa",
+            "real_name": "Баха",
+            "date": "16.12",
+            "year": 1999,
+            "status": "Готово",
+            "greeting": "🎂 Баха, разведашка устроена в твою честь! Развлекайся!",
+            "image": "birthday_15.jpg"
+        },
+        {
+            "id": 16,
+            "nickname": "макбук золотистый",
+            "real_name": "Даня",
+            "date": "27.10",
+            "year": 2004,
+            "status": "Готово",
+            "greeting": "💻 Даня, золотой макбук сияет! Ты наш tech-герой!",
+            "image": "birthday_16.jpg"
+        },
+        {
+            "id": 17,
+            "nickname": "НАТАХТАРИПЛАГГ",
+            "real_name": "Кирилл",
+            "date": "13.03",
+            "year": 2003,
+            "status": "Готово",
+            "greeting": "🎮 Кирилл, натахтари плагг активирован! Читай силу!",
+            "image": "birthday_17.jpg"
+        },
+        {
+            "id": 18,
+            "nickname": "Nash Slone",
+            "real_name": "Слава",
+            "date": "08.12",
+            "year": 1999,
+            "status": "Готово",
+            "greeting": "🎤 Слава, наш слон мощнее всех! Рви микрофон!",
+            "image": "birthday_18.jpg"
+        },
+        {
+            "id": 19,
+            "nickname": "BALBESINAGA",
+            "real_name": "Данил",
+            "date": "20.11",
+            "year": 2001,
+            "status": "Готово",
+            "greeting": "😎 Данил, балбесина в законе! Отжигай по-взрослому!",
+            "image": "birthday_19.jpg"
+        },
+        {
+            "id": 20,
+            "nickname": "BRUCE LEAN",
+            "real_name": "Брюс",
+            "date": "04.11",
+            "year": 2003,
+            "status": "Готово",
+            "greeting": "🥋 Брюс, ли́н против всех! Покажи мастер-класс!",
+            "image": "birthday_20.jpg"
+        },
+        {
+            "id": 21,
+            "nickname": "банан",
+            "real_name": "банан",
+            "date": "30.08",
+            "year": 2007,
+            "status": "Готово",
+            "greeting": "🍌 Банан, ты наш желтый герой! Очищайся от проблем!",
+            "image": "birthday_21.jpg"
+        },
+        {
+            "id": 22,
+            "nickname": "DJ ЧУГУН",
+            "real_name": "Неизвестно",
+            "date": null,
+            "year": null,
+            "status": "Написал",
+            "greeting": null,
+            "image": null
+        },
+        {
+            "id": 23,
+            "nickname": "Mr. Penis",
+            "real_name": "Неизвестно",
+            "date": null,
+            "year": null,
+            "status": "В розыске",
+            "greeting": null,
+            "image": null
+        },
+        {
+            "id": 24,
+            "nickname": "гетрозмей",
+            "real_name": "Богдан",
+            "date": "22.09",
+            "year": 2001,
+            "status": "Готово",
+            "greeting": "🐍 Богдан, гетрозмей ползёт к победе! Шипи громче!",
+            "image": "birthday_24.jpg"
+        },
+        {
+            "id": 25,
+            "nickname": "clubstepik",
+            "real_name": "Кейро или Санек",
+            "date": "17.04",
+            "year": 2010,
+            "status": "Готово",
+            "greeting": "🎮 Кейро/Санек, клабстепик в ритме! Танцуй до упаду!",
+            "image": "birthday_25.jpg"
+        },
+        {
+            "id": 26,
+            "nickname": "ХАПУГА",
+            "real_name": "Костя \"С\" как доллар",
+            "date": "04.03",
+            "year": 2007,
+            "status": "Готово",
+            "greeting": "💵 Костя, хапуга гребёт деньги лопатой! $ как доллар!",
+            "image": "birthday_26.jpg"
+        },
+        {
+            "id": 27,
+            "nickname": "$вRто́й Граа́Lь",
+            "real_name": "Майкл (Миша)",
+            "date": "23.11",
+            "year": 2004,
+            "status": "Готово",
+            "greeting": "🏆 Миша, второй грааль найден! Пей из чаши успеха!",
+            "image": "birthday_27.jpg"
+        },
+        {
+            "id": 28,
+            "nickname": "Яi4NыЙ_ШnaiDer_777",
+            "real_name": "Паша",
+            "date": "30.04",
+            "year": 2003,
+            "status": "Готово",
+            "greeting": "✂️ Паша, шнайдер режет по живому! 777 — твой счастливый код!",
+            "image": "birthday_28.jpg"
+        },
+        {
+            "id": 29,
+            "nickname": "$heptoon",
+            "real_name": "Гоша",
+            "date": "07.09",
+            "year": 2005,
+            "status": "Готово",
+            "greeting": "💰 Гоша, шефтун считает кэш! Богатей с каждым днём!",
+            "image": "birthday_29.jpg"
+        },
+        {
+            "id": 30,
+            "nickname": "DJ ДУРАК",
+            "real_name": "DJ ДУРАК",
+            "date": "12.11",
+            "year": 1999,
+            "status": "Готово",
+            "greeting": "🃏 DJ Дурак, король колоды! Раздавай по полной!",
+            "image": "birthday_30.jpg"
+        },
+        {
+            "id": 31,
+            "nickname": "LabubuL0V3R_exXxtraSwag1",
+            "real_name": "Неизвестно",
+            "date": null,
+            "year": null,
+            "status": "В розыске",
+            "greeting": null,
+            "image": null
+        },
+        {
+            "id": 32,
+            "nickname": "Коричневый",
+            "real_name": "Неизвестно",
+            "date": null,
+            "year": null,
+            "status": "В розыске",
+            "greeting": null,
+            "image": null
+        },
+        {
+            "id": 33,
+            "nickname": "zhiguli",
+            "real_name": "Неизвестно",
+            "date": null,
+            "year": null,
+            "status": "В розыске",
+            "greeting": null,
+            "image": null
+        },
+        {
+            "id": 34,
+            "nickname": "lil kakashke",
+            "real_name": "Амин",
+            "date": "17.06",
+            "year": 2008,
+            "status": "Готово",
+            "greeting": "💩 Амин, литл какашке — большой привет! Будь на волне!",
+            "image": "birthday_34.jpg"
+        },
+        {
+            "id": 35,
+            "nickname": "дайденяк",
+            "real_name": "Максим",
+            "date": "20.12",
+            "year": 2007,
+            "status": "Готово",
+            "greeting": "🎁 Максим, дайденяк дарит подарки! Получай и отдавай!",
+            "image": "birthday_35.jpg"
+        },
+        {
+            "id": 36,
+            "nickname": "клим2008",
+            "real_name": "Клим",
+            "date": "16.08",
+            "year": 2008,
+            "status": "Готово",
+            "greeting": "🔥 Клим, климат жаркий! Гори, но не сгорай!",
+            "image": "birthday_36.jpg"
+        },
+        {
+            "id": 37,
+            "nickname": "мс кукан",
+            "real_name": "Паша",
+            "date": "18.09",
+            "year": 2010,
+            "status": "Готово",
+            "greeting": "🎤 Паша, эмси кукан на микрофоне! Рэпчит лучше всех!",
+            "image": "birthday_37.jpg"
+        },
+        {
+            "id": 38,
+            "nickname": "битрейт",
+            "real_name": "Артем",
+            "date": "16.07",
+            "year": 2010,
+            "status": "Готово",
+            "greeting": "🎵 Артем, битрейт зашкаливает! Лови ритм!",
+            "image": "birthday_38.jpg"
+        },
+        {
+            "id": 39,
+            "nickname": "молодая денюжка",
+            "real_name": "Илья",
+            "date": "05.05",
+            "year": 2010,
+            "status": "Готово",
+            "greeting": "💸 Илья, молодая деньга растёт! Инвестируй в мечту!",
+            "image": "birthday_39.jpg"
+        },
+        {
+            "id": 40,
+            "nickname": "@слизень3000",
+            "real_name": "Серега",
+            "date": "22.10",
+            "year": 2004,
+            "status": "Готово",
+            "greeting": "🐌 Серега, слизень3000 ползёт к финишу! Медленно но верно!",
+            "image": "birthday_40.jpg"
+        },
+        {
+            "id": 41,
+            "nickname": "дж миша",
+            "real_name": "Миша",
+            "date": "28.11",
+            "year": 2005,
+            "status": "Готово",
+            "greeting": "🎧 Миша, дж миша сводит треки! Миксуй жизнь!",
+            "image": "birthday_41.jpg"
+        },
+        {
+            "id": 42,
+            "nickname": "мс паша",
+            "real_name": "Неизвестно",
+            "date": null,
+            "year": null,
+            "status": "В розыске",
+            "greeting": null,
+            "image": null
+        },
+        {
+            "id": 43,
+            "nickname": "вова кьё",
+            "real_name": "Вова",
+            "date": "02.03",
+            "year": 2008,
+            "status": "Готово",
+            "greeting": "🥋 Вова, кьё мастер! Бей точно в цель!",
+            "image": "birthday_43.jpg"
+        },
+        {
+            "id": 44,
+            "nickname": "костик4",
+            "real_name": "Костя",
+            "date": "14.07",
+            "year": 2006,
+            "status": "Готово",
+            "greeting": "🎮 Костя, костик4 на уровне! Проходи игру жизни!",
+            "image": "birthday_44.jpg"
+        },
+        {
+            "id": 45,
+            "nickname": "ЛюляK3bab4ik",
+            "real_name": "Неизвестно",
+            "date": null,
+            "year": null,
+            "status": "В розыске",
+            "greeting": null,
+            "image": null
+        },
+        {
+            "id": 46,
+            "nickname": "вхуски",
+            "real_name": "Антон",
+            "date": "26.02",
+            "year": 2004,
+            "status": "Готово",
+            "greeting": "🍫 Антон, вхуски тают во рту! Сладкой жизни!",
+            "image": "birthday_46.jpg"
+        },
+        {
+            "id": 47,
+            "nickname": "KloppKid",
+            "real_name": "Руслан",
+            "date": "28.09",
+            "year": 2006,
+            "status": "Готово",
+            "greeting": "⚽ Руслан, клопп кид на поле! Забивай голы!",
+            "image": "birthday_47.jpg"
+        },
+        {
+            "id": 48,
+            "nickname": "Вася Титькин",
+            "real_name": "Артем",
+            "date": "14.09",
+            "year": 2004,
+            "status": "Готово",
+            "greeting": "👀 Артем, вася титькин всё видит! Ничего не укроется!",
+            "image": "birthday_48.jpg"
+        },
+        {
+            "id": 49,
+            "nickname": "TOT SAMIY BELIY",
+            "real_name": "Егор",
+            "date": "06.06",
+            "year": 1999,
+            "status": "Готово",
+            "greeting": "🤍 Егор, тот самый белый! Сияй как снег!",
+            "image": "birthday_49.jpg"
+        },
+        {
+            "id": 50,
+            "nickname": "френдли таго",
+            "real_name": "Кирилл",
+            "date": "16.01",
+            "year": 2004,
+            "status": "Готово",
+            "greeting": "🤝 Кирилл, френдли таго для всех! Дружба — это сила!",
+            "image": "birthday_50.jpg"
+        },
+        {
+            "id": 51,
+            "nickname": "Barbo$228",
+            "real_name": "barbo$228",
+            "date": "29.05",
+            "year": 2002,
+            "status": "Готово",
+            "greeting": "💵 Barbo$228, деньги любят счёт! Копи и трать с умом!",
+            "image": "birthday_51.jpg"
+        },
+        {
+            "id": 52,
+            "nickname": "мистер сиськи 777",
+            "real_name": "Макс",
+            "date": "16.09",
+            "year": 2008,
+            "status": "Готово",
+            "greeting": "🎰 Макс, 777 — джекпот! Крути барабан удачи!",
+            "image": "birthday_52.jpg"
+        },
+        {
+            "id": 53,
+            "nickname": "Лил Янг Асап Хач",
+            "real_name": "Вано",
+            "date": "03.01",
+            "year": 2000,
+            "status": "Готово",
+            "greeting": "🎤 Вано, литл янг асап хач на бите! Фристайль весь день!",
+            "image": "birthday_53.jpg"
+        },
+        {
+            "id": 54,
+            "nickname": "урна",
+            "real_name": "Никита",
+            "date": "26.05",
+            "year": 2008,
+            "status": "Готово",
+            "greeting": "🗑️ Никита, урна полна идей! Выбрасывай негатив!",
+            "image": "birthday_54.jpg"
+        },
+        {
+            "id": 55,
+            "nickname": "Павлерский",
+            "real_name": "Паша",
+            "date": "08.07",
+            "year": 2008,
+            "status": "Готово",
+            "greeting": "🎸 Паша, павлерский рокер! Играй громче!",
+            "image": "birthday_55.jpg"
+        },
+        {
+            "id": 56,
+            "nickname": "ДиксиШутер",
+            "real_name": "Влад",
+            "date": "17.09",
+            "year": 1998,
+            "status": "Готово",
+            "greeting": "🔫 Влад, диксишутер меткий! Попадай в яблочко!",
+            "image": "birthday_56.jpg"
+        },
+        {
+            "id": 57,
+            "nickname": "lil jenshina",
+            "real_name": "Яна",
+            "date": "19.06",
+            "year": 2005,
+            "status": "Готово",
+            "greeting": "👸 Яна, литл женшина правит балом! Королева дня!",
+            "image": "birthday_57.jpg"
+        }
+    ],
+    "birthday_bonuses": {
+        "description": "Бонусы для всех пользователей в день рождения участника",
+        "fire_points_multiplier": 2,
+        "super_ability_draws": 2,
+        "casino_spins_bonus": 5
+    }
+}
