@@ -1,15 +1,40 @@
-<<<<<<< Updated upstream
-Nothing should be ignored since only source code files (.py) were modified.
-=======
 ```
 # Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.Python
+env/
+venv/
+.venv/
+.ENV
+.ENV.local
 
-# Logs and temp files
+# Logs
 *.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
+.coverage
+coverage/
+htmlcov/
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# Temp
 *.tmp
 
 # Environment
@@ -17,24 +42,6 @@ __pycache__/
 .env.local
 *.env.*
 
-# Editors
-.vscode/
-.idea/
-
-# Dependencies
-.venv/
-venv/
-node_modules/
-
-# Build artifacts
-dist/
-build/
-target/
+# MyPy
+.mypy_cache/
 ```
-# Данные бота (карточки, база данных)
-*.db
-*.sqlite
-*.json
-data/
-cards/
->>>>>>> Stashed changes

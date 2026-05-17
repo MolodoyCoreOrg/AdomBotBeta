@@ -5,7 +5,7 @@ from aiogram.types import CallbackQuery
 from aiogram.exceptions import TelegramBadRequest
 
 from handlers.keyboard import top_leaderboard_ui, top_roulette_ui, top_meow_ui, top_mat_ui, top_jopa_ui, top_cards_ui, top_balance_ui
-from utils.config import DB_FILE  # путь к твоей базе данных
+from utils.config import DB_FILE, ADMINS_LIST  # путь к твоей базе данных и список админов
 
 router = Router()
 
@@ -27,6 +27,10 @@ async def show_top_member_cards(callback: CallbackQuery):
 
     counts = []
     for user_id, username, member_cards_json in rows:
+        # Пропускаем админов
+        if user_id in ADMINS_LIST:
+            continue
+        
         try:
             cards = json.loads(member_cards_json or "{}")
         except Exception:
@@ -85,6 +89,10 @@ async def show_top_skill_cards(callback: CallbackQuery):
 
     counts = []
     for user_id, username, skill_cards_json in rows:
+        # Пропускаем админов
+        if user_id in ADMINS_LIST:
+            continue
+        
         try:
             cards = json.loads(skill_cards_json or "{}")
         except Exception:
@@ -149,12 +157,16 @@ async def show_top_donators(callback: CallbackQuery):
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
 
-    c.execute("""
+    # Создаем плейсхолдеры для списка админов
+    admin_placeholders = ','.join('?' * len(ADMINS_LIST))
+    
+    c.execute(f"""
         SELECT username, all_amount, biggest_amount 
         FROM user_donations
+        WHERE user_id NOT IN ({admin_placeholders})
         ORDER BY all_amount DESC
         LIMIT 10
-    """)
+    """, ADMINS_LIST)
     top_list = c.fetchall()
     conn.close()
 
@@ -206,13 +218,17 @@ async def show_top_meow_roulette(callback: CallbackQuery):
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
 
-    c.execute("""
+    # Создаем плейсхолдеры для списка админов
+    admin_placeholders = ','.join('?' * len(ADMINS_LIST))
+    
+    c.execute(f"""
         SELECT ru.user_id, u.username, ru.jopa_count
         FROM roulette_user ru
         LEFT JOIN users u ON ru.user_id = u.user_id
+        WHERE ru.user_id NOT IN ({admin_placeholders})
         ORDER BY ru.jopa_count DESC
         LIMIT 10
-    """)
+    """, ADMINS_LIST)
     top_list = c.fetchall()
     conn.close()
 
@@ -246,13 +262,17 @@ async def show_top_meow_roulette_alltime(callback: CallbackQuery):
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
 
-    c.execute("""
+    # Создаем плейсхолдеры для списка админов
+    admin_placeholders = ','.join('?' * len(ADMINS_LIST))
+    
+    c.execute(f"""
         SELECT ru.user_id, u.username, ru.meow_count_all
         FROM roulette_user ru
         LEFT JOIN users u ON ru.user_id = u.user_id
+        WHERE ru.user_id NOT IN ({admin_placeholders})
         ORDER BY ru.meow_count_all DESC
         LIMIT 10
-    """)
+    """, ADMINS_LIST)
     top_list = c.fetchall()
     conn.close()
 
@@ -286,13 +306,17 @@ async def show_top_meow_roulette(callback: CallbackQuery):
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
 
-    c.execute("""
+    # Создаем плейсхолдеры для списка админов
+    admin_placeholders = ','.join('?' * len(ADMINS_LIST))
+    
+    c.execute(f"""
         SELECT ru.user_id, u.username, ru.meow_count
         FROM roulette_user ru
         LEFT JOIN users u ON ru.user_id = u.user_id
+        WHERE ru.user_id NOT IN ({admin_placeholders})
         ORDER BY ru.meow_count DESC
         LIMIT 10
-    """)
+    """, ADMINS_LIST)
     top_list = c.fetchall()
     conn.close()
 
@@ -326,14 +350,18 @@ async def show_top_roulette_alltime(callback: CallbackQuery):
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
 
+    # Создаем плейсхолдеры для списка админов
+    admin_placeholders = ','.join('?' * len(ADMINS_LIST))
+    
     # Делаем JOIN, чтобы взять username из users
-    c.execute("""
+    c.execute(f"""
         SELECT ru.user_id, u.username, ru.total_opened
         FROM roulette_user ru
         LEFT JOIN users u ON ru.user_id = u.user_id
+        WHERE ru.user_id NOT IN ({admin_placeholders})
         ORDER BY ru.total_opened DESC
         LIMIT 10
-    """)
+    """, ADMINS_LIST)
     top_list = c.fetchall()
     conn.close()
 
@@ -370,14 +398,18 @@ async def show_top_roulette_today(callback: CallbackQuery):
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
 
+    # Создаем плейсхолдеры для списка админов
+    admin_placeholders = ','.join('?' * len(ADMINS_LIST))
+    
     # Делаем JOIN, чтобы взять username из users
-    c.execute("""
+    c.execute(f"""
         SELECT ru.user_id, u.username, ru.opened_today
         FROM roulette_user ru
         LEFT JOIN users u ON ru.user_id = u.user_id
+        WHERE ru.user_id NOT IN ({admin_placeholders})
         ORDER BY ru.opened_today DESC
         LIMIT 10
-    """)
+    """, ADMINS_LIST)
     top_list = c.fetchall()
     conn.close()
 
@@ -435,12 +467,16 @@ async def show_top_donators(callback: CallbackQuery):
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
 
-    c.execute("""
+    # Создаем плейсхолдеры для списка админов
+    admin_placeholders = ','.join('?' * len(ADMINS_LIST))
+    
+    c.execute(f"""
         SELECT username, word_send_count 
         FROM user_donations
+        WHERE user_id NOT IN ({admin_placeholders})
         ORDER BY word_send_count DESC
         LIMIT 10
-    """)
+    """, ADMINS_LIST)
     top_list = c.fetchall()
     conn.close()
 
@@ -476,12 +512,16 @@ async def show_top_donators(callback: CallbackQuery):
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
 
-    c.execute("""
+    # Создаем плейсхолдеры для списка админов
+    admin_placeholders = ','.join('?' * len(ADMINS_LIST))
+    
+    c.execute(f"""
         SELECT username, word_count 
         FROM user_donations
+        WHERE user_id NOT IN ({admin_placeholders})
         ORDER BY word_count DESC
         LIMIT 10
-    """)
+    """, ADMINS_LIST)
     top_list = c.fetchall()
     conn.close()
 
@@ -536,12 +576,16 @@ async def show_top_meow_roulette(callback: CallbackQuery):
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
 
-    c.execute("""
+    # Создаем плейсхолдеры для списка админов
+    admin_placeholders = ','.join('?' * len(ADMINS_LIST))
+    
+    c.execute(f"""
         SELECT user_id, username, balance 
         FROM users
+        WHERE user_id NOT IN ({admin_placeholders})
         ORDER BY balance DESC
         LIMIT 10
-    """)
+    """, ADMINS_LIST)
     top_list = c.fetchall()
     conn.close()
 
@@ -577,12 +621,16 @@ async def show_top_meow_roulette(callback: CallbackQuery):
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
 
-    c.execute("""
+    # Создаем плейсхолдеры для списка админов
+    admin_placeholders = ','.join('?' * len(ADMINS_LIST))
+    
+    c.execute(f"""
         SELECT user_id, username, balance_all_time
         FROM users
+        WHERE user_id NOT IN ({admin_placeholders})
         ORDER BY balance_all_time DESC
         LIMIT 10
-    """)
+    """, ADMINS_LIST)
     top_list = c.fetchall()
     conn.close()
 
