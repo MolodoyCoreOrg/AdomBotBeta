@@ -31,6 +31,9 @@ target/
 *.db
 *.sqlite
 *.json
-data/
 cards/
 
+*.db-shm
+*.db-wal
+migrate_user_cards.py
+venv3/
