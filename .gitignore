@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
-Nothing should be ignored since only source code files (.py) were modified.
-=======
-```
-# Python
+
 __pycache__/
 *.pyc
 *.pyo
@@ -37,4 +33,4 @@ target/
 *.json
 data/
 cards/
->>>>>>> Stashed changes
+
