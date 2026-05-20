@@ -9,7 +9,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message, FSInputFile
 from aiogram.exceptions import TelegramRetryAfter, TelegramBadRequest
 
-from database.db import get_member_cards, update_member_cards, increment_stat, get_card_drop_counts
+from database.db import get_member_cards, update_member_cards, increment_stat, get_card_drop_counts, add_balance
 from ..keyboard import get_main_keyboard
 from ..picture import find_image_file
 from utils.config import RARITY_WEIGHTS
@@ -145,7 +145,7 @@ def update_user_timer_after_open(user_id: int):
 
 
 def weighted_random_choice(cards, user_id: int, user_cards=None,
-                           duplicate_penalty=0.1, count_penalty_factor=0.8, noise_level=0.3):
+                           duplicate_penalty=1.0, count_penalty_factor=1.0, noise_level=0.3):
     if user_cards is None:
         user_cards = []
 
@@ -155,12 +155,11 @@ def weighted_random_choice(cards, user_id: int, user_cards=None,
     for card in cards:
         base_weight = RARITY_WEIGHTS.get(card["rarity"], 0)
 
-        if card["name"] in user_cards:
-            weight = base_weight * duplicate_penalty
-        else:
-            weight = base_weight
+        # Карточки могут повторяться - не снижаем вес за дубликаты
+        weight = base_weight
 
         drops = card_drop_counts.get(card["name"], 0)
+        # Не снижаем вес за количество выпадений
         weight *= count_penalty_factor ** drops
 
         noise = random.uniform(1 - noise_level, 1 + noise_level)
@@ -215,15 +214,27 @@ async def draw_member(event: CallbackQuery | Message):
         work = card["work"]
         image_filename = card["image"]
 
+        # Награда за сжигание повторной карточки в зависимости от редкости
+        burn_rewards = {
+            "Обычная": 10,
+            "Редкая": 50,
+            "Эпическая": 200,
+            "Легендарная": 1000
+        }
+
         if name in user_cards:
             user_cards[name]["rank"] += 1
             rank = user_cards[name]["rank"]
+            reward_amount = burn_rewards.get(rarity, 10)
+            new_balance = add_balance(user_id, reward_amount)
             text = (
                 f"💥 Повторная карточка: <b>{name}</b>\n"
                 f"⭐ Редкость: <i>{rarity}</i>\n"
                 f"🥇 Звание: <i>{work}</i>\n"
                 f"🔼 Ранг повышен: <b>{rank}</b>\n"
-                f"🧠 Получена суперспособность: <i>{skill}</i>"
+                f"🧠 Получена суперспособность: <i>{skill}</i>\n\n"
+                f"🔥 Карточка сожжена! Вы получили {reward_amount}🔥\n"
+                f"💰 Ваш баланс: {new_balance}🔥"
             )
         else:
             rank = 1
