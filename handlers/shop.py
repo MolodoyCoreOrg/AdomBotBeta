@@ -24,6 +24,15 @@ bot = Bot(token=TOKEN)
 KAZINO_FILE = os.path.join("data", "cards", "kazino_upgrades.json")
 
 
+def broadcast_cancel_kb():
+    """Клавиатура с кнопкой отмены для рассылки медиа."""
+    kb = InlineKeyboardBuilder()
+    kb.row(
+        types.InlineKeyboardButton(text="↪️ Назад", callback_data="shop_menu"),
+    )
+    return kb.as_markup()
+
+
 class MediaBroadcastState(StatesGroup):
     waiting_for_text = State()
     waiting_for_photo = State()
@@ -422,7 +431,7 @@ async def shop_broadcast_text(callback: CallbackQuery, state: FSMContext):
         return
     
     await state.set_state(MediaBroadcastState.waiting_for_text)
-    await safe_edit_message(callback.message, "💬 Введите текст сообщения, которое вы хотите отправить всем пользователям бота:\n\nЦена: 50🔥\n\nИспользуйте /cancel для отмены.")
+    await safe_edit_message(callback.message, "💬 Введите текст сообщения, которое вы хотите отправить всем пользователям бота:\n\nЦена: 50🔥\n\nИспользуйте /cancel для отмены или кнопку \"Назад\".", reply_markup=broadcast_cancel_kb())
 
 
 @router.message(MediaBroadcastState.waiting_for_text)
@@ -486,7 +495,7 @@ async def shop_broadcast_photo(callback: CallbackQuery, state: FSMContext):
         return
     
     await state.set_state(MediaBroadcastState.waiting_for_photo)
-    await safe_edit_message(callback.message, "🖼️ Отправьте фото, которое вы хотите показать всем пользователям бота:\n\nЦена: 75🔥\n\nИспользуйте /cancel для отмены.")
+    await safe_edit_message(callback.message, "🖼️ Отправьте фото, которое вы хотите показать всем пользователям бота:\n\nЦена: 75🔥\n\nИспользуйте /cancel для отмены или кнопку \\"Назад\\".", reply_markup=broadcast_cancel_kb())
 
 
 @router.message(MediaBroadcastState.waiting_for_photo, F.photo)
@@ -547,7 +556,7 @@ async def shop_broadcast_gif(callback: CallbackQuery, state: FSMContext):
         await callback.answer("❌ Недостаточно средств (нужно 100🔥).", show_alert=True)
         return
     
-    await state.set_state(MediaBroadcastState.waiting_for_gif)
+    await safe_edit_message(callback.message, "🎬 Отправьте GIF, который вы хотите показать всем пользователям бота:\n\nЦена: 100🔥\n\nИспользуйте /cancel для отмены или кнопку \\"Назад\\".", reply_markup=broadcast_cancel_kb())
     await safe_edit_message(callback.message, "🎬 Отправьте GIF, который вы хотите показать всем пользователям бота:\n\nЦена: 100🔥\n\nИспользуйте /cancel для отмены.")
 
 
@@ -609,7 +618,7 @@ async def shop_broadcast_video(callback: CallbackQuery, state: FSMContext):
         await callback.answer("❌ Недостаточно средств (нужно 150🔥).", show_alert=True)
         return
     
-    await state.set_state(MediaBroadcastState.waiting_for_video)
+    await safe_edit_message(callback.message, "🎥 Отправьте видео, которое вы хотите показать всем пользователям бота:\n\nЦена: 150🔥\n\nИспользуйте /cancel для отмены или кнопку \\"Назад\\".", reply_markup=broadcast_cancel_kb())
     await safe_edit_message(callback.message, "🎥 Отправьте видео, которое вы хотите показать всем пользователям бота:\n\nЦена: 150🔥\n\nИспользуйте /cancel для отмены.")
 
 
@@ -671,7 +680,7 @@ async def shop_broadcast_audio(callback: CallbackQuery, state: FSMContext):
         await callback.answer("❌ Недостаточно средств (нужно 50🔥).", show_alert=True)
         return
     
-    await state.set_state(MediaBroadcastState.waiting_for_audio)
+    await safe_edit_message(callback.message, "🎙️ Отправьте аудиосообщение, которое вы хотите показать всем пользователям бота:\n\nЦена: 50🔥\n\nИспользуйте /cancel для отмены или кнопку \\"Назад\\".", reply_markup=broadcast_cancel_kb())
     await safe_edit_message(callback.message, "🎙️ Отправьте аудиосообщение, которое вы хотите показать всем пользователям бота:\n\nЦена: 50🔥\n\nИспользуйте /cancel для отмены.")
 
 
@@ -732,3 +741,11 @@ async def cancel_handler(message: Message, state: FSMContext):
     if current_state:
         await state.clear()
         await message.answer("❌ Действие отменено.")
+
+
+# Обработчик кнопки "Назад" во время ожидания медиа
+@router.callback_query(F.data == "shop_menu", MediaBroadcastState.waiting_for_text | MediaBroadcastState.waiting_for_photo | MediaBroadcastState.waiting_for_gif | MediaBroadcastState.waiting_for_video | MediaBroadcastState.waiting_for_audio)
+async def cancel_broadcast_via_button(callback: CallbackQuery, state: FSMContext):
+    """Отмена рассылки через кнопку Назад."""
+    await state.clear()
+    await shop_menu(callback)
