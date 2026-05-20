@@ -5,9 +5,24 @@ from aiogram.types import CallbackQuery
 from aiogram.exceptions import TelegramBadRequest
 
 from handlers.keyboard import top_leaderboard_ui, top_roulette_ui, top_meow_ui, top_mat_ui, top_jopa_ui, top_cards_ui, top_balance_ui
-from utils.config import DB_FILE  # путь к твоей базе данных
+from utils.config import DB_FILE, ADMINS_LIST  # путь к твоей базе данных и список админов
 
 router = Router()
+
+# Вспомогательная функция для фильтрации админов из списка лидеров
+def filter_admins(top_list, has_user_id=True):
+    """
+    Фильтрует админов из списка лидеров.
+    top_list - список кортежей, где первый элемент user_id (если has_user_id=True)
+    has_user_id - если False, то в списке нет user_id (например, только username)
+    """
+    if has_user_id:
+        return [item for item in top_list if item[0] not in ADMINS_LIST]
+    else:
+        # Если в списке только username без user_id, нужно проверить по username
+        # Но у нас ADMINS_LIST содержит ID, поэтому такие списки фильтровать нельзя
+        # Возвращаем как есть
+        return top_list
 
 @router.callback_query(F.data == "top_cards_count")
 async def show_top_cards_count(callback: CallbackQuery):
@@ -44,6 +59,9 @@ async def show_top_member_cards(callback: CallbackQuery):
     # сортируем по количеству карточек по убыванию и берём топ-10
     counts.sort(key=lambda x: x[2], reverse=True)
     top_list = counts[:10]
+    
+    # Фильтруем админов из списка
+    top_list = filter_admins(top_list, has_user_id=True)
 
     if not top_list or all(item[2] == 0 for item in top_list):
         await callback.message.answer("📭 Список владельцев карточек пуст")
@@ -102,6 +120,9 @@ async def show_top_skill_cards(callback: CallbackQuery):
     # сортируем по количеству карточек по убыванию и берём топ-10
     counts.sort(key=lambda x: x[2], reverse=True)
     top_list = counts[:10]
+    
+    # Фильтруем админов из списка
+    top_list = filter_admins(top_list, has_user_id=True)
 
     if not top_list or all(item[2] == 0 for item in top_list):
         await callback.message.answer("📭 Список владельцев карточек пуст")
@@ -150,13 +171,16 @@ async def show_top_donators(callback: CallbackQuery):
     c = conn.cursor()
 
     c.execute("""
-        SELECT username, all_amount, biggest_amount 
+        SELECT user_id, username, all_amount, biggest_amount 
         FROM user_donations
         ORDER BY all_amount DESC
         LIMIT 10
     """)
     top_list = c.fetchall()
     conn.close()
+    
+    # Фильтруем админов из списка
+    top_list = filter_admins(top_list, has_user_id=True)
 
     if not top_list:
         await callback.message.answer("📭 Список донатеров пуст")
@@ -164,7 +188,7 @@ async def show_top_donators(callback: CallbackQuery):
         return
 
     text_lines = ["🏆 <b>Топ донатеров</b> 🏆\n"]
-    for i, (username, all_amount, biggest_amount) in enumerate(top_list, start=1):
+    for i, (user_id, username, all_amount, biggest_amount) in enumerate(top_list, start=1):
         display_name = username if username else "Пользователь"
         if username and not username.startswith("@"):
             display_name = "@" + username
@@ -215,6 +239,9 @@ async def show_top_meow_roulette(callback: CallbackQuery):
     """)
     top_list = c.fetchall()
     conn.close()
+    
+    # Фильтруем админов из списка
+    top_list = filter_admins(top_list, has_user_id=True)
 
     if not top_list:
         await callback.message.answer("📭 Список поджопников пуст")
@@ -255,6 +282,9 @@ async def show_top_meow_roulette_alltime(callback: CallbackQuery):
     """)
     top_list = c.fetchall()
     conn.close()
+    
+    # Фильтруем админов из списка
+    top_list = filter_admins(top_list, has_user_id=True)
 
     if not top_list:
         await callback.message.answer("📭 Список мяукольщиков пуст")
@@ -295,6 +325,9 @@ async def show_top_meow_roulette(callback: CallbackQuery):
     """)
     top_list = c.fetchall()
     conn.close()
+    
+    # Фильтруем админов из списка
+    top_list = filter_admins(top_list, has_user_id=True)
 
     if not top_list:
         await callback.message.answer("📭 Список мяукольщиков пуст")
@@ -336,6 +369,9 @@ async def show_top_roulette_alltime(callback: CallbackQuery):
     """)
     top_list = c.fetchall()
     conn.close()
+    
+    # Фильтруем админов из списка
+    top_list = filter_admins(top_list, has_user_id=True)
 
     if not top_list:
         await callback.message.answer("📭 Список казиношников пуст")
@@ -380,6 +416,9 @@ async def show_top_roulette_today(callback: CallbackQuery):
     """)
     top_list = c.fetchall()
     conn.close()
+    
+    # Фильтруем админов из списка
+    top_list = filter_admins(top_list, has_user_id=True)
 
     if not top_list:
         await callback.message.answer("📭 Список казиношников пуст")
@@ -436,13 +475,16 @@ async def show_top_donators(callback: CallbackQuery):
     c = conn.cursor()
 
     c.execute("""
-        SELECT username, word_send_count 
+        SELECT user_id, username, word_send_count 
         FROM user_donations
         ORDER BY word_send_count DESC
         LIMIT 10
     """)
     top_list = c.fetchall()
     conn.close()
+    
+    # Фильтруем админов из списка
+    top_list = filter_admins(top_list, has_user_id=True)
 
     if not top_list:
         await callback.message.answer("📭 Список донатеров пуст")
@@ -450,7 +492,7 @@ async def show_top_donators(callback: CallbackQuery):
         return
 
     text_lines = ["🏆 <b>Топ по количеству отправленных матов</b> 🏆\n"]
-    for i, (username, word_send_count) in enumerate(top_list, start=1):
+    for i, (user_id, username, word_send_count) in enumerate(top_list, start=1):
         display_name = username if username else "Пользователь"
         if username and not username.startswith("@"):
             display_name = "@" + username
@@ -477,13 +519,16 @@ async def show_top_donators(callback: CallbackQuery):
     c = conn.cursor()
 
     c.execute("""
-        SELECT username, word_count 
+        SELECT user_id, username, word_count 
         FROM user_donations
         ORDER BY word_count DESC
         LIMIT 10
     """)
     top_list = c.fetchall()
     conn.close()
+    
+    # Фильтруем админов из списка
+    top_list = filter_admins(top_list, has_user_id=True)
 
     if not top_list:
         await callback.message.answer("📭 Список донатеров пуст")
@@ -491,7 +536,7 @@ async def show_top_donators(callback: CallbackQuery):
         return
 
     text_lines = ["🏆 <b>Топ по количеству матюков</b> 🏆\n"]
-    for i, (username, word_count) in enumerate(top_list, start=1):
+    for i, (user_id, username, word_count) in enumerate(top_list, start=1):
         display_name = username if username else "Пользователь"
         if username and not username.startswith("@"):
             display_name = "@" + username
