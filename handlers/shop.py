@@ -495,7 +495,7 @@ async def shop_broadcast_photo(callback: CallbackQuery, state: FSMContext):
         return
     
     await state.set_state(MediaBroadcastState.waiting_for_photo)
-    await safe_edit_message(callback.message, "🖼️ Отправьте фото, которое вы хотите показать всем пользователям бота:\n\nЦена: 75🔥\n\nИспользуйте /cancel для отмены или кнопку \\"Назад\\".", reply_markup=broadcast_cancel_kb())
+    await safe_edit_message(callback.message, "🖼️ Отправьте фото, которое вы хотите показать всем пользователям бота:\n\nЦена: 75🔥\n\nИспользуйте /cancel для отмены или кнопку «Назад».", reply_markup=broadcast_cancel_kb())
 
 
 @router.message(MediaBroadcastState.waiting_for_photo, F.photo)
@@ -556,7 +556,7 @@ async def shop_broadcast_gif(callback: CallbackQuery, state: FSMContext):
         await callback.answer("❌ Недостаточно средств (нужно 100🔥).", show_alert=True)
         return
     
-    await safe_edit_message(callback.message, "🎬 Отправьте GIF, который вы хотите показать всем пользователям бота:\n\nЦена: 100🔥\n\nИспользуйте /cancel для отмены или кнопку \\"Назад\\".", reply_markup=broadcast_cancel_kb())
+    await safe_edit_message(callback.message, "🎬 Отправьте GIF, который вы хотите показать всем пользователям бота:\n\nЦена: 100🔥\n\nИспользуйте /cancel для отмены или кнопку «Назад».", reply_markup=broadcast_cancel_kb())
     await safe_edit_message(callback.message, "🎬 Отправьте GIF, который вы хотите показать всем пользователям бота:\n\nЦена: 100🔥\n\nИспользуйте /cancel для отмены.")
 
 
@@ -618,7 +618,7 @@ async def shop_broadcast_video(callback: CallbackQuery, state: FSMContext):
         await callback.answer("❌ Недостаточно средств (нужно 150🔥).", show_alert=True)
         return
     
-    await safe_edit_message(callback.message, "🎥 Отправьте видео, которое вы хотите показать всем пользователям бота:\n\nЦена: 150🔥\n\nИспользуйте /cancel для отмены или кнопку \\"Назад\\".", reply_markup=broadcast_cancel_kb())
+    await safe_edit_message(callback.message, "🎥 Отправьте видео, которое вы хотите показать всем пользователям бота:\n\nЦена: 150🔥\n\nИспользуйте /cancel для отмены или кнопку «Назад».", reply_markup=broadcast_cancel_kb())
     await safe_edit_message(callback.message, "🎥 Отправьте видео, которое вы хотите показать всем пользователям бота:\n\nЦена: 150🔥\n\nИспользуйте /cancel для отмены.")
 
 
@@ -680,7 +680,7 @@ async def shop_broadcast_audio(callback: CallbackQuery, state: FSMContext):
         await callback.answer("❌ Недостаточно средств (нужно 50🔥).", show_alert=True)
         return
     
-    await safe_edit_message(callback.message, "🎙️ Отправьте аудиосообщение, которое вы хотите показать всем пользователям бота:\n\nЦена: 50🔥\n\nИспользуйте /cancel для отмены или кнопку \\"Назад\\".", reply_markup=broadcast_cancel_kb())
+    await safe_edit_message(callback.message, "🎙️ Отправьте аудиосообщение, которое вы хотите показать всем пользователям бота:\n\nЦена: 50🔥\n\nИспользуйте /cancel для отмены или кнопку «Назад».", reply_markup=broadcast_cancel_kb())
     await safe_edit_message(callback.message, "🎙️ Отправьте аудиосообщение, которое вы хотите показать всем пользователям бота:\n\nЦена: 50🔥\n\nИспользуйте /cancel для отмены.")
 
 
