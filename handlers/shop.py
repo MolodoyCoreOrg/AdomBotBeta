@@ -744,8 +744,17 @@ async def cancel_handler(message: Message, state: FSMContext):
 
 
 # Обработчик кнопки "Назад" во время ожидания медиа
-@router.callback_query(F.data == "shop_menu", MediaBroadcastState.waiting_for_text | MediaBroadcastState.waiting_for_photo | MediaBroadcastState.waiting_for_gif | MediaBroadcastState.waiting_for_video | MediaBroadcastState.waiting_for_audio)
+@router.callback_query(F.data == "shop_menu")
 async def cancel_broadcast_via_button(callback: CallbackQuery, state: FSMContext):
     """Отмена рассылки через кнопку Назад."""
+    current_state = await state.get_state()
+    if current_state not in [
+        MediaBroadcastState.waiting_for_text.state,
+        MediaBroadcastState.waiting_for_photo.state,
+        MediaBroadcastState.waiting_for_gif.state,
+        MediaBroadcastState.waiting_for_video.state,
+        MediaBroadcastState.waiting_for_audio.state,
+    ]:
+        return
     await state.clear()
     await shop_menu(callback)

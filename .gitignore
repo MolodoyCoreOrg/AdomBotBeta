@@ -5,26 +5,35 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Logs and temp files
-*.log
-*.tmp
+# Database
+database/*.db
 
 # Environment
 .env
 .env.local
 *.env.*
 
-# Editors
-.vscode/
-.idea/
+# Logs
+*.log
 
 # Dependencies
 .venv/
 venv/
-node_modules/
+pip-log.txt
+pip-selfcheck.json
 
-# Build artifacts
-dist/
-build/
-target/
+# Testing
+.coverage
+htmlcov/
+.nox/
+.tox/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 ```
