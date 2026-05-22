@@ -795,7 +795,7 @@ def get_exchange_main_keyboard():
         InlineKeyboardButton(text="📥 Входящие предложения", callback_data="view_incoming_offers"),
     )
     builder.row(
-        InlineKeyboardButton(text="↪️ Назад", callback_data="main_menu"),
+        InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
     )
     return builder.as_markup()
 
