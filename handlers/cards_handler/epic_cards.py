@@ -27,6 +27,7 @@ DB_PATH = "database/users.db"
 
 # Состояния активных процессов
 active_epic_cards = {}  # {user_id: {"card_name": ..., "state": ...}}
+epic_card_usage_lock = {}  # {user_id: timestamp} - блокировка от повторного использования
 
 
 def connect_db():
@@ -159,6 +160,19 @@ async def broadcast_message_with_template(bot, base_message: str, user_id: int, 
 async def use_uraaa(callback: CallbackQuery, bot):
     """Дарение по юзернейму."""
     user_id = callback.from_user.id
+
+    # Проверяем, не используется ли карта уже (защита от мультикликов)
+    import time
+    current_time = time.time()
+    if user_id in epic_card_usage_lock:
+        lock_time = epic_card_usage_lock[user_id]
+        if current_time - lock_time < 3:
+            await callback.answer("⏳ Карта уже используется, дождитесь завершения эффекта!", show_alert=True)
+            return
+
+    # Устанавливаем блокировку
+    epic_card_usage_lock[user_id] = current_time
+
     
     # Запрашиваем юзернейм получателя
     await callback.message.answer(
@@ -553,14 +567,27 @@ def get_back_button() -> InlineKeyboardMarkup:
 @router.callback_query(F.data.startswith("use_epic_card:"))
 async def handle_use_epic_card(callback: CallbackQuery, bot):
     """Обработчик использования эпической карты"""
+    import time
     card_name = callback.data.split(":", 1)[1]
     user_id = callback.from_user.id
+    
+    # Проверяем, не используется ли карта уже (защита от мультикликов)
+    current_time = time.time()
+    if user_id in epic_card_usage_lock:
+        lock_time = epic_card_usage_lock[user_id]
+        # Если прошло меньше 3 секунд с последнего использования
+        if current_time - lock_time < 3:
+            await callback.answer("⏳ Карта уже используется, дождитесь завершения эффекта!", show_alert=True)
+            return
     
     # Проверяем наличие карты
     cards = get_skill_cards(user_id)
     if card_name not in cards:
         await callback.answer("У тебя нет этой карты", show_alert=True)
         return
+    
+    # Устанавливаем блокировку
+    epic_card_usage_lock[user_id] = current_time
     
     # Вызываем соответствующую функцию
     card_handlers = {
@@ -578,8 +605,16 @@ async def handle_use_epic_card(callback: CallbackQuery, bot):
     
     handler = card_handlers.get(card_name)
     if handler:
-        await handler()
+        try:
+            await handler()
+        finally:
+            # Снимаем блокировку после выполнения
+            if user_id in epic_card_usage_lock:
+                del epic_card_usage_lock[user_id]
     else:
+        # Снимаем блокировку при ошибке
+        if user_id in epic_card_usage_lock:
+            del epic_card_usage_lock[user_id]
         await callback.answer("Неизвестная карта", show_alert=True)
 
 
@@ -621,11 +656,13 @@ async def process_username_for_uraaa(message: Message, bot):
         await message.answer("Пользователь не найден. Попробуйте еще раз:")
         return
     
-    # Здесь должна быть логика дарения
-    # Для заглушки просто удаляем состояние
-    del active_epic_cards[user_id]
+    # Удаляем карту после использования
+    remove_skill_card(user_id, "УРААА")
     
-    await message.answer(f"Подарок отправлен пользователю @{username}!")
+    # Очищаем состояние
+    del active_epic_cards[user_id]
+
+    await message.answer(f"Подарок отправлен пользователю @{username}! Карта использована.")
 
 
 # === ПЕРИОДИЧЕСКАЯ ПРОВЕРКА ИСТЕЧЕНИЙ ===
