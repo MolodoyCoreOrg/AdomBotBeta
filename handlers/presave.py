@@ -33,11 +33,10 @@ async def presave_click(callback: CallbackQuery, state: FSMContext):
     if action:
         if action["rewarded"]:
             await callback.answer("Вы уже получили карту за пресейв!", show_alert=True)
+            return
         elif action.get("screenshot_file_id"):
             await callback.answer("Вы уже отправили скриншот, дождитесь модерации", show_alert=True)
-        else:
-            # Пользователь нажал кнопку, но ещё не отправил скриншот - показываем интерфейс
-            pass
+            return
     
     # Загружаем конфиг пресейва
     try:
