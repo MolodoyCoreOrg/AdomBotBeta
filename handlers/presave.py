@@ -61,20 +61,32 @@ async def presave_click(callback: CallbackQuery, state: FSMContext):
     )
     keyboard = InlineKeyboardMarkup(inline_keyboard=[[link_button], [screenshot_button]])
     
-    # Сначала пытаемся отредактировать исходное сообщение кнопки
+    # Отправляем картинку YaLG.jpg с текстом
+    image_path = "data/images/skills/YaLG.jpg"
+    caption_text = (
+        "🎵 <b>Сделать пресейв</b>\n\n"
+        "Поддержи трек \"Я люблю жизнь\" - сделай пресейв!\n"
+        "Перейди по ссылке ниже, послушай трек и добавь его в свою медиатеку.\n"
+        "После этого отправь скриншот для получения эксклюзивной карты!\n\n"
+        "✅ После проверки ты получишь уникальную карту, которую нельзя продать или обменять."
+    )
+    
     try:
-        await callback.message.edit_text(
-            "✅ Спасибо! Перейдите по ссылке, чтобы сделать пресейв.\n"
-            "После этого нажмите кнопку 'Отправить скриншот' и загрузите изображение.",
-            reply_markup=keyboard
+        photo = FSInputFile(image_path)
+        await callback.message.answer_photo(
+            photo=photo,
+            caption=caption_text,
+            reply_markup=keyboard,
+            parse_mode="HTML"
         )
-    except Exception:
-        # Если редактирование не удалось (например, сообщение слишком старое), отправляем новое
+    except Exception as e:
+        # Если картинка не найдена, отправляем только текст
         await callback.message.answer(
-            "✅ Спасибо! Перейдите по ссылке, чтобы сделать пресейв.\n"
-            "После этого нажмите кнопку 'Отправить скриншот' и загрузите изображение.",
-            reply_markup=keyboard
+            caption_text,
+            reply_markup=keyboard,
+            parse_mode="HTML"
         )
+        print(f"Не удалось отправить изображение YaLG.jpg: {e}")
 
     await callback.answer("Готово! Ждите карту после проверки.", show_alert=True)
 
