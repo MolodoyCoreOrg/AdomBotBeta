@@ -43,9 +43,9 @@ async def presave_click(callback: CallbackQuery, state: FSMContext):
     try:
         with open("data/table/presave_config.json", "r", encoding="utf-8") as f:
             config = json.load(f)
-        presave_link = config.get("link", "https://band.link/yaytsa_ptitsy")
+        presave_link = config.get("link", "https://band.link/ya_lublu_zhizn")
     except FileNotFoundError:
-        presave_link = "https://band.link/yaytsa_ptitsy"
+        presave_link = "https://band.link/ya_lublu_zhizn"
 
     # Сохраняем время нажатия
     now = int(time.time())
