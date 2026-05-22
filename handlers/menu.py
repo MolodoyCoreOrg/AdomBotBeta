@@ -333,7 +333,7 @@ def get_profile_text(user_id: int) -> str:
 
 # === UTILITS ===
 
-async def safe_edit_or_replace(callback: CallbackQuery, new_text: str, reply_markup=None, parse_mode=None):
+async def safe_edit_or_replace(callback: CallbackQuery, new_text: str, reply_markup=None, parse_mode=None, keep_message: bool = False):
     msg: Message = callback.message
 
     try:
@@ -343,13 +343,16 @@ async def safe_edit_or_replace(callback: CallbackQuery, new_text: str, reply_mar
             try:
                 await msg.edit_caption(new_text, reply_markup=reply_markup, parse_mode=parse_mode)
             except TelegramBadRequest:
+                if not keep_message:
+                    await msg.delete()
+                    await callback.message.answer(new_text, reply_markup=reply_markup, parse_mode=parse_mode)
+        else:
+            if not keep_message:
                 await msg.delete()
                 await callback.message.answer(new_text, reply_markup=reply_markup, parse_mode=parse_mode)
-        else:
-            await msg.delete()
-            await callback.message.answer(new_text, reply_markup=reply_markup, parse_mode=parse_mode)
     except TelegramBadRequest:
-        await callback.message.answer(new_text, reply_markup=reply_markup, parse_mode=parse_mode)
+        if not keep_message:
+            await callback.message.answer(new_text, reply_markup=reply_markup, parse_mode=parse_mode)
 
     await callback.answer()
 
@@ -675,7 +678,8 @@ async def handle_admin_menu(callback: CallbackQuery):
         callback,
         text,
         reply_markup=admin_menu_ui(),
-        parse_mode="HTML"
+        parse_mode="HTML",
+        keep_message=True
     )
 
 
@@ -712,7 +716,7 @@ async def handle_admin_give_all_skills(callback: CallbackQuery):
     
     await callback.answer(f"✅ Выдано {added_count} карт суперспособностей!", show_alert=True)
     
-    # Обновляем сообщение с админ-меню
+    # Обновляем сообщение с админ-меню (не создавая дубль)
     text = (
         "🔐 <b>Админ-панель</b>\n\n"
         "Выберите действие:"
@@ -723,7 +727,8 @@ async def handle_admin_give_all_skills(callback: CallbackQuery):
         callback,
         text,
         reply_markup=admin_menu_ui(),
-        parse_mode="HTML"
+        parse_mode="HTML",
+        keep_message=True
     )
 
 
@@ -744,7 +749,7 @@ async def handle_admin_give_1000_currency(callback: CallbackQuery):
     
     await callback.answer(f"✅ Выдано 1000 🔥! Новый баланс: {new_balance}", show_alert=True)
     
-    # Обновляем сообщение с админ-меню
+    # Обновляем сообщение с админ-меню (не создавая дубль)
     text = (
         "🔐 <b>Админ-панель</b>\n\n"
         "Выберите действие:"
@@ -755,7 +760,8 @@ async def handle_admin_give_1000_currency(callback: CallbackQuery):
         callback,
         text,
         reply_markup=admin_menu_ui(),
-        parse_mode="HTML"
+        parse_mode="HTML",
+        keep_message=True
     )
 
 
@@ -776,7 +782,7 @@ async def handle_admin_give_10000_currency(callback: CallbackQuery):
     
     await callback.answer(f"✅ Выдано 10000 🔥! Новый баланс: {new_balance}", show_alert=True)
     
-    # Обновляем сообщение с админ-меню
+    # Обновляем сообщение с админ-меню (не создавая дубль)
     text = (
         "🔐 <b>Админ-панель</b>\n\n"
         "Выберите действие:"
@@ -787,7 +793,8 @@ async def handle_admin_give_10000_currency(callback: CallbackQuery):
         callback,
         text,
         reply_markup=admin_menu_ui(),
-        parse_mode="HTML"
+        parse_mode="HTML",
+        keep_message=True
     )
 
 
@@ -824,7 +831,7 @@ async def handle_admin_give_all_members(callback: CallbackQuery):
     
     await callback.answer(f"✅ Выдано {added_count} карт участников!", show_alert=True)
     
-    # Обновляем сообщение с админ-меню
+    # Обновляем сообщение с админ-меню (не создавая дубль)
     text = (
         "🔐 <b>Админ-панель</b>\n\n"
         "Выберите действие:"
@@ -835,7 +842,8 @@ async def handle_admin_give_all_members(callback: CallbackQuery):
         callback,
         text,
         reply_markup=admin_menu_ui(),
-        parse_mode="HTML"
+        parse_mode="HTML",
+        keep_message=True
     )
 
 

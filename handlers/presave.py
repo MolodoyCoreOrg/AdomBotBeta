@@ -33,11 +33,10 @@ async def presave_click(callback: CallbackQuery, state: FSMContext):
     if action:
         if action["rewarded"]:
             await callback.answer("Вы уже получили карту за пресейв!", show_alert=True)
+            return
         elif action.get("screenshot_file_id"):
             await callback.answer("Вы уже отправили скриншот, дождитесь модерации", show_alert=True)
-        else:
-            # Пользователь нажал кнопку, но ещё не отправил скриншот - показываем интерфейс
-            pass
+            return
     
     # Загружаем конфиг пресейва
     try:
@@ -62,11 +61,20 @@ async def presave_click(callback: CallbackQuery, state: FSMContext):
     )
     keyboard = InlineKeyboardMarkup(inline_keyboard=[[link_button], [screenshot_button]])
     
-    await callback.message.answer(
-        "✅ Спасибо! Перейдите по ссылке, чтобы сделать пресейв.\n"
-        "После этого нажмите кнопку 'Отправить скриншот' и загрузите изображение.",
-        reply_markup=keyboard
-    )
+    # Сначала пытаемся отредактировать исходное сообщение кнопки
+    try:
+        await callback.message.edit_text(
+            "✅ Спасибо! Перейдите по ссылке, чтобы сделать пресейв.\n"
+            "После этого нажмите кнопку 'Отправить скриншот' и загрузите изображение.",
+            reply_markup=keyboard
+        )
+    except Exception:
+        # Если редактирование не удалось (например, сообщение слишком старое), отправляем новое
+        await callback.message.answer(
+            "✅ Спасибо! Перейдите по ссылке, чтобы сделать пресейв.\n"
+            "После этого нажмите кнопку 'Отправить скриншот' и загрузите изображение.",
+            reply_markup=keyboard
+        )
 
     await callback.answer("Готово! Ждите карту после проверки.", show_alert=True)
 
