@@ -245,9 +245,12 @@ async def draw_skill(event: CallbackQuery | Message):
 
         name = card["name"]
         rarity = card.get("rarity", "Неизвестно")
-        image_path = find_image_file(card['image'].split('.')[0], "data/images/skills")
+        image_name = card.get('image')
+        image_path = None
+        if image_name:
+            image_path = find_image_file(image_name.split('.')[0], "data/images/skills")
 
-        if not os.path.exists(image_path):
+        if not image_path or not os.path.exists(image_path):
             await event.message.answer("❌ Изображение не найдено.")
             return
 

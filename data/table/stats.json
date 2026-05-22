@@ -1,18 +1,18 @@
 {
-  "total_users": 1068,
+  "total_users": 1107,
   "cards_opened": {
-    "members": 9009,
-    "skills": 27433
+    "members": 9257,
+    "skills": 28006
   },
   "global": {
-    "roulette_opened": 86512,
+    "roulette_opened": 89163,
     "roulette_prizes": {
-      "JOPA": 1931,
-      "+10": 2274,
-      "skills_bonus": 925,
-      "members_bonus": 236,
+      "JOPA": 1974,
+      "+10": 2351,
+      "skills_bonus": 952,
+      "members_bonus": 244,
       "POCELUI": 18,
-      "nothing": 81128
+      "nothing": 83624
     }
   },
   "daily": {
@@ -2577,6 +2577,72 @@
         "members_bonus": 0,
         "POCELUI": 0,
         "nothing": 52
+      }
+    },
+    "2026-05-16": {
+      "roulette_opened": 807,
+      "roulette_prizes": {
+        "JOPA": 14,
+        "+10": 28,
+        "skills_bonus": 6,
+        "members_bonus": 3,
+        "POCELUI": 0,
+        "nothing": 756
+      }
+    },
+    "2026-05-17": {
+      "roulette_opened": 579,
+      "roulette_prizes": {
+        "JOPA": 13,
+        "+10": 12,
+        "skills_bonus": 8,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 546
+      }
+    },
+    "2026-05-18": {
+      "roulette_opened": 409,
+      "roulette_prizes": {
+        "JOPA": 7,
+        "+10": 10,
+        "skills_bonus": 6,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 384
+      }
+    },
+    "2026-05-19": {
+      "roulette_opened": 364,
+      "roulette_prizes": {
+        "JOPA": 5,
+        "+10": 13,
+        "skills_bonus": 4,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 342
+      }
+    },
+    "2026-05-20": {
+      "roulette_opened": 250,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 5,
+        "skills_bonus": 2,
+        "members_bonus": 1,
+        "POCELUI": 0,
+        "nothing": 240
+      }
+    },
+    "2026-05-21": {
+      "roulette_opened": 242,
+      "roulette_prizes": {
+        "JOPA": 2,
+        "+10": 9,
+        "skills_bonus": 1,
+        "members_bonus": 2,
+        "POCELUI": 0,
+        "nothing": 228
       }
     }
   }

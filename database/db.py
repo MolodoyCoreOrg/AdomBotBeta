@@ -474,11 +474,17 @@ def remove_member_card(user_id: int, card_name: str):
         del cards[card_name]
         update_member_cards(user_id, cards)
 
-def add_skill_card(user_id: int, card_name: str):
-    """Добавляет карту суперспособности пользователю."""
+def add_skill_card(user_id: int, card_name: str, is_unique: bool = False):
+    """Добавляет карту суперспособности пользователю.
+    
+    Args:
+        user_id: ID пользователя
+        card_name: Название карты
+        is_unique: Если True, карта помечается как уникальная (нельзя продать/обменять)
+    """
     cards = get_skill_cards(user_id)
-    # Просто добавляем карту с базовой структурой
-    cards[card_name] = {'rank': 1}
+    # Добавляем карту с базовой структурой
+    cards[card_name] = {'rank': 1, 'unique': is_unique}
     update_skill_cards(user_id, cards)
 
 def remove_skill_card(user_id: int, card_name: str):

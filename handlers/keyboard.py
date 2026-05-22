@@ -64,9 +64,6 @@ async def get_main_keyboard(spins, user_id) -> InlineKeyboardMarkup:
     builder.row(
         InlineKeyboardButton(text="🙏 Мотивация", callback_data="motivation_menu"),
     )
-    builder.row(
-        InlineKeyboardButton(text="🎵 Сделать пресейв", callback_data="presave_click"),
-    )
     
     # Добавляем кнопку "Админам" только для админов
     if is_admin(user_id):
@@ -772,7 +769,10 @@ def admin_menu_ui():
         InlineKeyboardButton(text="🃏 Выдать все суперспособности", callback_data="admin_give_all_skills"),
     )
     builder.row(
-        InlineKeyboardButton(text="🔥 Выдать 1000 огонечков", callback_data="admin_give_1000_currency"),
+        InlineKeyboardButton(text="👥 Выдать все карточки участников", callback_data="admin_give_all_members"),
+    )
+    builder.row(
+        InlineKeyboardButton(text="🔥 Выдать 10000 огонечков", callback_data="admin_give_10000_currency"),
     )
     builder.row(
         InlineKeyboardButton(text="🎵 Создать пресейв", callback_data="admin_create_presave"),
