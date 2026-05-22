@@ -255,6 +255,12 @@ async def sell_member_card(event: CallbackQuery):
             index = 0
 
     card_name = owned_card_names[index]
+    
+    # Проверяем, не является ли карта эксклюзивной (за пресейв) - такие карты нельзя продавать
+    if card_name in ["Я люблю жизнь", "Яйцо"]:
+        await event.answer("❌ Эксклюзивные карты за пресейв нельзя продавать!", show_alert=True)
+        return
+    
     card_data = user_cards[card_name]
 
     card_info = next(

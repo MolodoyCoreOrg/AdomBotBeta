@@ -199,6 +199,14 @@ async def presave_approve(callback: CallbackQuery, bot: Bot):
     except FileNotFoundError:
         card_name = "Яйцо"
     
+    # Определяем путь к изображению в зависимости от карты
+    if card_name == "Я люблю жизнь":
+        image_path = "data/images/skills/YaLG.jpg"
+        caption_text = "🎉 Поздравляем, братухо! Ты получил эксклюзивную карту суперспособности *Я люблю жизнь*, за пресейв песни ниги204vip с одноименным названием! Спасибо тебе! Люби жизнь, будь попроще к себе и посерьезнее к делу! Добра и позитива!"
+    else:  # Яйцо
+        image_path = "data/images/skills/yaica.jpg"
+        caption_text = "🎉 Поздравляем, братухо! Ты получил эксклюзивную карту суперспособности *Яйцо*! Эта карта доступна только за пресейвы!"
+    
     # Выдаём карту
     success = award_specific_skill(user_id, card_name)
     if success:
@@ -206,20 +214,19 @@ async def presave_approve(callback: CallbackQuery, bot: Bot):
         delete_presave_action(user_id)
 
         # Отправляем картинку карты вместе с текстом
-        image_path = "data/images/skills/YaLG.jpg"  # путь к изображению карты "Я люблю жизнь"
         try:
             photo = FSInputFile(image_path)
             await bot.send_photo(
                 chat_id=user_id,
                 photo=photo,
-                caption="🎉 Поздравляем, братухо/сеструхо! Ты получил(-а) эксклюзивную карту суперспособности *Я люблю жизнь*, за пресейв песни ниги204vip с одноименным названием! Спасибо тебе огромное за это! Люби жизнь, будь попроще к себе и посерьезнее к делу! Добра и позитива!",
+                caption=caption_text,
                 parse_mode="Markdown"
             )
         except Exception as e:
             # Если картинка не найдена, отправляем только текст
             await bot.send_message(
                 chat_id=user_id,
-                text="🎉 Поздравляем, братухо/сеструхо! Ты получил(-а) эксклюзивную карту суперспособности *Я люблю жизнь*, за пресейв песни ниги204vip с одноименным названием! Спасибо тебе огромное за это! Люби жизнь, будь попроще к себе и посерьезнее к делу! Добра и позитива!",
+                text=caption_text,
                 parse_mode="Markdown"
             )
             print(f"Не удалось отправить изображение карты пользователю {user_id}: {e}")

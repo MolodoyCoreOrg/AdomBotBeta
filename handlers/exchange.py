@@ -61,6 +61,11 @@ async def inline_exchange_start(callback: CallbackQuery, state: FSMContext):
     card_name = parts[2]
     user_id = callback.from_user.id
 
+    # Проверяем, не является ли карта эксклюзивной (за пресейв) - такие карты нельзя обменивать
+    if card_name in ["Я люблю жизнь", "Яйцо"]:
+        await callback.answer("❌ Эксклюзивные карты за пресейв нельзя обменивать!", show_alert=True)
+        return
+
     # Проверяем, есть ли у пользователя такая карта
     if card_type == "member":
         user_cards = get_member_cards(user_id)
@@ -131,12 +136,16 @@ async def select_exchange_type(callback: CallbackQuery, state: FSMContext):
         
     else:  # skill
         cards = get_skill_cards(user_id)
-        if not cards:
-            await callback.answer("❌ У вас нет суперспособностей для обмена!", show_alert=True)
+        # Фильтруем карты: исключаем "Я люблю жизнь" и "Яйцо" из обмена
+        filtered_cards = {name: count for name, count in cards.items() 
+                         if name not in ["Я люблю жизнь", "Яйцо"]}
+        
+        if not filtered_cards:
+            await callback.answer("❌ У вас нет суперспособностей для обмена! (Эксклюзивные карты за пресейв нельзя обменивать)", show_alert=True)
             return
         
         text = "🃏 Выберите суперспособность, которую хотите предложить для обмена:"
-        await safe_edit_message(callback.message, text, reply_markup=get_exchange_skill_cards_keyboard(cards, page=0))
+        await safe_edit_message(callback.message, text, reply_markup=get_exchange_skill_cards_keyboard(filtered_cards, page=0))
     
     await state.set_state(ExchangeStates.selecting_my_card)
     
@@ -261,11 +270,12 @@ async def select_request_type(callback: CallbackQuery, state: FSMContext):
         target_cards = get_skill_cards(target_user_id)
         my_cards = get_skill_cards(user_id)
         
-        # Фильтруем карты: показываем только те, которых нет у текущего пользователя
-        available_cards = {name: count for name, count in target_cards.items() if name not in my_cards}
+        # Фильтруем карты: исключаем "Я люблю жизнь" и "Яйцо" из обмена, показываем только те, которых нет у текущего пользователя
+        available_cards = {name: count for name, count in target_cards.items() 
+                          if name not in my_cards and name not in ["Я люблю жизнь", "Яйцо"]}
         
         if not available_cards:
-            await callback.answer(f"❌ У @{target_username} нет суперспособностей, которых у вас ещё нет!", show_alert=True)
+            await callback.answer(f"❌ У @{target_username} нет суперспособностей, которых у вас ещё нет! (Эксклюзивные карты за пресейв нельзя обменивать)", show_alert=True)
             return
         
         text = f"🃏 Выберите суперспособность, которую хотите получить от @{target_username}:"
@@ -320,6 +330,11 @@ async def select_request_card(callback: CallbackQuery, state: FSMContext):
     else:
         target_cards = get_skill_cards(target_user_id)
         my_cards = get_skill_cards(user_id)
+        
+        # Проверяем, не является ли карта эксклюзивной (за пресейв)
+        if card_name in ["Я люблю жизнь", "Яйцо"]:
+            await callback.answer(f"❌ Эксклюзивные карты за пресейв нельзя обменивать!", show_alert=True)
+            return
         
         if card_name not in target_cards:
             await callback.answer(f"❌ У @{target_username} больше нет этой карты!", show_alert=True)
@@ -595,6 +610,17 @@ async def accept_exchange(callback: CallbackQuery):
     from_user_cards = get_member_cards(offer["from_user_id"]) if offer["offered_card_type"] == "member" else get_skill_cards(offer["from_user_id"])
     # to_user должен иметь requested_card (то, что у него просят)
     to_user_cards = get_member_cards(offer["to_user_id"]) if offer["requested_card_type"] == "member" else get_skill_cards(offer["to_user_id"])
+    
+    # Проверяем, не являются ли карты эксклюзивными (за пресейв) - такие карты нельзя обменивать
+    if offer["offered_card_name"] in ["Я люблю жизнь", "Яйцо"]:
+        await callback.answer("❌ Эксклюзивные карты за пресейв нельзя обменивать!", show_alert=True)
+        update_exchange_offer_status(offer_id, "cancelled")
+        return
+    
+    if offer["requested_card_name"] in ["Я люблю жизнь", "Яйцо"]:
+        await callback.answer("❌ Эксклюзивные карты за пресейв нельзя обменивать!", show_alert=True)
+        update_exchange_offer_status(offer_id, "cancelled")
+        return
     
     if offer["offered_card_name"] not in from_user_cards:
         await callback.answer("❌ У отправителя больше нет этой карты!", show_alert=True)
