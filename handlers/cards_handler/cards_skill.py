@@ -206,6 +206,16 @@ async def sell_skill_card(event: CallbackQuery | Message):
             index = 0
 
     card_name = owned_card_names[index]
+    
+    # Проверяем, не является ли карта эксклюзивной (за пресейв) - такие карты нельзя продавать
+    if card_name in ["Я люблю жизнь", "Яйцо"]:
+        msg = "❌ Эксклюзивные карты за пресейв нельзя продавать!"
+        if isinstance(event, CallbackQuery):
+            await event.answer(msg, show_alert=True)
+        else:
+            await event.answer(msg)
+        return
+    
     card_data = user_cards[card_name]
 
     card_info = next((c for c in load_skill_catalog() if c["name"].strip().lower() == card_name.strip().lower()), None)
