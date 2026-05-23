@@ -215,9 +215,9 @@ async def presave_approve(callback: CallbackQuery, bot: Bot):
     try:
         with open("data/table/presave_config.json", "r", encoding="utf-8") as f:
             config = json.load(f)
-        card_name = config.get("card_name", "Яйцо")  # По умолчанию "Яйцо"
+        card_name = config.get("card_name", "Я люблю жизнь")  # По умолчанию "Я люблю жизнь"
     except FileNotFoundError:
-        card_name = "Яйцо"
+        card_name = "Я люблю жизнь"
     
     # Определяем путь к изображению в зависимости от карты
     if card_name == "Я люблю жизнь":
