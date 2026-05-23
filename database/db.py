@@ -165,6 +165,8 @@ def init_db():
     create_user_card_drops_table()
     create_presave_table()   # добавлено
     init_exchange_tables()   # инициализация таблиц системы обмена
+    from handlers.pidoraz import create_pidoraz_table
+    create_pidoraz_table()   # инициализация таблицы пидаразов
 
 def get_user_timezone(user_id: int) -> str:
     """Return user's timezone string (IANA), default 'UTC' if not set."""

@@ -903,3 +903,27 @@ def get_exchange_offer_keyboard(offer_id: int):
         InlineKeyboardButton(text="❌ Отклонить", callback_data=f"reject_exchange:{offer_id}"),
     )
     return builder.as_markup()
+
+
+# === ПИДАРАЗЫ ===
+
+def pidoraz_main_ui():
+    """Main keyboard for pidoraz feature."""
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="🔢 Выбрать номер", callback_data="pidoraz_select_number"),
+        InlineKeyboardButton(text="📋 Список пидаразов", callback_data="pidoraz_list")
+    )
+    builder.row(
+        InlineKeyboardButton(text="ℹ️ Мой номер", callback_data="pidoraz_my_number")
+    )
+    return builder.as_markup()
+
+
+def pidoraz_notify_ui(number: int):
+    """Keyboard for daily notification."""
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text=f"📣 Пидараз {number} на связи", callback_data=f"pidoraz_notify_{number}")
+    )
+    return builder.as_markup()
