@@ -5,35 +5,15 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Database
-database/*.db
+# Logs
+*.log
 
 # Environment
 .env
 .env.local
 *.env.*
 
-# Logs
-*.log
-
 # Dependencies
 .venv/
 venv/
-pip-log.txt
-pip-selfcheck.json
-
-# Testing
-.coverage
-htmlcov/
-.nox/
-.tox/
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
 ```
