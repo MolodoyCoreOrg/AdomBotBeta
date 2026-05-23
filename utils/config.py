@@ -12,6 +12,9 @@ DB_FILE = "database/users.db"
 
 ADMINS_LIST = [1114626593, 347632821, 462179661, 776301286, 1628880507, 1489467578]  # тут твои ID админов
 
+# Юзернеймы администраторов, которые не должны отображаться в таблицах лидеров
+ADMIN_USERNAMES = {"djozeph1", "echo_raya", "taka4212", "flameasfuck", "pixor448", "danchohuncho"}
+
 DA_TOKEN = "pqtvXdJ2EdIogi87hGzK"
 
 # Указываем режим работы

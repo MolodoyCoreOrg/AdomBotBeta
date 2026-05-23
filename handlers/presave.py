@@ -33,11 +33,10 @@ async def presave_click(callback: CallbackQuery, state: FSMContext):
     if action:
         if action["rewarded"]:
             await callback.answer("Вы уже получили карту за пресейв!", show_alert=True)
+            return
         elif action.get("screenshot_file_id"):
             await callback.answer("Вы уже отправили скриншот, дождитесь модерации", show_alert=True)
-        else:
-            # Пользователь нажал кнопку, но ещё не отправил скриншот - показываем интерфейс
-            pass
+            return
     
     # Загружаем конфиг пресейва
     try:
@@ -62,11 +61,32 @@ async def presave_click(callback: CallbackQuery, state: FSMContext):
     )
     keyboard = InlineKeyboardMarkup(inline_keyboard=[[link_button], [screenshot_button]])
     
-    await callback.message.answer(
-        "✅ Спасибо! Перейдите по ссылке, чтобы сделать пресейв.\n"
-        "После этого нажмите кнопку 'Отправить скриншот' и загрузите изображение.",
-        reply_markup=keyboard
+    # Отправляем картинку YaLG.jpg с текстом
+    image_path = "data/images/skills/YaLG.jpg"
+    caption_text = (
+        "🎵 <b>Сделать пресейв</b>\n\n"
+        "Поддержи трек \"Я люблю жизнь\" - сделай пресейв!\n"
+        "Перейди по ссылке ниже, послушай трек и добавь его в свою медиатеку.\n"
+        "После этого отправь скриншот для получения эксклюзивной карты!\n\n"
+        "✅ После проверки ты получишь уникальную карту, которую нельзя продать или обменять."
     )
+    
+    try:
+        photo = FSInputFile(image_path)
+        await callback.message.answer_photo(
+            photo=photo,
+            caption=caption_text,
+            reply_markup=keyboard,
+            parse_mode="HTML"
+        )
+    except Exception as e:
+        # Если картинка не найдена, отправляем только текст
+        await callback.message.answer(
+            caption_text,
+            reply_markup=keyboard,
+            parse_mode="HTML"
+        )
+        print(f"Не удалось отправить изображение YaLG.jpg: {e}")
 
     await callback.answer("Готово! Ждите карту после проверки.", show_alert=True)
 
@@ -195,17 +215,21 @@ async def presave_approve(callback: CallbackQuery, bot: Bot):
     try:
         with open("data/table/presave_config.json", "r", encoding="utf-8") as f:
             config = json.load(f)
-        card_name = config.get("card_name", "Яйцо")  # По умолчанию "Яйцо"
+        card_name = config.get("card_name", "Я люблю жизнь")  # По умолчанию "Я люблю жизнь"
     except FileNotFoundError:
-        card_name = "Яйцо"
+        card_name = "Я люблю жизнь"
     
     # Определяем путь к изображению в зависимости от карты
     if card_name == "Я люблю жизнь":
         image_path = "data/images/skills/YaLG.jpg"
         caption_text = "🎉 Поздравляем, братухо! Ты получил эксклюзивную карту суперспособности *Я люблю жизнь*, за пресейв песни ниги204vip с одноименным названием! Спасибо тебе! Люби жизнь, будь попроще к себе и посерьезнее к делу! Добра и позитива!"
-    else:  # Яйцо
+    elif card_name == "Яйцо":
         image_path = "data/images/skills/yaica.jpg"
         caption_text = "🎉 Поздравляем, братухо! Ты получил эксклюзивную карту суперспособности *Яйцо*! Эта карта доступна только за пресейвы!"
+    else:
+        # Для любой другой карты из конфига
+        image_path = "data/images/skills/YaLG.jpg"
+        caption_text = f"🎉 Поздравляем, братухо! Ты получил эксклюзивную карту суперспособности *{card_name}* за пресейв!"
     
     # Выдаём карту
     success = award_specific_skill(user_id, card_name)

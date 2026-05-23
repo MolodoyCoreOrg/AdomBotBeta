@@ -56,6 +56,10 @@ async def get_main_keyboard(spins, user_id) -> InlineKeyboardMarkup:
     builder.row(
         InlineKeyboardButton(text="🏆 ЛИДЕРЫ", callback_data="top_menu"),
     )
+    # Кнопка "Сделать пресейв" доступна всем пользователям
+    builder.row(
+        InlineKeyboardButton(text="🎵 Сделать пресейв", callback_data="presave_click"),
+    )
 
 #    if donate > 0:
     builder.row(
@@ -795,7 +799,7 @@ def get_exchange_main_keyboard():
         InlineKeyboardButton(text="📥 Входящие предложения", callback_data="view_incoming_offers"),
     )
     builder.row(
-        InlineKeyboardButton(text="↪️ Назад", callback_data="main_menu"),
+        InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
     )
     return builder.as_markup()
 
