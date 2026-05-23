@@ -223,9 +223,13 @@ async def presave_approve(callback: CallbackQuery, bot: Bot):
     if card_name == "Я люблю жизнь":
         image_path = "data/images/skills/YaLG.jpg"
         caption_text = "🎉 Поздравляем, братухо! Ты получил эксклюзивную карту суперспособности *Я люблю жизнь*, за пресейв песни ниги204vip с одноименным названием! Спасибо тебе! Люби жизнь, будь попроще к себе и посерьезнее к делу! Добра и позитива!"
-    else:  # Яйцо
+    elif card_name == "Яйцо":
         image_path = "data/images/skills/yaica.jpg"
         caption_text = "🎉 Поздравляем, братухо! Ты получил эксклюзивную карту суперспособности *Яйцо*! Эта карта доступна только за пресейвы!"
+    else:
+        # Для любой другой карты из конфига
+        image_path = "data/images/skills/YaLG.jpg"
+        caption_text = f"🎉 Поздравляем, братухо! Ты получил эксклюзивную карту суперспособности *{card_name}* за пресейв!"
     
     # Выдаём карту
     success = award_specific_skill(user_id, card_name)
