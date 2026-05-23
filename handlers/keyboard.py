@@ -179,7 +179,7 @@ def get_card_skill_ui():
 
 
 # === CARD NAVIGATION ===
-def get_member_card_navigation_keyboard(index: int, total: int, prefix: str = "my_member_cards"):
+def get_member_card_navigation_keyboard(index: int, total: int, prefix: str = "my_member_cards", card_name: str = None):
     builder = InlineKeyboardBuilder()
 
     # Стрелка влево
@@ -205,12 +205,17 @@ def get_member_card_navigation_keyboard(index: int, total: int, prefix: str = "m
             callback_data=f"{prefix}:{next_index}"
         )
     )
-    builder.row(
-        InlineKeyboardButton(text="🔥 Продать карту", callback_data=f"sell_member_card:{index}"),
-    )
-    builder.row(
-        InlineKeyboardButton(text="🆙 Апгрейд карты", callback_data=f"upgrade_member_card:{index}"),
-    )
+    
+    # Эксклюзивные карты за пресейв нельзя продавать - не показываем кнопку продажи и апгрейда
+    exclusive_cards = ["Я люблю жизнь", "Яйцо"]
+    if card_name not in exclusive_cards:
+        builder.row(
+            InlineKeyboardButton(text="🔥 Продать карту", callback_data=f"sell_member_card:{index}"),
+        )
+        builder.row(
+            InlineKeyboardButton(text="🆙 Апгрейд карты", callback_data=f"upgrade_member_card:{index}"),
+        )
+    
     builder.row(
         InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
     )
@@ -254,9 +259,13 @@ def get_skill_card_navigation_keyboard(index: int, total: int, prefix: str = "my
             InlineKeyboardButton(text="✨ Использовать", callback_data=f"use_epic_card:{card_name}"),
         )
     
-    builder.row(
-        InlineKeyboardButton(text="🔥 Продать карту", callback_data=f"sell_skill_card:{index}"),
-    )
+    # Эксклюзивные карты за пресейв нельзя продавать - не показываем кнопку продажи
+    exclusive_cards = ["Я люблю жизнь", "Яйцо"]
+    if card_name not in exclusive_cards:
+        builder.row(
+            InlineKeyboardButton(text="🔥 Продать карту", callback_data=f"sell_skill_card:{index}"),
+        )
+    
     builder.row(
         InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
     )
