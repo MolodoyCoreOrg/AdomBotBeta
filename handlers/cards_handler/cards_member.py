@@ -141,7 +141,7 @@ async def show_my_cards(event: CallbackQuery | Message):
     work = card_info.get("work", "неизвестно")
     rarity = card_info.get("rarity", "Обычная")
     caption = format_card_text(card_name, card_data, rarity, work, user_id=event.from_user.id if hasattr(event, 'from_user') else None)
-    keyboard = get_member_card_navigation_keyboard(index, len(owned_card_names), prefix="my_member_cards")
+    keyboard = get_member_card_navigation_keyboard(index, len(owned_card_names), prefix="my_member_cards", card_name=card_name)
 
     if isinstance(event, CallbackQuery):
         try:
@@ -219,7 +219,7 @@ async def navigate_my_member_cards(event: CallbackQuery):
     work = card_info.get("work", "неизвестно")
     rarity = card_info.get("rarity", "Обычная")
     caption = format_card_text(card_name, card_data, rarity, work, user_id=event.from_user.id if hasattr(event, 'from_user') else None)
-    keyboard = get_member_card_navigation_keyboard(index, len(owned_card_names), prefix="my_member_cards")
+    keyboard = get_member_card_navigation_keyboard(index, len(owned_card_names), prefix="my_member_cards", card_name=card_name)
 
     try:
         await event.message.edit_media(
@@ -284,7 +284,7 @@ async def sell_member_card(event: CallbackQuery):
     work = card_info.get("work", "неизвестно")
     rarity = card_info.get("rarity", "Обычная")
     caption = format_card_text(card_name, card_data, rarity, work, user_id=event.from_user.id if hasattr(event, 'from_user') else None)
-    keyboard = get_member_card_navigation_keyboard(index, len(owned_card_names), prefix="my_member_cards")
+    keyboard = get_member_card_navigation_keyboard(index, len(owned_card_names), prefix="my_member_cards", card_name=card_name)
 
     try:
         await event.message.edit_media(
