@@ -214,27 +214,16 @@ async def draw_member(event: CallbackQuery | Message):
         work = card["work"]
         image_filename = card["image"]
 
-        # Награда за сжигание повторной карточки в зависимости от редкости
-        burn_rewards = {
-            "Обычная": 5,
-            "Редкая": 10,
-            "Эпическая": 20,
-            "Легендарная": 50
-        }
-
         if name in user_cards:
+            # При получении повторки карты участника - просто повышаем ранг (без сжигания и без огоньков)
             user_cards[name]["rank"] += 1
             rank = user_cards[name]["rank"]
-            reward_amount = burn_rewards.get(rarity, 10)
-            new_balance = add_balance(user_id, reward_amount)
             text = (
                 f"💥 Повторная карточка: <b>{name}</b>\n"
                 f"⭐ Редкость: <i>{rarity}</i>\n"
                 f"🥇 Звание: <i>{work}</i>\n"
                 f"🔼 Ранг повышен: <b>{rank}</b>\n"
-                f"🧠 Получена суперспособность: <i>{skill}</i>\n\n"
-                f"🔥 Карточка сожжена! Вы получили {reward_amount}🔥\n"
-                f"💰 Ваш баланс: {new_balance}🔥"
+                f"🧠 Получена суперспособность: <i>{skill}</i>"
             )
         else:
             rank = 1
