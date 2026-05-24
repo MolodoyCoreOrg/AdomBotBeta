@@ -257,13 +257,8 @@ async def on_successfull_payment(message: Message):
     word = get_random_word_for_user(user_id)
 
 
-    # Сохраняем донат (если слово не осталось, сохраняем пустую строку)
+    # Сохраняем донат
     save_donation(id_operation, user_id, username, amount, "XTR", word or "")
-
-    # Если слов больше нет — сообщаем пользователю
-    if not word:
-        await message.answer("Все слова уже получены!")
-        return
 
     # Показать выданное слово и благодарность
     await message.answer(
@@ -360,26 +355,11 @@ def get_random_word_for_user(user_id: int) -> str:
     with open(WORDS_FILE, "r", encoding="utf-8") as f:
         words = json.load(f)
 
-    conn = sqlite3.connect(DB_FILE)
-    c = conn.cursor()
-
-    # Получаем JSON со словами
-    c.execute("SELECT words FROM user_donations WHERE user_id=?", (user_id,))
-    row = c.fetchone()
-    conn.close()
-
-    used_words = set()
-    if row and row[0]:
-        try:
-            used_words = set(json.loads(row[0]))  # <-- теперь нормальные слова
-        except Exception:
-            used_words = set()
-
-    # выбираем слово, которого ещё нет
-    unused_words = list(set(words) - used_words)
-    if not unused_words:
+    if not words:
         return None
-    return random.choice(unused_words)
+        
+    # Матюки могут повторяться - выбираем случайное слово из всех доступных
+    return random.choice(words)
 
 
 
