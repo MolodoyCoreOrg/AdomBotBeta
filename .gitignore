@@ -1,8 +1,1 @@
-```
-# Compiled Python files
-*.pyc
-__pycache__/
-
-# Original rules preserved
-*.log
-```
+Nothing should be ignored based on the provided file changes, as only a Python source file (`handlers/cards_handler/epic_cards.py`) was modified and no build artifacts, dependencies, or temporary files were included in the changes.

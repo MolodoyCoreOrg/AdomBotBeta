@@ -28,6 +28,7 @@ DB_PATH = "database/users.db"
 # Состояния активных процессов
 active_epic_cards = {}  # {user_id: {"card_name": ..., "state": ...}}
 epic_card_usage_lock = {}  # {user_id: timestamp} - блокировка от повторного использования
+epic_cards_in_progress = {}  # {user_id: card_name} - карта, которая используется (для защиты от дублей)
 
 
 def connect_db():
@@ -130,9 +131,7 @@ async def use_bratan_chotkiy(callback: CallbackQuery, bot):
     # Отправляем сообщение всем
     await broadcast_message_with_template(bot, message, user_id, target_id)
     
-    # Удаляем карту у пользователя
-    remove_skill_card(user_id, "БРАТАН ТЫ ЧОТКИЙ")
-    
+    # Карта уже удалена в handle_use_epic_card
     await callback.answer("Карта использована! Все пользователи получили сообщение.", show_alert=True)
 
 
@@ -160,19 +159,6 @@ async def broadcast_message_with_template(bot, base_message: str, user_id: int, 
 async def use_uraaa(callback: CallbackQuery, bot):
     """Дарение по юзернейму."""
     user_id = callback.from_user.id
-
-    # Проверяем, не используется ли карта уже (защита от мультикликов)
-    import time
-    current_time = time.time()
-    if user_id in epic_card_usage_lock:
-        lock_time = epic_card_usage_lock[user_id]
-        if current_time - lock_time < 3:
-            await callback.answer("⏳ Карта уже используется, дождитесь завершения эффекта!", show_alert=True)
-            return
-
-    # Устанавливаем блокировку
-    epic_card_usage_lock[user_id] = current_time
-
     
     # Запрашиваем юзернейм получателя
     await callback.message.answer(
@@ -201,9 +187,7 @@ async def use_babki_ne_problema(callback: CallbackQuery, bot):
     # Отправляем сообщение всем
     await broadcast_message_with_template(bot, message, user_id)
     
-    # Удаляем карту
-    remove_skill_card(user_id, "БАБКИ НЕ ПРОБЛЕМА")
-    
+    # Карта уже удалена в handle_use_epic_card
     await callback.answer("💸 Раздаем баксы всем...", show_alert=False)
 
 
@@ -226,9 +210,7 @@ async def use_vse_v_azhure(callback: CallbackQuery, bot):
     # Отправляем сообщение всем
     await broadcast_message_with_template(bot, message, user_id)
     
-    # Удаляем карту
-    remove_skill_card(user_id, "ВСЕ В АЖУРЕ")
-    
+    # Карта уже удалена в handle_use_epic_card
     await callback.answer("🎡 Раздаем крутки всем...", show_alert=False)
 
 
@@ -251,9 +233,7 @@ async def use_hihiks(callback: CallbackQuery, bot):
     # Отправляем сообщение всем
     await broadcast_message_with_template(bot, message, user_id)
     
-    # Удаляем карту
-    remove_skill_card(user_id, "ХИХИКС")
-    
+    # Карта уже удалена в handle_use_epic_card
     await callback.answer("😄 Все получили поджопник!", show_alert=False)
 
 
@@ -285,8 +265,7 @@ async def use_hmmm(callback: CallbackQuery, bot):
         reply_markup=keyboard
     )
     
-    # Удаляем карту из коллекции
-    remove_skill_card(user_id, "ХМММ")
+    # Карта уже удалена в handle_use_epic_card
 
 
 async def hmmm_take_spins(callback: CallbackQuery, spins: int):
@@ -463,8 +442,7 @@ async def use_megaludik(callback: CallbackQuery):
     
     await callback.message.answer(result_text)
     
-    # Удаляем карту
-    remove_skill_card(user_id, "МЕГАЛУДИК")
+    # Карта уже удалена в handle_use_epic_card
 
 
 # === КАРТА 8: КРУТАЧКИ ===
@@ -481,8 +459,7 @@ async def use_krutachki(callback: CallbackQuery):
     
     await callback.answer(f"Ты получил {spins} круток!", show_alert=True)
     
-    # Удаляем карту
-    remove_skill_card(user_id, "КРУТАЧКИ")
+    # Карта уже удалена в handle_use_epic_card
 
 
 # === КАРТА 9: ОУ ДА БЕБИ ===
@@ -509,8 +486,7 @@ async def use_ou_da_bebi(callback: CallbackQuery):
     
     await callback.answer(f"Ты получил улучшение: {chosen_upgrade[1]}!", show_alert=True)
     
-    # Удаляем карту
-    remove_skill_card(user_id, "ОУ ДА БЕБИ")
+    # Карта уже удалена в handle_use_epic_card
 
 
 # === КАРТА 10: ВЫГОДНАЯ СДЕЛКА ===
@@ -529,8 +505,7 @@ async def use_vygodnaya_sdelka(callback: CallbackQuery):
     
     await callback.answer("Следующая продажа карты будет x2!", show_alert=True)
     
-    # Удаляем карту
-    remove_skill_card(user_id, "ВЫГОДНАЯ СДЕЛКА")
+    # Карта уже удалена в handle_use_epic_card
 
 
 def check_vygodnaya_sdelka(user_id: int, base_price: int) -> int:
@@ -572,22 +547,21 @@ async def handle_use_epic_card(callback: CallbackQuery, bot):
     user_id = callback.from_user.id
     
     # Проверяем, не используется ли карта уже (защита от мультикликов)
-    current_time = time.time()
-    if user_id in epic_card_usage_lock:
-        lock_time = epic_card_usage_lock[user_id]
-        # Если прошло меньше 3 секунд с последнего использования
-        if current_time - lock_time < 3:
-            await callback.answer("⏳ Карта уже используется, дождитесь завершения эффекта!", show_alert=True)
-            return
+    if user_id in epic_cards_in_progress:
+        await callback.answer("⏳ Карта уже используется, дождитесь завершения эффекта!", show_alert=True)
+        return
     
-    # Проверяем наличие карты
+    # Проверяем наличие карты у пользователя
     cards = get_skill_cards(user_id)
     if card_name not in cards:
         await callback.answer("У тебя нет этой карты", show_alert=True)
         return
     
-    # Устанавливаем блокировку
-    epic_card_usage_lock[user_id] = current_time
+    # Помечаем карту как используемую (блокировка)
+    epic_cards_in_progress[user_id] = card_name
+    
+    # СРАЗУ удаляем карту из коллекции - ДО применения эффекта!
+    remove_skill_card(user_id, card_name)
     
     # Вызываем соответствующую функцию
     card_handlers = {
@@ -608,13 +582,13 @@ async def handle_use_epic_card(callback: CallbackQuery, bot):
         try:
             await handler()
         finally:
-            # Снимаем блокировку после выполнения
-            if user_id in epic_card_usage_lock:
-                del epic_card_usage_lock[user_id]
+            # Снимаем блокировку после выполнения (независимо от результата)
+            if user_id in epic_cards_in_progress:
+                del epic_cards_in_progress[user_id]
     else:
         # Снимаем блокировку при ошибке
-        if user_id in epic_card_usage_lock:
-            del epic_card_usage_lock[user_id]
+        if user_id in epic_cards_in_progress:
+            del epic_cards_in_progress[user_id]
         await callback.answer("Неизвестная карта", show_alert=True)
 
 
@@ -656,8 +630,7 @@ async def process_username_for_uraaa(message: Message, bot):
         await message.answer("Пользователь не найден. Попробуйте еще раз:")
         return
     
-    # Удаляем карту после использования
-    remove_skill_card(user_id, "УРААА")
+    # Карта уже удалена в handle_use_epic_card при нажатии кнопки
     
     # Очищаем состояние
     del active_epic_cards[user_id]
