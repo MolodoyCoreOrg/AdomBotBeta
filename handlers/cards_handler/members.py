@@ -219,10 +219,10 @@ async def draw_member(event: CallbackQuery | Message):
             user_cards[name]["rank"] += 1
             rank = user_cards[name]["rank"]
             text = (
-                f"💥 Повторная карточка: <b>{name}</b>\n"
+                f"🔁 Тебе выпала повторная карточка: <b>{name}</b>\n"
                 f"⭐ Редкость: <i>{rarity}</i>\n"
-                f"🥇 Звание: <i>{work}</i>\n"
-                f"🔼 Ранг повышен: <b>{rank}</b>\n"
+                f"🥇 Звание: <i>{work}</i>\n\n"
+                f"🔼 Ранг карты повышен: <b>{rank}</b>\n"
                 f"🧠 Получена суперспособность: <i>{skill}</i>"
             )
         else:

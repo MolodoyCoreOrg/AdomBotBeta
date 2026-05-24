@@ -72,17 +72,29 @@ async def on_donation(data):
     if user_id:
         # Код валиден — выдаём приз
         word = get_random_word_for_user(user_id)
-        save_donation(id_operation, user_id, username, amount, currency, word or "")
+        is_duplicate = save_donation(id_operation, user_id, username, amount, currency, word or "")
         remove_code(message)
 
         # Отправка сообщения пользователю
         try:
-            await bot.send_message(
-                user_id,
-                f"🎁 Твой донат на {amount}{currency} успешно получен!\n"
-                f"Тебе выпал матюк: <b>{word}</b>\n"
-                f"💖 Спасибо за поддержку!\n\n Транзакция: `{id_operation}`"
-            )
+            if is_duplicate:
+                # Повторный матюк - сжигаем и даем 10🔥
+                new_balance = add_balance(user_id, 10)
+                await bot.send_message(
+                    user_id,
+                    f"🎁 Твой донат на {amount}{currency} успешно получен!\n"
+                    f"🔁 Тебе выпал повторный матюк: <b>{word}</b>\n\n"
+                    f"🔥 Он автоматически сожгся, и ты получил <b>10🔥</b> на свой счёт!\n"
+                    f"💰 Твой баланс: {new_balance}🔥\n\n"
+                    f"💖 Спасибо за поддержку!\n\n Транзакция: `{id_operation}`"
+                )
+            else:
+                await bot.send_message(
+                    user_id,
+                    f"🎁 Твой донат на {amount}{currency} успешно получен!\n"
+                    f"Тебе выпал матюк: <b>{word}</b>\n"
+                    f"💖 Спасибо за поддержку!\n\n Транзакция: `{id_operation}`"
+                )
         except Exception as e:
             print(f"❌ Не удалось отправить сообщение пользователю {user_id}: {e}")
     else:
@@ -258,15 +270,28 @@ async def on_successfull_payment(message: Message):
 
 
     # Сохраняем донат
-    save_donation(id_operation, user_id, username, amount, "XTR", word or "")
+    is_duplicate = save_donation(id_operation, user_id, username, amount, "XTR", word or "")
 
     # Показать выданное слово и благодарность
-    await message.answer(
-        f"🎁 Тебе выпал матюк: <b>{word}</b>\nСумма доната: {amount}\n"
-        f"💖 Спасибо за поддержку!\n\n Транзакция: `{id_operation}`",
-        parse_mode="HTML",
-        message_effect_id="5159385139981059251"
-    )
+    if is_duplicate:
+        # Повторный матюк - сжигаем и даем 10🔥
+        new_balance = add_balance(user_id, 10)
+        await message.answer(
+            f"🎁 Тебе выпал повторный матюк: <b>{word}</b>\n\n"
+            f"🔥 Он автоматически сожгся, и ты получил <b>10🔥</b> на свой счёт!\n"
+            f"💰 Твой баланс: {new_balance}🔥\n\n"
+            f"Сумма доната: {amount}\n"
+            f"💖 Спасибо за поддержку!\n\n Транзакция: `{id_operation}`",
+            parse_mode="HTML",
+            message_effect_id="5159385139981059251"
+        )
+    else:
+        await message.answer(
+            f"🎁 Тебе выпал матюк: <b>{word}</b>\nСумма доната: {amount}\n"
+            f"💖 Спасибо за поддержку!\n\n Транзакция: `{id_operation}`",
+            parse_mode="HTML",
+            message_effect_id="5159385139981059251"
+        )
 
 
 @router.callback_query(F.data.startswith("sell_word:"))
@@ -400,6 +425,7 @@ def save_donation(id_operation: str, user_id: int, username: str, amount: int, c
     c.execute("SELECT biggest_amount, all_amount, words, word_count FROM user_donations WHERE user_id=?", (user_id,))
     row = c.fetchone()
 
+    is_duplicate = False
     if row:
         biggest_amount, all_amount, words_json, word_count = row
 
@@ -410,6 +436,9 @@ def save_donation(id_operation: str, user_id: int, username: str, amount: int, c
         words_list = json.loads(words_json) if words_json else []
         if word not in words_list:
             words_list.append(word)
+        else:
+            # Повторный матюк - сжигаем и даем 10🔥
+            is_duplicate = True
 
         c.execute(
             """UPDATE user_donations 
@@ -428,6 +457,8 @@ def save_donation(id_operation: str, user_id: int, username: str, amount: int, c
 
     conn.commit()
     conn.close()
+
+    return is_duplicate
 
 def get_user_words(user_id):
     conn = connect()
