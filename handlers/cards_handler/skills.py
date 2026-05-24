@@ -264,16 +264,13 @@ async def draw_skill(event: CallbackQuery | Message):
         owned = set(user_cards.keys()) - {"_last_draw"}
         if name in owned:
             # Повторная карточка - сжигаем и даем валюту
-            rank = user_cards[name].get("rank", 1) + 1
-            user_cards[name]["rank"] = rank
-            reward_amount = burn_rewards.get(rarity, 10)
+            reward_amount = burn_rewards.get(rarity, 1)
             new_balance = add_balance(user_id, reward_amount)
             text = (
-                f"💥 Повторная карточка умения: <b>{name}</b>\n"
-                f"⭐ Редкость: <i>{rarity}</i>\n"
-                f"🔼 Ранг повышен: <b>{rank}</b>\n\n"
-                f"🔥 Карточка сожжена! Вы получили {reward_amount}🔥\n"
-                f"💰 Ваш баланс: {new_balance}🔥"
+                f"🔁 Тебе выпала повторная карточка: <b>{name}</b>\n"
+                f"⭐ Редкость: <i>{rarity}</i>\n\n"
+                f"🔥 Она автоматически сожглась, и ты получил <b>{reward_amount}🔥</b> на свой счёт!\n"
+                f"💰 Твой баланс: {new_balance}🔥"
             )
         else:
             # Новая карточка
