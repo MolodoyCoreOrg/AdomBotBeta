@@ -139,6 +139,9 @@ def set_check_skill_enabled(user_id: int, enabled: bool):
     set_user_timer(user_id, last_open, check_enabled=enabled)
 
 # === Выбор карточки ===
+# Уникальные карточки, которые нельзя получить через ежедневную функцию (только за пресейв)
+EXCLUSIVE_CARDS = {"Яйцо", "Я люблю жизнь"}
+
 def weighted_random_choice(user_cards, skills_path="data/cards/skills.json"):
     if not isinstance(skills_path, (str, bytes, type(None))):
         raise TypeError(f"Неверный тип пути: {type(skills_path)}")
@@ -163,6 +166,9 @@ def weighted_random_choice(user_cards, skills_path="data/cards/skills.json"):
     available_cards = []
     for card in all_cards:
         name = card.get("name")
+        # Пропускаем уникальные карточки, которые доступны только за пресейв
+        if name in EXCLUSIVE_CARDS:
+            continue
         last_ts = last_awarded.get(name)
         if last_ts and (now_ts - float(last_ts) < LAST_AWARDED_TTL):
             # skip recently awarded card to reduce collisions
