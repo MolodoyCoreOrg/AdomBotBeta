@@ -1,1 +1,36 @@
-Nothing should be ignored in this case, as the changes only include Python source files (.py) which are not build artifacts, dependencies, or temporary files.
+```gitignore
+# Python compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Database files
+*.db
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+*.env.*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
+# Coverage reports
+coverage/
+htmlcov/
+.coverage
+
+# Test cache
+.pytest_cache/
+
+# MyPy cache
+.mypy_cache/
+```
