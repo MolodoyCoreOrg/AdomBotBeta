@@ -296,8 +296,8 @@ def get_skill_card_navigation_keyboard(index: int, total: int, prefix: str = "my
 def get_sort_member_menu_keyboard() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="По редкости", callback_data="sort_by_rarity"),
-        InlineKeyboardButton(text="По алфавиту", callback_data="sort_by_name")
+        InlineKeyboardButton(text="По редкости", callback_data="sort_member_by_rarity"),
+        InlineKeyboardButton(text="По алфавиту", callback_data="sort_member_by_name")
     )
     return builder.as_markup()
 
@@ -365,13 +365,13 @@ def get_member_list_page_keyboard(
     next_page = min(total_pages - 1, page + 1)
 
     builder.row(
-        InlineKeyboardButton(text="◀️", callback_data=f"navigate_page:{prev_page}"),
+        InlineKeyboardButton(text="◀️", callback_data=f"navigate_member_page:{prev_page}"),
         InlineKeyboardButton(text=f"{page + 1}/{total_pages}", callback_data="noop"),
-        InlineKeyboardButton(text="▶️", callback_data=f"navigate_page:{next_page}")
+        InlineKeyboardButton(text="▶️", callback_data=f"navigate_member_page:{next_page}")
     )
 
     builder.row(
-        InlineKeyboardButton(text="Сортировать", callback_data="sort_menu")
+        InlineKeyboardButton(text="Сортировать", callback_data="sort_member_menu")
     )
 
     return builder.as_markup()
@@ -381,18 +381,18 @@ def get_edit_mode_member_keyboard(index: int, total: int) -> InlineKeyboardMarku
     builder = InlineKeyboardBuilder()
 
     builder.row(
-        InlineKeyboardButton(text="✏ Изменить имя", callback_data=f"edit_name:{index}"),
-        InlineKeyboardButton(text="💥 Изменить суперспособность", callback_data=f"edit_skill:{index}")
+        InlineKeyboardButton(text="✏ Изменить имя", callback_data=f"edit_member_name:{index}"),
+        InlineKeyboardButton(text="💥 Изменить суперспособность", callback_data=f"edit_member_skill:{index}")
     )
     # Добавляем кнопку для изменения звания
     builder.row(
-        InlineKeyboardButton(text="🏷 Поменять Звание", callback_data=f"edit_work:{index}")
+        InlineKeyboardButton(text="🏷 Поменять Звание", callback_data=f"edit_member_work:{index}")
     )
     builder.row(
-        InlineKeyboardButton(text="⭐ Изменить редкость", callback_data=f"edit_rarity:{index}")
+        InlineKeyboardButton(text="⭐ Изменить редкость", callback_data=f"edit_member_rarity:{index}")
     )
     builder.row(
-        InlineKeyboardButton(text="🖼 Показать изображения по рангам", callback_data=f"show_rank_images:{index}")
+        InlineKeyboardButton(text="🖼 Показать изображения по рангам", callback_data=f"show_member_rank_images:{index}")
     )
     builder.row(
         InlineKeyboardButton(text="🗑 Удалить карту", callback_data=f"delete_member:{index}")
@@ -416,9 +416,9 @@ def get_rank_images_keyboard(index: int, current_rank: int) -> InlineKeyboardMar
     next_rank = current_rank % 4 + 1
 
     builder.row(
-        InlineKeyboardButton(text="⬅", callback_data=f"show_rank_images:{index}:{prev_rank}"),
+        InlineKeyboardButton(text="⬅", callback_data=f"show_member_rank_images:{index}:{prev_rank}"),
         InlineKeyboardButton(text=f"Ранг {current_rank}", callback_data="noop"),
-        InlineKeyboardButton(text="➡", callback_data=f"show_rank_images:{index}:{next_rank}")
+        InlineKeyboardButton(text="➡", callback_data=f"show_member_rank_images:{index}:{next_rank}")
     )
 
     builder.row(
@@ -432,10 +432,10 @@ def get_rank_select_keyboard(index: int) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for n in range(1, 5):
         builder.row(
-            InlineKeyboardButton(text=f"Ранг {n}", callback_data=f"upload_rank_image:{index}:{n}")
+            InlineKeyboardButton(text=f"Ранг {n}", callback_data=f"upload_member_rank_image:{index}:{n}")
         )
     builder.row(
-        InlineKeyboardButton(text="🔙 Назад", callback_data=f"show_rank_images:{index}")
+        InlineKeyboardButton(text="🔙 Назад", callback_data=f"show_member_rank_images:{index}")
     )
     return builder.as_markup()
 
@@ -482,13 +482,13 @@ def get_skill_list_page_keyboard(
     next_page = min(total_pages - 1, page + 1)
 
     builder.row(
-        InlineKeyboardButton(text="◀️", callback_data=f"navigate_page:{prev_page}"),
+        InlineKeyboardButton(text="◀️", callback_data=f"navigate_skill_page:{prev_page}"),
         InlineKeyboardButton(text=f"{page + 1}/{total_pages}", callback_data="noop"),
-        InlineKeyboardButton(text="▶️", callback_data=f"navigate_page:{next_page}")
+        InlineKeyboardButton(text="▶️", callback_data=f"navigate_skill_page:{next_page}")
     )
 
     builder.row(
-        InlineKeyboardButton(text="Сортировать", callback_data="sort_menu")
+        InlineKeyboardButton(text="Сортировать", callback_data="sort_skill_menu")
     )
 
     return builder.as_markup()
