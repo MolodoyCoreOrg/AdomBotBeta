@@ -139,6 +139,9 @@ def set_check_skill_enabled(user_id: int, enabled: bool):
     set_user_timer(user_id, last_open, check_enabled=enabled)
 
 # === Выбор карточки ===
+# Уникальные карточки, которые нельзя получить через ежедневную функцию (только за пресейв)
+EXCLUSIVE_CARDS = {"Яйцо", "Я люблю жизнь"}
+
 def weighted_random_choice(user_cards, skills_path="data/cards/skills.json"):
     if not isinstance(skills_path, (str, bytes, type(None))):
         raise TypeError(f"Неверный тип пути: {type(skills_path)}")
@@ -163,6 +166,9 @@ def weighted_random_choice(user_cards, skills_path="data/cards/skills.json"):
     available_cards = []
     for card in all_cards:
         name = card.get("name")
+        # Пропускаем уникальные карточки, которые доступны только за пресейв
+        if name in EXCLUSIVE_CARDS:
+            continue
         last_ts = last_awarded.get(name)
         if last_ts and (now_ts - float(last_ts) < LAST_AWARDED_TTL):
             # skip recently awarded card to reduce collisions
@@ -248,26 +254,23 @@ async def draw_skill(event: CallbackQuery | Message):
 
         # Награда за сжигание повторной карточки в зависимости от редкости
         burn_rewards = {
-            "Обычная": 10,
-            "Редкая": 50,
-            "Эпическая": 200,
-            "Легендарная": 1000
+            "Обычная": 1,
+            "Редкая": 5,
+            "Эпическая": 9,
+            "Легендарная": 10
         }
 
         # Проверяем, есть ли уже эта карточка у пользователя
         owned = set(user_cards.keys()) - {"_last_draw"}
         if name in owned:
             # Повторная карточка - сжигаем и даем валюту
-            rank = user_cards[name].get("rank", 1) + 1
-            user_cards[name]["rank"] = rank
-            reward_amount = burn_rewards.get(rarity, 10)
+            reward_amount = burn_rewards.get(rarity, 1)
             new_balance = add_balance(user_id, reward_amount)
             text = (
-                f"💥 Повторная карточка умения: <b>{name}</b>\n"
-                f"⭐ Редкость: <i>{rarity}</i>\n"
-                f"🔼 Ранг повышен: <b>{rank}</b>\n\n"
-                f"🔥 Карточка сожжена! Вы получили {reward_amount}🔥\n"
-                f"💰 Ваш баланс: {new_balance}🔥"
+                f"🔁 Тебе выпала повторная карточка: <b>{name}</b>\n"
+                f"⭐ Редкость: <i>{rarity}</i>\n\n"
+                f"🔥 Она автоматически сожглась, и ты получил <b>{reward_amount}🔥</b> на свой счёт!\n"
+                f"💰 Твой баланс: {new_balance}🔥"
             )
         else:
             # Новая карточка

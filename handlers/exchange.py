@@ -184,7 +184,11 @@ async def select_my_card(callback: CallbackQuery, state: FSMContext):
 async def enter_username(message: Message, state: FSMContext):
     """Обработка ввода username."""
     user_id = message.from_user.id
-    username_text = message.text.strip()
+    username_text = message.text.strip() if message.text else ""
+    
+    if not username_text:
+        await message.answer("❌ Пожалуйста, отправьте текст с @username:")
+        return
     
     # Извлекаем username из текста (может быть с @ или без)
     username_match = re.search(r'@?([a-zA-Z0-9_]+)', username_text)

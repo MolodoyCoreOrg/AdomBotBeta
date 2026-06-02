@@ -859,8 +859,8 @@ async def add_member_rank_image(callback: CallbackQuery, state: FSMContext):
 
 # --- Выбор ранга для загрузки изображения ---
 
-@router.callback_query(lambda c: c.data and c.data.startswith("upload_rank_image:"))
-async def upload_rank_image(callback: CallbackQuery, state: FSMContext):
+@router.callback_query(lambda c: c.data and c.data.startswith("upload_member_rank_image:"))
+async def upload_member_rank_image(callback: CallbackQuery, state: FSMContext):
     if not await is_admin(callback.from_user.id):
         await callback.answer("❌ Нет доступа", show_alert=True)
         return
