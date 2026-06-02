@@ -7,12 +7,13 @@ from datetime import datetime, timedelta
 
 from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.exceptions import TelegramRetryAfter, TelegramBadRequest
 
 from database.db import (
-    connect, get_skill_cards, update_skill_cards, add_balance, 
+    connect, get_skill_cards, update_skill_cards, add_balance,
     load_roulette_data, save_roulette_data, get_all_user_ids,
-    find_user_by_username, get_user_full_data
+    find_user_by_username, get_user_full_data, add_skill_card
 )
 from handlers.picture import find_image_file
 from utils.helpers import safe_delete
@@ -186,6 +187,9 @@ async def use_uraaa(callback: CallbackQuery, bot):
 async def handle_uraaa_self(callback: CallbackQuery, bot):
     """Использование карты УРААА на себя — сброс таймера карты участника"""
     user_id = callback.from_user.id
+
+    # Удаляем карту у пользователя
+    remove_skill_card(user_id, "УРААА")
 
     # Импортируем функцию сброса таймера участника
     from .members import TIMER_PATH as MEMBER_TIMER_PATH
@@ -603,24 +607,28 @@ async def handle_use_epic_card(callback: CallbackQuery, bot):
     import time
     card_name = callback.data.split(":", 1)[1]
     user_id = callback.from_user.id
-    
+
     # Проверяем, не используется ли карта уже (защита от мультикликов)
     if user_id in epic_cards_in_progress:
         await callback.answer("⏳ Карта уже используется, дождитесь завершения эффекта!", show_alert=True)
         return
-    
+
     # Проверяем наличие карты у пользователя
     cards = get_skill_cards(user_id)
     if card_name not in cards:
         await callback.answer("У тебя нет этой карты", show_alert=True)
         return
-    
+
     # Помечаем карту как используемую (блокировка)
     epic_cards_in_progress[user_id] = card_name
-    
-    # СРАЗУ удаляем карту из коллекции - ДО применения эффекта!
-    remove_skill_card(user_id, card_name)
-    
+
+    # Карты, которые требуют отложенного удаления (показывают выбор пользователю)
+    deferred_removal_cards = ["УРААА"]
+
+    # Удаляем карту сразу для всех, кроме тех, что требуют отложенного удаления
+    if card_name not in deferred_removal_cards:
+        remove_skill_card(user_id, card_name)
+
     # Вызываем соответствующую функцию
     card_handlers = {
         "БРАТАН ТЫ ЧОТКИЙ": lambda: use_bratan_chotkiy(callback, bot),
@@ -634,7 +642,7 @@ async def handle_use_epic_card(callback: CallbackQuery, bot):
         "ОУ ДА БЕБИ": lambda: use_ou_da_bebi(callback),
         "ВЫГОДНАЯ СДЕЛКА": lambda: use_vygodnaya_sdelka(callback)
     }
-    
+
     handler = card_handlers.get(card_name)
     if handler:
         try:
@@ -677,23 +685,50 @@ async def handle_cancel_epic(callback: CallbackQuery):
 async def process_username_for_uraaa(message: Message, bot):
     """Обработка username для карты УРААА"""
     user_id = message.from_user.id
-    
+
     if user_id not in active_epic_cards or active_epic_cards[user_id].get("card") != "УРААА":
         return
-    
+
     username = message.text.strip().lstrip("@")
     target_user = find_user_by_username(username)
-    
+
     if not target_user:
         await message.answer("Пользователь не найден. Попробуйте еще раз:")
         return
-    
-    # Карта уже удалена в handle_use_epic_card при нажатии кнопки
-    
+
+    target_user_id = target_user["user_id"]
+
+    # Проверяем, не пытается ли пользователь подарить карту самому себе
+    if target_user_id == user_id:
+        await message.answer("Нельзя подарить карту самому себе! Используй кнопку 'Использовать на себя'.")
+        return
+
+    # Удаляем карту у отправителя
+    remove_skill_card(user_id, "УРААА")
+
+    # Добавляем карту другу
+    add_skill_card(target_user_id, "УРААА")
+
     # Очищаем состояние
     del active_epic_cards[user_id]
 
-    await message.answer(f"Подарок отправлен пользователю @{username}! Карта использована.")
+    # Уведомляем отправителя
+    await message.answer(f"🎁 Ты подарил карту УРААА пользователю @{username}!")
+
+    # Уведомляем получателя
+    try:
+        sender_data = get_user_full_data(user_id)
+        sender_name = get_user_mention(user_id, sender_data.get("first_name") if sender_data else None, sender_data.get("username") if sender_data else None)
+
+        await bot.send_message(
+            chat_id=target_user_id,
+            text=f"🎁 {sender_name} подарил тебе карту УРААА!\n\n"
+                 f"Карта добавлена в твою коллекцию. Используй её, чтобы сбросить таймер карты участника!",
+            parse_mode="HTML"
+        )
+    except Exception:
+        # Если не удалось отправить сообщение (бот заблокирован и т.д.), игнорируем
+        pass
 
 
 # === ПЕРИОДИЧЕСКАЯ ПРОВЕРКА ИСТЕЧЕНИЙ ===
