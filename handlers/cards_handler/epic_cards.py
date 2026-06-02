@@ -157,15 +157,73 @@ async def broadcast_message_with_template(bot, base_message: str, user_id: int, 
 
 # === КАРТА 2: УРААА ===
 async def use_uraaa(callback: CallbackQuery, bot):
-    """Дарение по юзернейму."""
+    """Сброс таймера карты участника для себя или друга."""
     user_id = callback.from_user.id
-    
-    # Запрашиваем юзернейм получателя
+
+    # Показываем выбор: использовать на себя или подарить другу
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="🎯 Использовать на себя", callback_data="uraaa_self")
+    )
+    builder.row(
+        InlineKeyboardButton(text="🎁 Подарить другу", callback_data="uraaa_gift")
+    )
+    builder.row(
+        InlineKeyboardButton(text="❌ Отмена", callback_data="cancel_epic_card")
+    )
+
     await callback.message.answer(
-        "Введите @username пользователя, которому хотите сделать подарок:",
+        "Выберите действие для карты \"УРААА\":\n\n"
+        "🎯 <b>Использовать на себя</b> — сбросить таймер карты участника\n"
+        "🎁 <b>Подарить другу</b> — отправить карту другу по username",
+        reply_markup=builder.as_markup(),
+        parse_mode="HTML"
+    )
+
+
+# === ОБРАБОТЧИКИ ДЛЯ КАРТЫ УРААА ===
+@router.callback_query(F.data == "uraaa_self")
+async def handle_uraaa_self(callback: CallbackQuery, bot):
+    """Использование карты УРААА на себя — сброс таймера карты участника"""
+    user_id = callback.from_user.id
+
+    # Импортируем функцию сброса таймера участника
+    from .members import TIMER_PATH as MEMBER_TIMER_PATH
+    import json
+
+    # Сбрасываем таймер карты участника
+    timers = {}
+    if os.path.exists(MEMBER_TIMER_PATH):
+        with open(MEMBER_TIMER_PATH, "r", encoding="utf-8") as f:
+            timers = json.load(f)
+
+    # Устанавливаем, что можно открыть карту сейчас
+    timers[str(user_id)] = {
+        "last_open": None,
+        "can_open_after": None,
+        "check_enabled": True
+    }
+
+    with open(MEMBER_TIMER_PATH, "w", encoding="utf-8") as f:
+        json.dump(timers, f, ensure_ascii=False, indent=2)
+
+    await callback.message.edit_text(
+        "🎉 Таймер карты участника сброшен! Теперь ты можешь открыть новую карту!",
+        reply_markup=None
+    )
+    await callback.answer("✅ Карта УРААА использована!")
+
+
+@router.callback_query(F.data == "uraaa_gift")
+async def handle_uraaa_gift(callback: CallbackQuery, bot):
+    """Подарить карту УРААА другу"""
+    user_id = callback.from_user.id
+
+    await callback.message.edit_text(
+        "Введите @username пользователя, которому хотите подарить карту:",
         reply_markup=get_back_button()
     )
-    
+
     # Сохраняем состояние ожидания
     active_epic_cards[user_id] = {"card": "УРААА", "step": "waiting_username"}
 
