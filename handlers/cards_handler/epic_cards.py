@@ -447,18 +447,18 @@ async def use_megaludik(callback: CallbackQuery):
 
 # === КАРТА 8: КРУТАЧКИ ===
 async def use_krutachki(callback: CallbackQuery):
-    """Просто дает круточки"""
+    """Выдает 15 круток"""
     user_id = callback.from_user.id
-    
-    # Даем случайное количество круток (например, 5-15)
-    spins = random.randint(5, 15)
-    
+
+    # Даем 15 круток
+    spins = 15
+
     data = load_roulette_data(user_id)
     data["roulette_count"] = data.get("roulette_count", 0) + spins
     save_roulette_data(user_id, data)
-    
+
     await callback.answer(f"Ты получил {spins} круток!", show_alert=True)
-    
+
     # Карта уже удалена в handle_use_epic_card
 
 
