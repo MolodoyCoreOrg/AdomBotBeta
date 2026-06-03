@@ -771,11 +771,11 @@ def get_unrewarded_presave_actions() -> list[dict]:
 # ==================== ФУНКЦИИ ДЛЯ СИСТЕМЫ ОБМЕНА ====================
 
 def find_user_by_username(username: str) -> dict | None:
-    """Ищет пользователя по username (без @)."""
+    """Ищет пользователя по username (без @, без учёта регистра)."""
     username = username.lstrip('@')
     with connect() as conn:
         cur = conn.cursor()
-        cur.execute("SELECT user_id, username FROM users WHERE username = ?", (username,))
+        cur.execute("SELECT user_id, username FROM users WHERE LOWER(username) = LOWER(?)", (username,))
         row = cur.fetchone()
         if row:
             return {"user_id": row[0], "username": row[1]}
