@@ -226,7 +226,13 @@ async def enter_username(message: Message, state: FSMContext):
             await message.answer("❌ У вас больше нет этой карты! Начните обмен заново.")
             await state.clear()
             return
-    
+    elif my_card_type == "skill":
+        user_cards = get_skill_cards(user_id)
+        if my_card_name not in user_cards:
+            await message.answer("❌ У вас больше нет этой карты! Начните обмен заново.")
+            await state.clear()
+            return
+
     # Сохраняем данные о целевом пользователе
     await state.update_data(target_user_id=target_user_id, target_username=target_username)
     
