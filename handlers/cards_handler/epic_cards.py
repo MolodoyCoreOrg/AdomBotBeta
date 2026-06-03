@@ -681,16 +681,16 @@ async def handle_cancel_epic(callback: CallbackQuery):
 
 
 # === ОБРАБОТЧИК СООБЩЕНИЙ ДЛЯ КАРТЫ УРААА ===
-@router.message(F.text.startswith("@"))
-async def process_username_for_uraaa(message: Message, bot):
-    """Обработка username для карты УРААА"""
-    user_id = message.from_user.id
+# Важно: этот обработчик должен проверять активность карты и не мешать другим обработчикам
+# Используем магический фильтр для проверки состояния
 
-    if user_id not in active_epic_cards or active_epic_cards[user_id].get("card") != "УРААА":
-        return
+from aiogram.fsm.context import FSMContext
 
-    username = message.text.strip().lstrip("@")
-    target_user = find_user_by_username(username)
+async def is_uraaa_active(user_id: int) -> bool:
+    """Проверяет, активна ли карта УРААА для пользователя"""
+    return user_id in active_epic_cards and active_epic_cards[user_id].get("card") == "УРААА"
+
+# Обработчик удалён - логика перенесена в exchange.py для избежания конфликтов
 
     if not target_user:
         await message.answer("Пользователь не найден. Попробуйте еще раз:")
