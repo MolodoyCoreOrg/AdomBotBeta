@@ -1,24 +1,3 @@
-<<<<<<< Updated upstream
-```
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Logs
-*.log
-
-# Environment
-.env
-.env.local
-*.env.*
-
-# Dependencies
-.venv/
-venv/
-```
-=======
 node_modules/
 build/
 dist/
@@ -27,4 +6,3 @@ coverage/
 *.log
 .env*
 !.env.example
->>>>>>> Stashed changes
