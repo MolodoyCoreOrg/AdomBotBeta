@@ -157,6 +157,7 @@ async def broadcast_message_with_template(bot, base_message: str, user_id: int, 
 
 # === КАРТА 2: УРААА ===
 async def use_uraaa(callback: CallbackQuery, bot):
+<<<<<<< Updated upstream
     """Дарение по юзернейму."""
     user_id = callback.from_user.id
     
@@ -168,6 +169,52 @@ async def use_uraaa(callback: CallbackQuery, bot):
     
     # Сохраняем состояние ожидания
     active_epic_cards[user_id] = {"card": "УРААА", "step": "waiting_username"}
+=======
+    """Сбрасывает кулдаун (таймер) на открытие карточек участников."""
+    user_id = callback.from_user.id
+    
+    # Сбрасываем таймер в timer_members_card.json
+    timer_path = "data/table/timer_members_card.json"
+    if os.path.exists(timer_path):
+        try:
+            with open(timer_path, "r", encoding="utf-8") as f:
+                timers = json.load(f)
+        except Exception:
+            timers = {}
+    else:
+        timers = {}
+        
+    user_key = str(user_id)
+    if user_key in timers:
+        # Сбрасываем время ожидания кулдауна
+        timers[user_key]["can_open_after"] = None
+    else:
+        timers[user_key] = {
+            "last_open": None,
+            "can_open_after": None,
+            "check_enabled": True
+        }
+        
+    os.makedirs(os.path.dirname(timer_path), exist_ok=True)
+    try:
+        with open(timer_path, "w", encoding="utf-8") as f:
+            json.dump(timers, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"Error saving timer file: {e}")
+        
+    # Удаляем карту из коллекции
+    remove_skill_card(user_id, "УРААА")
+    
+    # Очищаем временное состояние
+    if user_id in active_epic_cards:
+        del active_epic_cards[user_id]
+        
+    await callback.message.answer("🎉 Кулдаун на открытие карточек участников сброшен! Ты можешь открыть карточку участника прямо сейчас!")
+    try:
+        await callback.answer("Успешно использовано!", show_alert=True)
+    except Exception:
+        pass
+>>>>>>> Stashed changes
 
 
 # === КАРТА 3: БАБКИ НЕ ПРОБЛЕМА ===
