@@ -157,7 +157,6 @@ async def broadcast_message_with_template(bot, base_message: str, user_id: int, 
 
 # === КАРТА 2: УРААА ===
 async def use_uraaa(callback: CallbackQuery, bot):
-Updated upstream
     """Дарение по юзернейму."""
     user_id = callback.from_user.id
     
