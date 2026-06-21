@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "description": "",
+  "name": "AdomBotBeta Dev",
+  "description": "Dev branch code for AdomBotBeta, with epic_cards.py syntax error fixed.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
