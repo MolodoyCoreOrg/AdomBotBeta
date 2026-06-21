@@ -157,7 +157,7 @@ async def broadcast_message_with_template(bot, base_message: str, user_id: int, 
 
 # === КАРТА 2: УРААА ===
 async def use_uraaa(callback: CallbackQuery, bot):
-<<<<<<< Updated upstream
+Updated upstream
     """Дарение по юзернейму."""
     user_id = callback.from_user.id
     
@@ -214,7 +214,7 @@ async def use_uraaa(callback: CallbackQuery, bot):
         await callback.answer("Успешно использовано!", show_alert=True)
     except Exception:
         pass
->>>>>>> Stashed changes
+ Stashed changes
 
 
 # === КАРТА 3: БАБКИ НЕ ПРОБЛЕМА ===
