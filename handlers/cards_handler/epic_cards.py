@@ -12,7 +12,7 @@ from aiogram.exceptions import TelegramRetryAfter, TelegramBadRequest
 from database.db import (
     connect, get_skill_cards, update_skill_cards, add_balance, 
     load_roulette_data, save_roulette_data, get_all_user_ids,
-    find_user_by_username, get_user_full_data
+    find_user_by_username, get_user_full_data, add_skill_bonus
 )
 from handlers.picture import find_image_file
 from utils.helpers import safe_delete
@@ -483,14 +483,38 @@ async def use_megaludik(callback: CallbackQuery):
         else:  # 5% карт
             card_count += 1
     
-    # Списываем крутки
+    # Обрабатываем бонусы к поджопникам (огонек)
+    upgrades = data.get("kazino_upgrades", {})
+    has_jopa_fire = False
+    if isinstance(upgrades, dict):
+        has_jopa_fire = "jopa_fire_2" in upgrades
+    elif isinstance(upgrades, list):
+        has_jopa_fire = any(u.get("id") == "jopa_fire_2" if isinstance(u, dict) else u == "jopa_fire_2" for u in upgrades)
+
+    fire_bonus = 2 if has_jopa_fire else 0
+    total_fire_bonus = fire_bonus * podzhopnik_count
+    
+    if total_fire_bonus > 0:
+        data["fire_points"] = data.get("fire_points", 0) + total_fire_bonus
+        fire_suffix = f" (+{total_fire_bonus}🔥)"
+    else:
+        fire_suffix = ""
+        
+    # Начисляем поджопники
+    data["jopa_count"] = data.get("jopa_count", 0) + podzhopnik_count
+    
+    # Начисляем карты суперспособностей (возможность их открыть)
+    if card_count > 0:
+        add_skill_bonus(user_id, card_count)
+        
+    # Списываем крутки и сохраняем рулеточные данные
     data["roulette_count"] = 0
     save_roulette_data(user_id, data)
     
     result_text = (
         f"🎰 Ты прокрутил {spins} круток из них:\n"
         f"🗑️ {empty_count} пустышек\n"
-        f"🍑 {podzhopnik_count} поджопник(ов)\n"
+        f"🍑 {podzhopnik_count} поджопник(ов){fire_suffix}\n"
         f"🎴 {card_count} карта(ы) способности"
     )
     
