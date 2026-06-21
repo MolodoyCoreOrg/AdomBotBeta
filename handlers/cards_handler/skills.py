@@ -74,8 +74,10 @@ def get_user_timer(user_id: int):
 
 def set_user_timer(user_id: int, last_open: datetime, check_enabled: bool = True):
     timers = load_timers()
+    old_timer = timers.get(str(user_id), {})
     timers[str(user_id)] = {
         "last_open": last_open.date().isoformat(),
+        "can_open_after": old_timer.get("can_open_after"),
         "check_enabled": check_enabled
     }
     save_timers(timers)
