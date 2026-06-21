@@ -1,6 +1,6 @@
 {
-  "name": "AdomBotBeta Dev",
-  "description": "Dev branch code for AdomBotBeta, with epic_cards.py syntax error fixed.",
+  "name": "AdomBot Debugger",
+  "description": "Developer control panel and syntax debugger for AdomBot Beta. View resolved merge conflicts, explore the 800+ cards library, and simulate card actions.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
