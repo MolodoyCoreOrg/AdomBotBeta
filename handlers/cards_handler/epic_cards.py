@@ -157,19 +157,6 @@ async def broadcast_message_with_template(bot, base_message: str, user_id: int, 
 
 # === КАРТА 2: УРААА ===
 async def use_uraaa(callback: CallbackQuery, bot):
-<<<<<<< Updated upstream
-    """Дарение по юзернейму."""
-    user_id = callback.from_user.id
-    
-    # Запрашиваем юзернейм получателя
-    await callback.message.answer(
-        "Введите @username пользователя, которому хотите сделать подарок:",
-        reply_markup=get_back_button()
-    )
-    
-    # Сохраняем состояние ожидания
-    active_epic_cards[user_id] = {"card": "УРААА", "step": "waiting_username"}
-=======
     """Сбрасывает кулдаун (таймер) на открытие карточек участников."""
     user_id = callback.from_user.id
     
@@ -214,7 +201,6 @@ async def use_uraaa(callback: CallbackQuery, bot):
         await callback.answer("Успешно использовано!", show_alert=True)
     except Exception:
         pass
->>>>>>> Stashed changes
 
 
 # === КАРТА 3: БАБКИ НЕ ПРОБЛЕМА ===
