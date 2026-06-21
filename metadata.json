@@ -1,6 +1,6 @@
 {
-  "name": "AdomBot Simulator",
-  "description": "Interactive developer hub, simulator, and exporter for the AdomBot Telegram bot. It features a custom AI mock-mute generator and interactive inline 'pidoras' counter.",
+  "name": "",
+  "description": "",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
