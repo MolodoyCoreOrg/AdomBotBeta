@@ -733,15 +733,15 @@ async def handle_edit_member_work(callback: CallbackQuery, state: FSMContext):
     builder.row(
         types.InlineKeyboardButton(
             text="Участник объединения",
-            callback_data=f"set_work:{index}:Участник объединения"
+            callback_data=f"set_member_work:{index}:Участник объединения"
         ),
         types.InlineKeyboardButton(
             text="Саппортер",
-            callback_data=f"set_work:{index}:Саппортер"
+            callback_data=f"set_member_work:{index}:Саппортер"
         ),
         types.InlineKeyboardButton(
             text="Победитель конкурса",
-            callback_data=f"set_work:{index}:Победитель конкурса"
+            callback_data=f"set_member_work:{index}:Победитель конкурса"
         ),
         width=2
     )
