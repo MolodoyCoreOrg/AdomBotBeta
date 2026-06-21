@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 ```
 # Python
 __pycache__/
@@ -17,3 +18,13 @@ __pycache__/
 .venv/
 venv/
 ```
+=======
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+>>>>>>> Stashed changes
