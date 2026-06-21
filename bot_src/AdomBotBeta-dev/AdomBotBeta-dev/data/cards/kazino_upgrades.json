@@ -1,0 +1,12 @@
+[
+    {"id": "spin_per_hour_plus", "name": "+1 крутка в час", "rarity": "common", "effect": "+1 к количеству круток в час", "weight": 15},
+    {"id": "max_spins_plus", "name": "+1 к максимальному накапливаемому количеству круток", "rarity": "common", "effect": "+1 к макс. круткам", "weight": 15},
+    {"id": "jopa_fire_2", "name": "Выпадение поджопника дает 2🔥", "rarity": "common", "effect": "+2🔥 за поджопник", "weight": 12},
+    {"id": "ghost_spins_plus5", "name": "Выпадение призраков дает на 5 больше круток", "rarity": "common", "effect": "+5 круток за призраков", "weight": 12},
+    {"id": "meow_fire", "name": "При мяуканьи больше 5 раз дается 1🔥", "rarity": "common", "effect": "+1🔥 за 5+ мяуканий", "weight": 10},
+    {"id": "kiss_kiss_kiss_fire", "name": "При выпадении 💋💋💋 дается 300 🔥", "rarity": "common", "effect": "+300🔥 за 💋💋💋", "weight": 6},
+    {"id": "dopa_mechanic", "name": "Открыта механика ДОДЕПА", "rarity": "common", "effect": "x10🔥 при любой комбинации", "weight": 10},
+    {"id": "timer_reduce_10min", "name": "Минус 10 минут к таймеру пополнения круток", "rarity": "rare", "effect": "-10 мин к таймеру", "weight": 20, "max_count": 3},
+    {"id": "double_casino", "name": "Можно крутить сразу два казика", "rarity": "epic", "effect": "Двойная прокрутка", "weight": 7, "max_count": 1},
+    {"id": "fast_spin", "name": "Появляется возможность быстрой прокрутки", "rarity": "legendary", "effect": "Быстрая прокрутка", "weight": 3, "max_count": 1}
+]
