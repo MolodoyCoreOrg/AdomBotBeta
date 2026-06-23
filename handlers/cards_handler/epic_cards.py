@@ -15,7 +15,8 @@ from aiogram.fsm.state import State, StatesGroup
 from database.db import (
     connect, get_skill_cards, update_skill_cards, add_balance,
     load_roulette_data, save_roulette_data, get_all_user_ids,
-    find_user_by_username, get_user_full_data, add_skill_card
+    find_user_by_username, get_user_full_data, add_skill_card,
+    add_skill_bonus # Добавлен импорт для начисления карточек
 )
 from handlers.picture import find_image_file
 from utils.helpers import safe_delete
@@ -565,28 +566,67 @@ async def use_megaludik(callback: CallbackQuery):
     empty_count = 0
     podzhopnik_count = 0
     card_count = 0
+    ghost_count = 0
     
-    for _ in range(spins):
+    current_spins = spins
+    total_spins_made = 0
+    
+    # Крутим пока есть крутки (включая те, что выпадают с призраков) 
+    # с лимитом от бесконечного цикла
+    while current_spins > 0 and total_spins_made < 1000:
+        current_spins -= 1
+        total_spins_made += 1
+        
         rand = random.random()
-        if rand < 0.7:  # 70% пустышек
+        # Вероятности скорректированы для учета призраков
+        if rand < 0.70:  # 70% пустышек
             empty_count += 1
-        elif rand < 0.95:  # 25% поджопников
+        elif rand < 0.90:  # 20% поджопников
             podzhopnik_count += 1
+        elif rand < 0.95:  # 5% призраков (+10 или +15 круток)
+            ghost_count += 1
+            # Учитываем улучшение для призраков, если оно есть
+            ghost_spins = 15 if "ghost_spins_plus5" in data.get("kazino_upgrades", {}) else 10
+            current_spins += ghost_spins
         else:  # 5% карт
             card_count += 1
+            
+    # Сохраняем результаты в профиль пользователя
     
-    # Списываем крутки
-    data["roulette_count"] = 0
+    # 1. Начисляем возможности открыть карты суперспособностей
+    if card_count > 0:
+        add_skill_bonus(user_id, card_count)
+        
+    # 2. Сохраняем поджопники и выдаем за них огоньки (если есть улучшение)
+    if podzhopnik_count > 0:
+        data["jopa_count"] = data.get("jopa_count", 0) + podzhopnik_count
+        upgrades = data.get("kazino_upgrades", {})
+        if "jopa_fire_2" in upgrades:
+            data["fire_points"] = data.get("fire_points", 0) + (2 * podzhopnik_count)
+            
+    # 3. Сохраняем остаток круток (если цикл оборвался на 1000 или остались после призраков)
+    data["roulette_count"] = current_spins
     save_roulette_data(user_id, data)
     
+    # Формируем итоговый текст
     result_text = (
-        f"🎰 Ты прокрутил {spins} круток из них:\n"
+        f"🎰 Ты прокрутил {total_spins_made} круток из них:\n"
         f"🗑️ {empty_count} пустышек\n"
         f"🍑 {podzhopnik_count} поджопник(ов)\n"
-        f"🎴 {card_count} карта(ы) способности"
     )
+    if ghost_count > 0:
+        result_text += f"👻 {ghost_count} раз(а) выпали призраки\n"
     
-    await callback.message.answer(result_text)
+    result_text += f"🎴 {card_count} карта(ы) способности"
+    
+    # Добавляем кнопку открытия карт, если они выпали
+    reply_markup = None
+    if card_count > 0:
+        reply_markup = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="🎁 Открыть карту способности", callback_data="draw_skill")]
+        ])
+    
+    await callback.message.answer(result_text, reply_markup=reply_markup)
     
     # Карта уже удалена в handle_use_epic_card
 
