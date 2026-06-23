@@ -165,8 +165,6 @@ def init_db():
     create_user_card_drops_table()
     create_presave_table()   # добавлено
     init_exchange_tables()   # инициализация таблиц системы обмена
-    from handlers.pidoraz import create_pidoraz_table
-    create_pidoraz_table()   # инициализация таблицы пидаразов
 
 def get_user_timezone(user_id: int) -> str:
     """Return user's timezone string (IANA), default 'UTC' if not set."""
@@ -773,11 +771,11 @@ def get_unrewarded_presave_actions() -> list[dict]:
 # ==================== ФУНКЦИИ ДЛЯ СИСТЕМЫ ОБМЕНА ====================
 
 def find_user_by_username(username: str) -> dict | None:
-    """Ищет пользователя по username (без @)."""
+    """Ищет пользователя по username (без @, без учёта регистра)."""
     username = username.lstrip('@')
     with connect() as conn:
         cur = conn.cursor()
-        cur.execute("SELECT user_id, username FROM users WHERE username = ?", (username,))
+        cur.execute("SELECT user_id, username FROM users WHERE LOWER(username) = LOWER(?)", (username,))
         row = cur.fetchone()
         if row:
             return {"user_id": row[0], "username": row[1]}
