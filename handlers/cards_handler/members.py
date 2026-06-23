@@ -84,10 +84,8 @@ def get_user_timer(user_id: int):
 
 def set_user_timer(user_id: int, last_open: datetime, check_enabled: bool = True):
     timers = load_timers()
-    old_timer = timers.get(str(user_id), {})
     timers[str(user_id)] = {
         "last_open": last_open.isoformat(),
-        "can_open_after": old_timer.get("can_open_after"),
         "check_enabled": check_enabled
     }
     save_timers(timers)
@@ -216,27 +214,16 @@ async def draw_member(event: CallbackQuery | Message):
         work = card["work"]
         image_filename = card["image"]
 
-        # Награда за сжигание повторной карточки в зависимости от редкости
-        burn_rewards = {
-            "Обычная": 10,
-            "Редкая": 50,
-            "Эпическая": 200,
-            "Легендарная": 1000
-        }
-
         if name in user_cards:
+            # При получении повторки карты участника - просто повышаем ранг (без сжигания и без огоньков)
             user_cards[name]["rank"] += 1
             rank = user_cards[name]["rank"]
-            reward_amount = burn_rewards.get(rarity, 10)
-            new_balance = add_balance(user_id, reward_amount)
             text = (
-                f"💥 Повторная карточка: <b>{name}</b>\n"
+                f"🔁 Тебе выпала повторная карточка: <b>{name}</b>\n"
                 f"⭐ Редкость: <i>{rarity}</i>\n"
-                f"🥇 Звание: <i>{work}</i>\n"
-                f"🔼 Ранг повышен: <b>{rank}</b>\n"
-                f"🧠 Получена суперспособность: <i>{skill}</i>\n\n"
-                f"🔥 Карточка сожжена! Вы получили {reward_amount}🔥\n"
-                f"💰 Ваш баланс: {new_balance}🔥"
+                f"🥇 Звание: <i>{work}</i>\n\n"
+                f"🔼 Ранг карты повышен: <b>{rank}</b>\n"
+                f"🧠 Получена суперспособность: <i>{skill}</i>"
             )
         else:
             rank = 1
