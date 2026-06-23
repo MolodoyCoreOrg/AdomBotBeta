@@ -61,20 +61,22 @@ def get_notify_skill_keyboard():
         )
     return builder.as_markup()
 
-REMINDER_HOUR = 19
+REMINDER_HOUR_UTC = 19  # 19:00 UTC = 22:00 МСК
 REMINDER_MINUTE = 0
 
 async def notify_skill_card_reminder():
     global last_skill_notify_date
     total_skill_cards = get_total_skill_cards_count()
-    
+
     while True:
         now = datetime.utcnow()
         today_str = now.strftime("%Y-%m-%d")
 
-        # Проверяем, наступило ли заданное время
-        if now.hour == REMINDER_HOUR and now.minute == REMINDER_MINUTE:
+        # Проверяем, находимся ли мы в нужный час (19:00 UTC = 22:00 МСК)
+        # Используем окно в 5 минут (19:00 - 19:04 UTC) для надёжности
+        if now.hour == REMINDER_HOUR_UTC and 0 <= now.minute <= 4:
             if last_skill_notify_date != today_str:
+                print(f"[notify_skill] Отправка уведомлений в {now} UTC")
                 # Получаем всех пользователей и проверяем, у кого собраны все карты
                 with connect() as conn:
                     cur = conn.cursor()
