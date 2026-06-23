@@ -326,16 +326,18 @@ async def use_babki_ne_problema(callback: CallbackQuery, bot):
     
     message = f"{user_name} использует карту \"БАБКИ НЕ ПРОБЛЕМА\" и дарит всем пользователям бота +1🔥"
     
-    # Выдаем всем по 1 огню
+    # Выдаем всем по 1 огню (в параметры рулетки, а не в основной баланс)
     user_ids = get_all_user_ids()
     for uid in user_ids:
-        add_balance(uid, 1)
+        data = load_roulette_data(uid)
+        data["fire_points"] = data.get("fire_points", 0) + 1
+        save_roulette_data(uid, data)
     
     # Отправляем сообщение всем
     await broadcast_message_with_template(bot, message, user_id)
     
     # Карта уже удалена в handle_use_epic_card
-    await callback.answer("💸 Раздаем баксы всем...", show_alert=False)
+    await callback.answer("💸 Раздаем огоньки всем...", show_alert=False)
 
 
 # === КАРТА 4: ВСЕ В АЖУРЕ ===
@@ -415,7 +417,7 @@ async def use_hmmm(callback: CallbackQuery, bot):
     # Карта уже удалена в handle_use_epic_card
 
 
-async def hmmm_take_spins(callback: CallbackQuery, spins: int):
+async def hmmm_take_spins(callback: CallbackQuery, spins: int, bot):
     """Пользователь забирает крутки себе"""
     user_id = callback.from_user.id
     
@@ -435,7 +437,7 @@ async def hmmm_take_spins(callback: CallbackQuery, spins: int):
     user_name = get_user_mention(user_id, user_data.get("first_name") if user_data else None, user_data.get("username") if user_data else None)
     
     message = f"{user_name} забирает себе {spins} круток"
-    await broadcast_message_with_template(bot=None, base_message=message, user_id=user_id)
+    await broadcast_message_with_template(bot=bot, base_message=message, user_id=user_id)
     
     await callback.answer(f"Ты получил {spins} круток!", show_alert=True)
 
@@ -452,7 +454,10 @@ async def hmmm_double_other(callback: CallbackQuery, bot):
         return
     
     current_spins = epic_chain[chain_key]["spins_amount"]
-    new_spins = current_spins * 2
+    
+    # Лимит на максимальное количество круток для экономики
+    MAX_HMMM_SPINS = 256
+    new_spins = min(current_spins * 2, MAX_HMMM_SPINS)
     
     # Выбираем случайного пользователя (кроме текущего)
     all_users = get_all_user_ids()
@@ -460,7 +465,7 @@ async def hmmm_double_other(callback: CallbackQuery, bot):
     
     if not other_users:
         # Если нет других игроков, забираем себе
-        await hmmm_take_spins(callback, new_spins)
+        await hmmm_take_spins(callback, new_spins, bot)
         return
     
     next_user = random.choice(other_users)
@@ -486,15 +491,19 @@ async def hmmm_double_other(callback: CallbackQuery, bot):
     ])
     
     try:
+        limit_text = f" (макс. {MAX_HMMM_SPINS})" if new_spins < MAX_HMMM_SPINS else " (достигнут лимит)"
         await bot.send_message(
             chat_id=next_user,
-            text=f"🎲 Тебе передана карта ХМММ!\n\nТекущий приз: {new_spins} круток\n\nВыбери:\n• Забрать крутки себе\n• Удвоить и передать дальше",
+            text=f"🎲 Тебе передана карта ХМММ!\n\nТекущий приз: {new_spins} круток\n\nВыбери:\n• Забрать крутки себе\n• Удвоить и передать дальше{limit_text}",
             reply_markup=keyboard
         )
     except Exception:
         pass
     
-    await callback.answer(f"Карта передана следующему игроку! Приз удвоен до {new_spins} круток", show_alert=True)
+    if current_spins * 2 >= MAX_HMMM_SPINS:
+        await callback.answer(f"Карта передана следующему игроку! Достигнут лимит в {MAX_HMMM_SPINS} круток", show_alert=True)
+    else:
+        await callback.answer(f"Карта передана следующему игроку! Приз удвоен до {new_spins} круток", show_alert=True)
 
 
 async def check_hmmm_expirations(bot):
@@ -782,10 +791,10 @@ async def handle_use_epic_card(callback: CallbackQuery, bot):
 
 
 @router.callback_query(F.data.startswith("hmmm_take:"))
-async def handle_hmmm_take(callback: CallbackQuery):
+async def handle_hmmm_take(callback: CallbackQuery, bot):
     """Обработчик забирания круток из цепочки ХМММ"""
     spins = int(callback.data.split(":")[1])
-    await hmmm_take_spins(callback, spins)
+    await hmmm_take_spins(callback, spins, bot)
 
 
 @router.callback_query(F.data == "hmmm_double_other")
