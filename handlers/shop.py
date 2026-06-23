@@ -32,6 +32,13 @@ def broadcast_cancel_kb():
     )
     return kb.as_markup()
 
+def get_broadcast_kb(sender_id: int):
+    """Клавиатура для оценки публикации (донат автору)."""
+    kb = InlineKeyboardBuilder()
+    kb.row(
+        types.InlineKeyboardButton(text="🔥 Поддержать автора (10🔥)", callback_data=f"tip_author_{sender_id}")
+    )
+    return kb.as_markup()
 
 class MediaBroadcastState(StatesGroup):
     waiting_for_text = State()
@@ -383,24 +390,27 @@ async def broadcast_media_to_all_users(media_type: str, file_id: str = None, tex
             sender_name = first_name
         else:
             sender_name = f"пользователь {sender_id}"
+            
+    # Получаем клавиатуру для оценки (если известен sender_id)
+    reply_markup = get_broadcast_kb(sender_id) if sender_id else None
     
     for uid in user_ids:
         try:
             if media_type == "text":
                 message_text = f"📢 <b>Публичное сообщение от {sender_name}</b>:\n\n{text}"
-                await bot.send_message(chat_id=uid, text=message_text, parse_mode="HTML")
+                await bot.send_message(chat_id=uid, text=message_text, parse_mode="HTML", reply_markup=reply_markup)
             elif media_type == "photo":
                 caption = f"🖼️ <b>Фото от {sender_name}</b>"
-                await bot.send_photo(chat_id=uid, photo=file_id, caption=caption, parse_mode="HTML")
+                await bot.send_photo(chat_id=uid, photo=file_id, caption=caption, parse_mode="HTML", reply_markup=reply_markup)
             elif media_type == "gif":
                 caption = f"🎬 <b>GIF от {sender_name}</b>"
-                await bot.send_animation(chat_id=uid, animation=file_id, caption=caption, parse_mode="HTML")
+                await bot.send_animation(chat_id=uid, animation=file_id, caption=caption, parse_mode="HTML", reply_markup=reply_markup)
             elif media_type == "video":
                 caption = f"🎥 <b>Видео от {sender_name}</b>"
-                await bot.send_video(chat_id=uid, video=file_id, caption=caption, parse_mode="HTML")
+                await bot.send_video(chat_id=uid, video=file_id, caption=caption, parse_mode="HTML", reply_markup=reply_markup)
             elif media_type == "audio":
                 caption = f"🎙️ <b>Аудио от {sender_name}</b>"
-                await bot.send_audio(chat_id=uid, audio=file_id, caption=caption, parse_mode="HTML")
+                await bot.send_audio(chat_id=uid, audio=file_id, caption=caption, parse_mode="HTML", reply_markup=reply_markup)
             sent_count += 1
         except Exception as e:
             # Игнорируем ошибки отправки (бот заблокирован и т.д.)
@@ -557,7 +567,6 @@ async def shop_broadcast_gif(callback: CallbackQuery, state: FSMContext):
         return
     
     await safe_edit_message(callback.message, "🎬 Отправьте GIF, который вы хотите показать всем пользователям бота:\n\nЦена: 100🔥\n\nИспользуйте /cancel для отмены или кнопку «Назад».", reply_markup=broadcast_cancel_kb())
-    await safe_edit_message(callback.message, "🎬 Отправьте GIF, который вы хотите показать всем пользователям бота:\n\nЦена: 100🔥\n\nИспользуйте /cancel для отмены.")
 
 
 @router.message(MediaBroadcastState.waiting_for_gif, F.animation)
@@ -619,7 +628,6 @@ async def shop_broadcast_video(callback: CallbackQuery, state: FSMContext):
         return
     
     await safe_edit_message(callback.message, "🎥 Отправьте видео, которое вы хотите показать всем пользователям бота:\n\nЦена: 150🔥\n\nИспользуйте /cancel для отмены или кнопку «Назад».", reply_markup=broadcast_cancel_kb())
-    await safe_edit_message(callback.message, "🎥 Отправьте видео, которое вы хотите показать всем пользователям бота:\n\nЦена: 150🔥\n\nИспользуйте /cancel для отмены.")
 
 
 @router.message(MediaBroadcastState.waiting_for_video, F.video)
@@ -681,7 +689,6 @@ async def shop_broadcast_audio(callback: CallbackQuery, state: FSMContext):
         return
     
     await safe_edit_message(callback.message, "🎙️ Отправьте аудиосообщение, которое вы хотите показать всем пользователям бота:\n\nЦена: 50🔥\n\nИспользуйте /cancel для отмены или кнопку «Назад».", reply_markup=broadcast_cancel_kb())
-    await safe_edit_message(callback.message, "🎙️ Отправьте аудиосообщение, которое вы хотите показать всем пользователям бота:\n\nЦена: 50🔥\n\nИспользуйте /cancel для отмены.")
 
 
 @router.message(MediaBroadcastState.waiting_for_audio, F.audio | F.voice)
@@ -758,3 +765,65 @@ async def cancel_broadcast_via_button(callback: CallbackQuery, state: FSMContext
         return
     await state.clear()
     await shop_menu(callback)
+
+
+# ====== ОБРАБОТЧИК ДОНАТА (ОЦЕНКИ ПУБЛИКАЦИИ) ======
+
+@router.callback_query(F.data.startswith("tip_author_"))
+async def tip_broadcast_author(callback: CallbackQuery):
+    try:
+        sender_id = int(callback.data.split("_")[2])
+    except (IndexError, ValueError):
+        await callback.answer("❌ Ошибка при обработке запроса.", show_alert=True)
+        return
+
+    user_id = callback.from_user.id
+    
+    # Нельзя поддерживать самого себя
+    if sender_id == user_id:
+        await callback.answer("❌ Вы не можете отправить огоньки самому себе!", show_alert=True)
+        return
+        
+    with connect() as conn:
+        cur = conn.cursor()
+        
+        # Проверяем баланс отправителя
+        cur.execute("SELECT balance FROM users WHERE user_id = ?", (user_id,))
+        row = cur.fetchone()
+        
+        if not row:
+            await callback.answer("❌ Профиль не найден.", show_alert=True)
+            return
+            
+        if row[0] < 10:
+            await callback.answer("❌ У вас недостаточно средств (нужно 10🔥).", show_alert=True)
+            return
+            
+        # Списываем 10🔥 у лайкающего
+        cur.execute("UPDATE users SET balance = balance - 10 WHERE user_id = ?", (user_id,))
+        
+        # Зачисляем 10🔥 автору поста
+        cur.execute("""
+            UPDATE users 
+            SET balance = balance + 10, 
+                balance_all_time = balance_all_time + 10 
+            WHERE user_id = ?
+        """, (sender_id,))
+        conn.commit()
+        
+    await callback.answer("✅ Вы успешно отправили 10🔥 автору публикации!", show_alert=True)
+    
+    # Пытаемся отправить автору уведомление, что его кто-то поддержал
+    try:
+        liker_name = callback.from_user.username or callback.from_user.first_name or f"Пользователь {user_id}"
+        if not liker_name.startswith("@") and callback.from_user.username:
+            liker_name = f"@{liker_name}"
+            
+        await bot.send_message(
+            chat_id=sender_id,
+            text=f"🔥 Пользователь <b>{liker_name}</b> оценил вашу публикацию и пожертвовал вам <b>10🔥</b>!",
+            parse_mode="HTML"
+        )
+    except Exception:
+        # Если автор заблокировал бота, ничего страшного - просто игнорируем
+        pass
