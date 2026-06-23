@@ -175,7 +175,7 @@ def get_card_skill_ui():
 
 
 # === CARD NAVIGATION ===
-def get_member_card_navigation_keyboard(index: int, total: int, prefix: str = "my_member_cards"):
+def get_member_card_navigation_keyboard(index: int, total: int, prefix: str = "my_member_cards", card_name: str = None):
     builder = InlineKeyboardBuilder()
 
     # Стрелка влево
@@ -201,12 +201,17 @@ def get_member_card_navigation_keyboard(index: int, total: int, prefix: str = "m
             callback_data=f"{prefix}:{next_index}"
         )
     )
-    builder.row(
-        InlineKeyboardButton(text="🔥 Продать карту", callback_data=f"sell_member_card:{index}"),
-    )
-    builder.row(
-        InlineKeyboardButton(text="🆙 Апгрейд карты", callback_data=f"upgrade_member_card:{index}"),
-    )
+    
+    # Эксклюзивные карты за пресейв нельзя продавать - не показываем кнопку продажи и апгрейда
+    exclusive_cards = ["Я люблю жизнь", "Яйцо"]
+    if card_name not in exclusive_cards:
+        builder.row(
+            InlineKeyboardButton(text="🔥 Продать карту", callback_data=f"sell_member_card:{index}"),
+        )
+        builder.row(
+            InlineKeyboardButton(text="🆙 Апгрейд карты", callback_data=f"upgrade_member_card:{index}"),
+        )
+    
     builder.row(
         InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
     )
@@ -250,9 +255,13 @@ def get_skill_card_navigation_keyboard(index: int, total: int, prefix: str = "my
             InlineKeyboardButton(text="✨ Использовать", callback_data=f"use_epic_card:{card_name}"),
         )
     
-    builder.row(
-        InlineKeyboardButton(text="🔥 Продать карту", callback_data=f"sell_skill_card:{index}"),
-    )
+    # Эксклюзивные карты за пресейв нельзя продавать - не показываем кнопку продажи
+    exclusive_cards = ["Я люблю жизнь", "Яйцо"]
+    if card_name not in exclusive_cards:
+        builder.row(
+            InlineKeyboardButton(text="🔥 Продать карту", callback_data=f"sell_skill_card:{index}"),
+        )
+    
     builder.row(
         InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
     )
@@ -283,8 +292,8 @@ def get_skill_card_navigation_keyboard(index: int, total: int, prefix: str = "my
 def get_sort_member_menu_keyboard() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="По редкости", callback_data="sort_by_rarity"),
-        InlineKeyboardButton(text="По алфавиту", callback_data="sort_by_name")
+        InlineKeyboardButton(text="По редкости", callback_data="sort_member_by_rarity"),
+        InlineKeyboardButton(text="По алфавиту", callback_data="sort_member_by_name")
     )
     return builder.as_markup()
 
@@ -419,7 +428,7 @@ def get_rank_select_keyboard(index: int) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for n in range(1, 5):
         builder.row(
-            InlineKeyboardButton(text=f"Ранг {n}", callback_data=f"upload_rank_image:{index}:{n}")
+            InlineKeyboardButton(text=f"Ранг {n}", callback_data=f"upload_member_rank_image:{index}:{n}")
         )
     builder.row(
         InlineKeyboardButton(text="🔙 Назад", callback_data=f"show_member_rank_images:{index}")
@@ -795,7 +804,7 @@ def get_exchange_main_keyboard():
         InlineKeyboardButton(text="📥 Входящие предложения", callback_data="view_incoming_offers"),
     )
     builder.row(
-        InlineKeyboardButton(text="↪️ Назад", callback_data="main_menu"),
+        InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
     )
     return builder.as_markup()
 
@@ -901,29 +910,5 @@ def get_exchange_offer_keyboard(offer_id: int):
     builder.row(
         InlineKeyboardButton(text="✅ Принять", callback_data=f"accept_exchange:{offer_id}"),
         InlineKeyboardButton(text="❌ Отклонить", callback_data=f"reject_exchange:{offer_id}"),
-    )
-    return builder.as_markup()
-
-
-# === ПИДАРАЗЫ ===
-
-def pidoraz_main_ui():
-    """Main keyboard for pidoraz feature."""
-    builder = InlineKeyboardBuilder()
-    builder.row(
-        InlineKeyboardButton(text="🔢 Выбрать номер", callback_data="pidoraz_select_number"),
-        InlineKeyboardButton(text="📋 Список пидаразов", callback_data="pidoraz_list")
-    )
-    builder.row(
-        InlineKeyboardButton(text="ℹ️ Мой номер", callback_data="pidoraz_my_number")
-    )
-    return builder.as_markup()
-
-
-def pidoraz_notify_ui(number: int):
-    """Keyboard for daily notification."""
-    builder = InlineKeyboardBuilder()
-    builder.row(
-        InlineKeyboardButton(text=f"📣 Пидараз {number} на связи", callback_data=f"pidoraz_notify_{number}")
     )
     return builder.as_markup()
