@@ -304,6 +304,7 @@ async def sell_member_card(event: CallbackQuery):
         else:
             raise
     await event.answer()
+    
     # --- Выплата при продаже карты ---
     try:
         # Базовая цена по редкости
@@ -322,6 +323,11 @@ async def sell_member_card(event: CallbackQuery):
         multiplier = rank_multipliers.get(rank, 1.0)
 
         amount = int(round(base_price * multiplier))
+
+        # --- ИСПРАВЛЕНИЕ: Проверяем бонус от карты "ВЫГОДНАЯ СДЕЛКА" ---
+        from .epic_cards import check_vygodnaya_sdelka
+        amount = check_vygodnaya_sdelka(user_id, amount)
+        # ---------------------------------------------------------------
 
         # Удаляем карту из коллекции пользователя
         del user_cards[card_name]

@@ -240,6 +240,11 @@ async def sell_skill_card(event: CallbackQuery | Message):
         }
         amount = int(rarity_prices.get(rarity, 1))
 
+        # --- ИСПРАВЛЕНИЕ: Проверяем бонус от карты "ВЫГОДНАЯ СДЕЛКА" ---
+        from .epic_cards import check_vygodnaya_sdelka
+        amount = check_vygodnaya_sdelka(user_id, amount)
+        # ---------------------------------------------------------------
+
         # Удаляем карту из коллекции пользователя
         del user_cards[card_name]
 
