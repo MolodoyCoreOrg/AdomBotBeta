@@ -6,7 +6,7 @@ from aiogram.types import CallbackQuery, FSInputFile, Message
 from aiogram.exceptions import TelegramRetryAfter, TelegramBadRequest
 
 from ..keyboard import get_main_keyboard
-from database.db import get_skill_cards, update_skill_cards
+from database.db import get_skill_cards, update_skill_cards, add_balance
 from ..picture import find_image_file
 from database.stats import increment_stat
 from utils.config import RARITY_WEIGHTS
@@ -74,10 +74,8 @@ def get_user_timer(user_id: int):
 
 def set_user_timer(user_id: int, last_open: datetime, check_enabled: bool = True):
     timers = load_timers()
-    old_timer = timers.get(str(user_id), {})
     timers[str(user_id)] = {
         "last_open": last_open.date().isoformat(),
-        "can_open_after": old_timer.get("can_open_after"),
         "check_enabled": check_enabled
     }
     save_timers(timers)
@@ -141,6 +139,9 @@ def set_check_skill_enabled(user_id: int, enabled: bool):
     set_user_timer(user_id, last_open, check_enabled=enabled)
 
 # === Выбор карточки ===
+# Уникальные карточки, которые нельзя получить через ежедневную функцию (только за пресейв)
+EXCLUSIVE_CARDS = {"Яйцо", "Я люблю жизнь"}
+
 def weighted_random_choice(user_cards, skills_path="data/cards/skills.json"):
     if not isinstance(skills_path, (str, bytes, type(None))):
         raise TypeError(f"Неверный тип пути: {type(skills_path)}")
@@ -160,14 +161,13 @@ def weighted_random_choice(user_cards, skills_path="data/cards/skills.json"):
 
     now_ts = datetime.utcnow().timestamp()
 
-
-    # Фильтруем карточки, которые у пользователя уже есть
-    owned_names = set(user_cards)
-    # Exclude owned cards and cards awarded to anyone in the recent TTL
+    # Карточки могут повторяться - не фильтруем owned_names
+    # Exclude only cards awarded to anyone in the recent TTL to reduce collisions
     available_cards = []
     for card in all_cards:
         name = card.get("name")
-        if name in owned_names:
+        # Пропускаем уникальные карточки, которые доступны только за пресейв
+        if name in EXCLUSIVE_CARDS:
             continue
         last_ts = last_awarded.get(name)
         if last_ts and (now_ts - float(last_ts) < LAST_AWARDED_TTL):
@@ -230,17 +230,13 @@ async def draw_skill(event: CallbackQuery | Message):
 
     try:
         user_cards = get_skill_cards(user_id)
-        owned = set(user_cards.keys()) - {"_last_draw"}
-
-        card = weighted_random_choice(user_cards=owned)
+        # Передаем все карточки пользователя, функция weighted_random_choice теперь игнорирует owned_names
+        card = weighted_random_choice(user_cards=user_cards)
         if not card:
             try:
                 await event.message.answer("Ты уже собрал все карточки!")
             except TelegramRetryAfter as e:
                 print(f"Flood control: ждем {e.retry_after} секунд.")
-                # Можно:
-                # await asyncio.sleep(e.retry_after)
-                # или пропустить
             except Exception as e:
                 print(f"Ошибка при отправке сообщения: {e}")
             return
@@ -256,9 +252,31 @@ async def draw_skill(event: CallbackQuery | Message):
             await event.message.answer("❌ Изображение не найдено.")
             return
 
-        text = f"🎉 Ты получил карточку умения!\n<b>{name}</b>\n⭐ Редкость: <i>{rarity}</i>"
-        # mark receipt time for newly granted skill cards
-        user_cards[name] = {"rank": 1, "received_at": datetime.utcnow().isoformat()}
+        # Награда за сжигание повторной карточки в зависимости от редкости
+        burn_rewards = {
+            "Обычная": 1,
+            "Редкая": 5,
+            "Эпическая": 9,
+            "Легендарная": 10
+        }
+
+        # Проверяем, есть ли уже эта карточка у пользователя
+        owned = set(user_cards.keys()) - {"_last_draw"}
+        if name in owned:
+            # Повторная карточка - сжигаем и даем валюту
+            reward_amount = burn_rewards.get(rarity, 1)
+            new_balance = add_balance(user_id, reward_amount)
+            text = (
+                f"🔁 Тебе выпала повторная карточка: <b>{name}</b>\n"
+                f"⭐ Редкость: <i>{rarity}</i>\n\n"
+                f"🔥 Она автоматически сожглась, и ты получил <b>{reward_amount}🔥</b> на свой счёт!\n"
+                f"💰 Твой баланс: {new_balance}🔥"
+            )
+        else:
+            # Новая карточка
+            rank = 1
+            user_cards[name] = {"rank": 1, "received_at": datetime.utcnow().isoformat()}
+            text = f"🎉 Ты получил карточку умения!\n<b>{name}</b>\n⭐ Редкость: <i>{rarity}</i>"
 
         # persist last-awarded timestamp to reduce duplicate drops across users
         try:
