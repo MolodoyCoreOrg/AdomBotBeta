@@ -10,6 +10,7 @@ from utils.config import TOKEN
 from handlers.notify import notify_member_card_reminder, notify_skill_card_reminder
 from handlers.roulette import roulette_increment_task
 from handlers.donate import run_da_client
+from handlers.pidaraz import daily_pidaraz_check
 
 import socketio
 
@@ -35,6 +36,7 @@ if __name__ == "__main__":
         asyncio.create_task(notify_member_card_reminder())
         asyncio.create_task(notify_skill_card_reminder())
         asyncio.create_task(roulette_increment_task())
+        asyncio.create_task(daily_pidaraz_check(bot))
 
         await main()
 

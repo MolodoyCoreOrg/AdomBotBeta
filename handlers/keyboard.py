@@ -51,6 +51,9 @@ async def get_main_keyboard(spins, user_id) -> InlineKeyboardMarkup:
         InlineKeyboardButton(text=f"🎰 Казик — круток: {spins} ", callback_data="roulette_button"),
     )
     builder.row(
+        InlineKeyboardButton(text="🎪 ПИДАРАЗЫ", callback_data="pidaraz_menu"),
+    )
+    builder.row(
         InlineKeyboardButton(text="👤 Профиль", callback_data="main_profile"),
     )
     builder.row(
@@ -554,36 +557,6 @@ def get_edit_mode_kazin_keyboard(index: int, total: int) -> InlineKeyboardMarkup
 
     return builder.as_markup()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # === ПРОФИЛЬ МЕНЮ ===
 def profile_ui(user_id: int):
 
@@ -619,10 +592,6 @@ def support_ui():
     )
     return builder.as_markup()
 
-
-
-
-
 # === ДОНАТ ===
 
 def donate_ui():
@@ -635,10 +604,6 @@ def donate_ui():
         InlineKeyboardButton(text="↪️ Назад", callback_data="main_profile"),
     )
     return builder.as_markup()
-
-
-
-
 
 # === ТОП ===
 def top_menu_ui():
@@ -747,13 +712,6 @@ def top_balance_ui():
         InlineKeyboardButton(text="↪️ Назад", callback_data="top_menu"),
     )
     return builder.as_markup()
-
-
-
-
-
-
-
 
 # === МАГАЗИН ===
 def shop_ui():
@@ -910,5 +868,19 @@ def get_exchange_offer_keyboard(offer_id: int):
     builder.row(
         InlineKeyboardButton(text="✅ Принять", callback_data=f"accept_exchange:{offer_id}"),
         InlineKeyboardButton(text="❌ Отклонить", callback_data=f"reject_exchange:{offer_id}"),
+    )
+    return builder.as_markup()
+
+# === МЕНЮ ПИДАРАЗОВ ===
+def pidaraz_ui():
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="🔢 Забронировать номер", callback_data="pidaraz_pick"),
+    )
+    builder.row(
+        InlineKeyboardButton(text="📋 Список всех пидаразов", callback_data="pidaraz_list"),
+    )
+    builder.row(
+        InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
     )
     return builder.as_markup()

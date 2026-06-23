@@ -5,8 +5,6 @@ from handlers.keyboard import bonus_member_card_open
 
 DB_PATH = "database/users.db"
 
-
-
 def connect():
     # Use a longer timeout to wait for locks and allow connections from other threads.
     # Also enable WAL journal mode and foreign_keys to improve concurrency and integrity.
@@ -158,13 +156,63 @@ def create_presave_table():
         """)
         conn.commit()
 
+# ==================== ПЕРЕСЧЕТ ПИДАРАЗОВ ====================
+def create_pidaraz_table():
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS pidaraz_registry (
+                user_id INTEGER PRIMARY KEY,
+                pid_number INTEGER UNIQUE,
+                username TEXT,
+                first_name TEXT,
+                registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        conn.commit()
+
+def get_pidaraz_number(user_id: int):
+    with connect() as conn:
+        cur = conn.cursor()
+        row = cur.execute("SELECT pid_number FROM pidaraz_registry WHERE user_id = ?", (user_id,)).fetchone()
+        return row["pid_number"] if row else None
+
+def claim_pidaraz_number(user_id: int, pid_number: int, username: str, first_name: str):
+    with connect() as conn:
+        cur = conn.cursor()
+        
+        has_num = cur.execute("SELECT pid_number FROM pidaraz_registry WHERE user_id = ?", (user_id,)).fetchone()
+        if has_num:
+            return False, f"У тебя уже есть номер: {has_num['pid_number']}. Изменить нельзя!"
+        
+        is_taken = cur.execute("SELECT user_id FROM pidaraz_registry WHERE pid_number = ?", (pid_number,)).fetchone()
+        if is_taken:
+            return False, "Этот номер уже занят другим пидаразом. Выбери другой!"
+        
+        try:
+            cur.execute(
+                "INSERT INTO pidaraz_registry (user_id, pid_number, username, first_name) VALUES (?, ?, ?, ?)", 
+                (user_id, pid_number, username, first_name)
+            )
+            conn.commit()
+            return True, "Успешно"
+        except sqlite3.IntegrityError:
+            return False, "Произошла ошибка при регистрации."
+
+def get_all_pidarazs():
+    with connect() as conn:
+        cur = conn.cursor()
+        rows = cur.execute("SELECT user_id, pid_number, username, first_name FROM pidaraz_registry ORDER BY pid_number ASC").fetchall()
+        return [dict(row) for row in rows]
+
 def init_db():
     create_user_donate_table()
     create_users_table()
     create_roulette_tables()
     create_user_card_drops_table()
-    create_presave_table()   # добавлено
-    init_exchange_tables()   # инициализация таблиц системы обмена
+    create_presave_table()
+    init_exchange_tables()
+    create_pidaraz_table()
 
 def get_user_timezone(user_id: int) -> str:
     """Return user's timezone string (IANA), default 'UTC' if not set."""
