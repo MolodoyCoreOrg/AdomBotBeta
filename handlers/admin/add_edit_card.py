@@ -11,23 +11,22 @@ from utils.helpers import safe_edit_message
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from handlers.keyboard import (
-get_rarity_keyboard,
-
-get_sort_member_menu_keyboard,
-get_list_member_keyboard,
-get_edit_mode_member_keyboard,
-get_rank_images_keyboard, 
-get_rank_select_keyboard, 
-get_member_list_page_keyboard,
-
-get_edit_mode_skill_keyboard,
-get_list_skill_keyboard,
-get_skill_list_page_keyboard,
-get_sort_skill_menu_keyboard,
+    get_rarity_keyboard,
+    get_sort_member_menu_keyboard,
+    get_list_member_keyboard,
+    get_edit_mode_member_keyboard,
+    get_rank_images_keyboard, 
+    get_rank_select_keyboard, 
+    get_member_list_page_keyboard,
+    get_edit_mode_skill_keyboard,
+    get_list_skill_keyboard,
+    get_skill_list_page_keyboard,
+    get_sort_skill_menu_keyboard,
+    get_list_kazin_keyboard, 
+    get_edit_mode_kazin_keyboard
 )
 from handlers.picture import find_image_file
 from utils.config import ADMINS_LIST, RARITY_WEIGHTS
-from handlers.keyboard import get_list_kazin_keyboard, get_edit_mode_kazin_keyboard
 
 router = Router()
 
@@ -40,15 +39,10 @@ async def is_admin(user_id: int) -> bool:
     ADMINS = ADMINS_LIST  # например, список айдишников админов
     return user_id in ADMINS
 
-
-
-
-
-
-
-
-
-
+# --- Заглушка для неактивных кнопок пагинации (чтобы кнопка не "крутилась") ---
+@router.callback_query(lambda c: c.data == "noop")
+async def noop_handler(callback: CallbackQuery):
+    await callback.answer()
 
 # --- Кнопка сортировки ---
 
@@ -59,7 +53,11 @@ async def show_sort_member_menu(callback: CallbackQuery):
         return
 
     keyboard = get_sort_member_menu_keyboard()
-    await safe_edit_message(callback.message, "Выберите способ сортировки:", reply_markup=keyboard)
+    try:
+        await callback.message.edit_text("Выберите способ сортировки:", reply_markup=keyboard)
+    except TelegramBadRequest:
+        pass
+    await callback.answer()
 
 @router.callback_query(lambda c: c.data and c.data.startswith("sort_skill_menu"))
 async def show_sort_skill_menu(callback: CallbackQuery):
@@ -68,8 +66,11 @@ async def show_sort_skill_menu(callback: CallbackQuery):
         return
 
     keyboard = get_sort_skill_menu_keyboard()
-    await safe_edit_message(callback.message, "Выберите способ сортировки:", reply_markup=keyboard)
-
+    try:
+        await callback.message.edit_text("Выберите способ сортировки:", reply_markup=keyboard)
+    except TelegramBadRequest:
+        pass
+    await callback.answer()
 
 
 # --- Сортировка по редкости ---
@@ -85,7 +86,7 @@ async def sort_member_by_rarity(callback: CallbackQuery):
     cards_member.sort(key=lambda c: rarity_order.get(c.get("rarity", "Обычная"), 0))
 
     save_member_cards(cards_member)
-    # Показываем первую карточку отсортированного списка
+    await callback.answer("✅ Сортировка применена!")
     await send_member_card(callback, 0)
 
 # --- Сортировка по имени (алфавит) ---
@@ -96,19 +97,15 @@ async def sort_member_by_name(callback: CallbackQuery):
         await callback.answer("❌ Нет доступа", show_alert=True)
         return
 
-
     cards_member = load_member_cards()
     cards_member.sort(key=lambda c: c.get("name", "").lower())
 
     save_member_cards(cards_member)
+    await callback.answer("✅ Сортировка применена!")
     await send_member_card(callback, 0)
 
 
-
-
-
-
-# --- Сортировка по редкости ---
+# --- Сортировка скиллов по редкости ---
 
 @router.callback_query(lambda c: c.data and c.data.startswith("sort_skill_by_rarity"))
 async def sort_skill_by_rarity(callback: CallbackQuery):
@@ -121,10 +118,10 @@ async def sort_skill_by_rarity(callback: CallbackQuery):
     cards_skill.sort(key=lambda c: rarity_order.get(c.get("rarity", "Обычная"), 0))
 
     save_skill_cards(cards_skill)
-    # Показываем первую карточку отсортированного списка
+    await callback.answer("✅ Сортировка применена!")
     await send_skill_card(callback, 0)
 
-# --- Сортировка по имени (алфавит) ---
+# --- Сортировка скиллов по имени (алфавит) ---
 
 @router.callback_query(lambda c: c.data and c.data.startswith("sort_skill_by_name"))
 async def sort_skill_by_name(callback: CallbackQuery):
@@ -132,33 +129,15 @@ async def sort_skill_by_name(callback: CallbackQuery):
         await callback.answer("❌ Нет доступа", show_alert=True)
         return
 
-
     cards_skill = load_skill_cards()
     cards_skill.sort(key=lambda c: c.get("name", "").lower())
 
     save_skill_cards(cards_skill)
+    await callback.answer("✅ Сортировка применена!")
     await send_skill_card(callback, 0)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#ДОБАВЛЕНИЕ КАРТОЧЕК
+# ДОБАВЛЕНИЕ КАРТОЧЕК
 
 # Пути
 MEMBERS_JSON = "data/cards/members.json"
@@ -166,27 +145,13 @@ SKILLS_JSON = "data/cards/skills.json"
 MEMBER_IMG_PATH = "data/images/members"
 SKILL_IMG_PATH = "data/images/skills"
 
-# FSM states
-class AddMember(StatesGroup):
-    waiting_for_image = State()
-    waiting_for_name = State()
-    waiting_for_skill = State()
-    waiting_for_rarity = State()
-
-class AddSkill(StatesGroup):
-    waiting_for_image = State()
-    waiting_for_name = State()
-    waiting_for_rarity = State()
-
 # Шансы выпадения по редкости
 RARITY_CHANCES = RARITY_WEIGHTS
 
-# Функция для очистки имени файла (разрешает латиницу, кириллицу, цифры, -, _)
 def sanitize_filename(name: str) -> str:
     return re.sub(r'[^\w\-]', '_', name, flags=re.UNICODE)
 
 # === MEMBER ===
-# redefine AddMember to include waiting_for_work
 class AddMember(StatesGroup):
     waiting_for_image = State()
     waiting_for_name = State()
@@ -235,7 +200,6 @@ async def member_get_skill(message: Message, state: FSMContext):
 @router.callback_query(AddMember.waiting_for_work)
 async def member_get_work(callback: CallbackQuery, state: FSMContext):
     data_val = callback.data or ""
-    # normalize to human-readable label
     if data_val == "work:participant":
         work_label = "Участник объединения"
     elif data_val == "work:supporter":
@@ -252,6 +216,7 @@ async def member_get_work(callback: CallbackQuery, state: FSMContext):
 
     await callback.message.answer("Выбери редкость участника:", reply_markup=get_rarity_keyboard())
     await state.set_state(AddMember.waiting_for_rarity)
+    await callback.answer()
 
 @router.callback_query(AddMember.waiting_for_rarity)
 async def member_get_rarity(callback: CallbackQuery, state: FSMContext):
@@ -264,7 +229,7 @@ async def member_get_rarity(callback: CallbackQuery, state: FSMContext):
     photo_id = data.get("photo")
     name = data.get("name")
     skill = data.get("skill")
-    work = data.get("work", "")  # новое поле
+    work = data.get("work", "")
 
     if not (photo_id and name and skill):
         await callback.answer("Ошибка: не все данные указаны.", show_alert=True)
@@ -273,32 +238,28 @@ async def member_get_rarity(callback: CallbackQuery, state: FSMContext):
 
     sanitized_name = sanitize_filename(name)
 
-    # Загружаем текущих участников
     if os.path.exists(MEMBERS_JSON):
         with open(MEMBERS_JSON, "r", encoding="utf-8") as f:
             data_list = json.load(f)
     else:
         data_list = []
 
-    # Проверка дубликата имени
     if any(member["name"].lower() == name.lower() for member in data_list):
         await callback.answer("❗ Участник с таким именем уже существует!", show_alert=True)
         return
 
-    # Скачиваем изображение
     file = await callback.bot.get_file(photo_id)
     image_dir = f"{MEMBER_IMG_PATH}/rank_1"
     os.makedirs(image_dir, exist_ok=True)
     image_path = f"{image_dir}/{sanitized_name}.jpg"
     await callback.bot.download_file(file.file_path, image_path)
 
-    # Добавляем участника (только базовое изображение)
     member_card = {
         "name": name,
         "skill": skill,
         "rarity": rarity,
-        "work": work,  # сохраняем звание
-        "image": f"{sanitized_name}.jpg"  # Только 1 ранг
+        "work": work,
+        "image": f"{sanitized_name}.jpg"
     }
 
     data_list.append(member_card)
@@ -308,8 +269,14 @@ async def member_get_rarity(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(f"✅ Участник '{name}' успешно добавлен.")
     print(f"[LOG] Добавлен участник: {name} (work: {work})")
     await state.clear()
+    await callback.answer()
 
 # === SKILL ===
+class AddSkill(StatesGroup):
+    waiting_for_image = State()
+    waiting_for_name = State()
+    waiting_for_rarity = State()
+
 @router.message(Command("addskill"))
 async def start_add_skill(message: Message, state: FSMContext):
     if not await is_admin(message.from_user.id):
@@ -343,14 +310,12 @@ async def skill_get_rarity(callback: CallbackQuery, state: FSMContext):
 
     sanitized_name = sanitize_filename(name)
 
-    # Загружаем текущие суперспособности
     if os.path.exists(SKILLS_JSON):
         with open(SKILLS_JSON, "r", encoding="utf-8") as f:
             data_list = json.load(f)
     else:
         data_list = []
 
-    # Проверяем дубликат имени (без учёта регистра)
     if any(skill["name"].lower() == name.lower() for skill in data_list):
         await callback.answer("❗ Суперспособность с таким именем уже существует!", show_alert=True)
         return
@@ -372,21 +337,8 @@ async def skill_get_rarity(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(f"Суперспособность '{name}' добавлена.")
     print(f"Добавлена новая суперспособность '{name}'")
     await state.clear()
+    await callback.answer()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
 
 # === EDIT CARD ===
 
@@ -426,12 +378,10 @@ def format_card_text(card):
     )
 
 def find_image_file(name_without_ext: str, folder: str):
-    # ищем файл изображения в папке (без рангов, только основное)
     for ext in ['.jpg', '.jpeg', '.png', '.webp']:
         path = os.path.join(folder, f"{name_without_ext}{ext}")
         if os.path.exists(path):
             return path
-    # fallback
     return os.path.join(folder, f"{name_without_ext}.jpg")
 
 # --- Отправка карточки с навигацией ---
@@ -443,7 +393,7 @@ async def send_member_card(message_or_cb, index: int, edit_mode=False):
         if hasattr(message_or_cb, "answer"):
             await message_or_cb.answer("Карточка не найдена.")
         else:
-            await message_or_cb.answer("Карточка не найдена.", show_alert=True)
+            await message_or_cb.message.answer("Карточка не найдена.")
         return
 
     card = cards[index]
@@ -452,36 +402,30 @@ async def send_member_card(message_or_cb, index: int, edit_mode=False):
         if hasattr(message_or_cb, "answer"):
             await message_or_cb.answer("Изображение карточки не найдено.")
         else:
-            await message_or_cb.answer("Изображение карточки не найдено.", show_alert=True)
+            await message_or_cb.message.answer("Изображение карточки не найдено.")
         return
 
     photo = FSInputFile(image_path)
     caption = format_card_text(card)
 
-    # При показе карточки внизу клавиатура с навигацией и кнопкой "Редактировать" или без
     keyboard = get_edit_mode_member_keyboard(index, total) if edit_mode else get_list_member_keyboard(index, total, prefix="edit_member_cards")
-
-    # Чтобы реализовать нажатие по центру (index/total) - callback "show_member_list:{page}"
-    # Мы просто заменим центральную кнопку на callback с префиксом "show_member_list"
-
-    # Исправим клавиатуру под центральную кнопку (делается в клавиатуре, предположу, что уже сделано)
 
     if isinstance(message_or_cb, Message):
         await message_or_cb.answer_photo(photo=photo, caption=caption, reply_markup=keyboard)
     else:
         try:
+            # Пытаемся заменить фото, если текущее сообщение – тоже фото
             await message_or_cb.message.edit_media(
                 media=types.InputMediaPhoto(media=photo, caption=caption),
                 reply_markup=keyboard
             )
         except TelegramBadRequest:
+            # Если текущее сообщение – текстовое, удаляем и присылаем новое с фото
+            try:
+                await message_or_cb.message.delete()
+            except:
+                pass
             await message_or_cb.message.answer_photo(photo=photo, caption=caption, reply_markup=keyboard)
-
-
-
-
-
-
 
 
 # --- Обработка команды /members ---
@@ -496,12 +440,6 @@ async def cmd_members(message: Message):
         await message.answer("Список карточек пуст.")
         return
     await send_member_card(message, 0, edit_mode=False)
-
-
-
-
-
-
 
 
 # --- Навигация по карточкам (следующая, предыдущая) ---
@@ -529,13 +467,7 @@ async def navigate_cards(callback: CallbackQuery):
         new_index = current_index
 
     await send_member_card(callback, new_index)
-
-
-
-
-
-
-
+    await callback.answer()
 
 
 # --- При нажатии на центральную кнопку с номером показываем список карточек постранично ---
@@ -552,7 +484,6 @@ async def show_member_list(callback: CallbackQuery):
     per_page = 10
     total_pages = (total + per_page - 1) // per_page
 
-    # Корректируем страницу
     if page < 0:
         page = 0
     if page >= total_pages:
@@ -561,13 +492,17 @@ async def show_member_list(callback: CallbackQuery):
     keyboard = get_member_list_page_keyboard(page, per_page, total, cards, prefix="select_member_card")
 
     text = f"Список карточек, страница {page+1}/{total_pages}:"
-    # Можно вывести список названий карт, но они уже в кнопках — необязательно повторять
 
-    # Отправляем или редактируем сообщение
     try:
-        await safe_edit_message(callback.message, text, reply_markup=keyboard)
+        await callback.message.edit_text(text, reply_markup=keyboard)
     except TelegramBadRequest:
+        # Падает, если текущее сообщение было с фото
+        try:
+            await callback.message.delete()
+        except:
+            pass
         await callback.message.answer(text, reply_markup=keyboard)
+    await callback.answer()
 
 # --- Навигация по страницам списка карт ---
 
@@ -591,9 +526,10 @@ async def navigate_member_page(callback: CallbackQuery):
     keyboard = get_member_list_page_keyboard(page, per_page, total, cards, prefix="select_member_card")
     text = f"Список карточек, страница {page+1}/{total_pages}:"
     try:
-        await safe_edit_message(callback.message, text, reply_markup=keyboard)
+        await callback.message.edit_text(text, reply_markup=keyboard)
     except TelegramBadRequest:
-        await callback.message.answer(text, reply_markup=keyboard)
+        pass # message is not modified
+    await callback.answer()
 
 # --- При выборе карты из списка возвращаемся к просмотру карты ---
 
@@ -605,12 +541,7 @@ async def select_member_card(callback: CallbackQuery):
 
     index = int(callback.data.split(":")[1])
     await send_member_card(callback, index, edit_mode=False)
-
-
-
-
-
-
+    await callback.answer()
 
 
 # --- Вход в режим редактирования карты ---
@@ -623,6 +554,7 @@ async def enter_member_edit_mode(callback: CallbackQuery):
     _, index_str = callback.data.split(":")
     index = int(index_str)
     await send_member_card(callback, index, edit_mode=True)
+    await callback.answer()
 
 # --- Редактирование имени ---
 
@@ -635,6 +567,7 @@ async def handle_edit_member_name(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(f"Введите новое имя для карточки #{index + 1}:")
     await state.update_data(edit_index=index)
     await state.set_state(EditMemberCardStates.waiting_for_member_name)
+    await callback.answer()
 
 @router.message(EditMemberCardStates.waiting_for_member_name)
 async def process_new_member_name(message: Message, state: FSMContext):
@@ -652,8 +585,6 @@ async def process_new_member_name(message: Message, state: FSMContext):
     await state.clear()
 
 
-
-
 # --- Редактирование способности ---
 
 @router.callback_query(lambda c: c.data and c.data.startswith("edit_member_skill:"))
@@ -665,6 +596,7 @@ async def handle_edit_member_skill(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(f"Введите новую суперспособность для карточки #{index + 1}:")
     await state.update_data(edit_index=index)
     await state.set_state(EditMemberCardStates.waiting_for_member_skill)
+    await callback.answer()
 
 @router.message(EditMemberCardStates.waiting_for_member_skill)
 async def process_new_member_skill(message: Message, state: FSMContext):
@@ -693,6 +625,7 @@ async def handle_edit_member_rarity(callback: CallbackQuery, state: FSMContext):
         f"Введите новую редкость для карточки #{index + 1}:", reply_markup=get_rarity_keyboard())
     await state.update_data(edit_index=index)
     await state.set_state(EditMemberCardStates.waiting_for_member_rarity)
+    await callback.answer()
 
 @router.callback_query(EditMemberCardStates.waiting_for_member_rarity)
 async def process_new_member_rarity_callback(callback: CallbackQuery, state: FSMContext):
@@ -718,6 +651,7 @@ async def process_new_member_rarity_callback(callback: CallbackQuery, state: FSM
     await callback.message.answer(f"✅ Редкость успешно изменена на «{rarity}».")
     await send_member_card(callback, index, edit_mode=True)
     await state.clear()
+    await callback.answer()
 
 
 # --- Изменение звания (work) ---
@@ -733,17 +667,17 @@ async def handle_edit_member_work(callback: CallbackQuery, state: FSMContext):
     builder.row(
         types.InlineKeyboardButton(
             text="Участник объединения",
-            callback_data=f"set_work:{index}:Участник объединения"
+            callback_data=f"set_member_work:{index}:Участник объединения"
         ),
         types.InlineKeyboardButton(
             text="Саппортер",
-            callback_data=f"set_work:{index}:Саппортер"
+            callback_data=f"set_member_work:{index}:Саппортер"
         ),
         types.InlineKeyboardButton(
             text="Победитель конкурса",
-            callback_data=f"set_work:{index}:Победитель конкурса"
+            callback_data=f"set_member_work:{index}:Победитель конкурса"
         ),
-        width=2
+        width=1
     )
     builder.row(
         types.InlineKeyboardButton(
@@ -752,10 +686,14 @@ async def handle_edit_member_work(callback: CallbackQuery, state: FSMContext):
         )
     )
 
-    await safe_edit_message(callback.message,
-        "Выберите новое звание:",
-        reply_markup=builder.as_markup()
-    )
+    try:
+        await callback.message.edit_caption(
+            caption="Выберите новое звание:",
+            reply_markup=builder.as_markup()
+        )
+    except TelegramBadRequest:
+        pass
+    await callback.answer()
 
 
 @router.callback_query(lambda c: c.data and c.data.startswith("set_member_work:"))
@@ -778,8 +716,7 @@ async def handle_set_member_work(callback: CallbackQuery):
     cards[index]["work"] = new_work
     save_member_cards(cards)
 
-    await callback.message.answer(f"✅ Звание карточки #{index+1} обновлено: {new_work}")
-    # Вернуться в режим редактирования, показывая обновлённую карточку
+    await callback.answer(f"✅ Звание карточки #{index+1} обновлено: {new_work}")
     await send_member_card(callback, index, edit_mode=True)
 
 # --- Возврат из режима редактирования ---
@@ -791,6 +728,7 @@ async def handle_back_to_member_list(callback: CallbackQuery):
         return
     index = int(callback.data.split(":")[1])
     await send_member_card(callback, index, edit_mode=False)
+    await callback.answer()
 
 # --- ПОКАЗ ИЗОБРАЖЕНИЙ РАНГОВ ---
 
@@ -801,7 +739,7 @@ async def show_member_rank_images(callback: CallbackQuery):
         return
     parts = callback.data.split(":")
     index = int(parts[1])
-    rank = int(parts[2]) if len(parts) > 2 else 1  # <-- вот тут
+    rank = int(parts[2]) if len(parts) > 2 else 1
 
     cards = load_member_cards()
     if index < 0 or index >= len(cards):
@@ -824,12 +762,20 @@ async def show_member_rank_images(callback: CallbackQuery):
                 reply_markup=keyboard
             )
         except TelegramBadRequest:
+            try: await callback.message.delete()
+            except: pass
             await callback.message.answer_photo(photo=photo, caption=caption, reply_markup=keyboard)
     else:
-        await callback.message.edit_media(
-                media=types.InputMediaPhoto(media=photo, caption=f"Изображение ранга {rank} не найдено."),
+        try:
+            await callback.message.edit_caption(
+                caption=f"Изображение ранга {rank} не найдено.",
                 reply_markup=keyboard
             )
+        except TelegramBadRequest:
+            try: await callback.message.delete()
+            except: pass
+            await callback.message.answer(f"Изображение ранга {rank} не найдено.", reply_markup=keyboard)
+    await callback.answer()
 
 # --- Добавить изображение ранга (вывод выбора ранга) ---
 
@@ -844,18 +790,15 @@ async def add_member_rank_image(callback: CallbackQuery, state: FSMContext):
     if index < 0 or index >= len(cards):
         await callback.answer("Карточка не найдена.", show_alert=True)
         return
-    card = cards[index]
-
-    rank = 1
-    rank_folder = os.path.join(IMAGES_PATH_MAIN, f"rank_{rank}")
-    image_file_name = card.get("image", "")
-    image_path = find_image_file(os.path.splitext(image_file_name)[0], rank_folder)
-    photo = FSInputFile(image_path) if os.path.exists(image_path) else None
-
-    await callback.message.edit_media(
-                media=types.InputMediaPhoto(media=photo, caption=f"Выберите ранг для загрузки изображения:"),
-                reply_markup=keyboard
-            )
+    
+    try:
+        await callback.message.edit_caption(
+            caption=f"Выберите ранг для загрузки изображения:",
+            reply_markup=keyboard
+        )
+    except TelegramBadRequest:
+        pass
+    await callback.answer()
 
 # --- Выбор ранга для загрузки изображения ---
 
@@ -873,10 +816,10 @@ async def upload_member_rank_image(callback: CallbackQuery, state: FSMContext):
     index = int(parts[1])
     rank = int(parts[2])
 
-    # Сохраним в состояние index и rank
     await state.update_data(edit_index=index, upload_rank=rank)
     await state.set_state(EditMemberCardStates.waiting_for_rank_image_upload)
     await callback.message.answer(f"Отправьте изображение для ранга {rank}.")
+    await callback.answer()
 
 # --- Получение изображения для ранга ---
 
@@ -897,14 +840,12 @@ async def receive_rank_image(message: Message, state: FSMContext):
         await state.clear()
         return
 
-    # Сохраняем фото в папку ранга
     rank_folder = os.path.join(IMAGES_PATH_MAIN, f"rank_{rank}")
     os.makedirs(rank_folder, exist_ok=True)
 
     file_id = message.photo[-1].file_id
     file_info = await message.bot.get_file(file_id)
-    ext = os.path.splitext(file_info.file_path)[1] or ".jpg"
-    filename = cards[index]["image"]  # сохраняем под тем же именем (чтобы найти потом)
+    filename = cards[index]["image"] 
 
     save_path = os.path.join(rank_folder, filename)
 
@@ -912,12 +853,14 @@ async def receive_rank_image(message: Message, state: FSMContext):
 
     await message.answer(f"Изображение для ранга {rank} успешно сохранено.")
 
-    # Возвращаем в просмотр изображений рангов
     await state.clear()
-    await show_member_rank_images(await message.answer(" "), CallbackQuery(
+    msg = await message.answer("🔄 Обновляю меню...")
+    await show_member_rank_images(CallbackQuery(
+        id="0",
         data=f"show_member_rank_images:{index}",
         from_user=message.from_user,
-        message=message
+        message=msg,
+        chat_instance="0"
     ))
 
 # --- Кнопка "Назад" из просмотра изображений рангов в редактор карты ---
@@ -929,6 +872,7 @@ async def back_to_edit(callback: CallbackQuery):
         return
     index = int(callback.data.split(":")[1])
     await send_member_card(callback, index, edit_mode=True)
+    await callback.answer()
 
 @router.callback_query(lambda c: c.data and c.data.startswith("delete_member:"))
 async def prompt_delete_member(callback: CallbackQuery):
@@ -954,19 +898,16 @@ async def prompt_delete_member(callback: CallbackQuery):
         width=2
     )
 
-
     text = (
     f"Вы уверены, что хотите удалить карточку участника #{index + 1} "
     f"— «{cards[index].get('name','—')}»?\nЭто действие нельзя отменить."
     )
 
     try:
-        await safe_edit_message(callback.message, text, reply_markup=builder.as_markup())
+        await callback.message.edit_caption(caption=text, reply_markup=builder.as_markup())
     except TelegramBadRequest:
-        # Если нет текста в сообщении (например, карточка с фото)
-        await callback.message.delete()
-        await callback.message.answer(text, reply_markup=builder.as_markup())
-
+        pass
+    await callback.answer()
 
 
 @router.callback_query(lambda c: c.data and c.data.startswith("confirm_delete:"))
@@ -1012,28 +953,18 @@ async def confirm_delete_member(callback: CallbackQuery):
         await send_member_card(callback, new_index, edit_mode=False)
     else:
         try:
-            await safe_edit_message(callback.message, "Список карточек пуст.")
-        except TelegramBadRequest:
-            await callback.message.answer("Список карточек пуст.")
-
-
-
-
-
-
-
-
-
-
-
-
+            await callback.message.delete()
+        except:
+            pass
+        await callback.message.answer("Список карточек пуст.")
+    await callback.answer()
 
 
 # === EDIT SKILL ===
 SKILL_CARDS_PATH = "data/cards/skills.json"
 SKILL_IMAGES_PATH = "data/images/skills"
 
-# FSM states
+# FSM states (Было задвоено имя класса)
 class EditSkillCardStates(StatesGroup):
     waiting_for_new_skill_name = State()
     waiting_for_skill_rarity = State()
@@ -1056,7 +987,6 @@ def save_skill_cards(cards):
         logging.error(f"Ошибка при сохранении суперспособностей: {e}")
 
 
-
 # --- Форматирование текста скилл-карты ---
 
 def format_skill_text(card):
@@ -1064,8 +994,6 @@ def format_skill_text(card):
         f"<b>{card['name']}</b>\n"
         f"⭐ Редкость: <b>{card.get('rarity','—')}</b>"
     )
-
-
 
 # --- Отправка скилл-карты с навигацией ---
 
@@ -1084,7 +1012,6 @@ async def send_skill_card(message_or_cb, index: int, edit_mode=False):
     photo = FSInputFile(image_path) if os.path.exists(image_path) else None
     caption = format_skill_text(card)
 
-    # Клавиатура навигации для скиллов (похожая на member list) - reuse get_list_member_keyboard but prefix changed
     keyboard = get_edit_mode_skill_keyboard(index, total) if edit_mode else get_list_skill_keyboard(index, total, prefix="edit_skill_cards")
 
     if isinstance(message_or_cb, Message):
@@ -1099,15 +1026,12 @@ async def send_skill_card(message_or_cb, index: int, edit_mode=False):
             else:
                 await message_or_cb.message.edit_text(caption, reply_markup=keyboard)
         except TelegramBadRequest:
-            # fallback to sending message
+            try: await message_or_cb.message.delete()
+            except: pass
             if photo:
                 await message_or_cb.message.answer_photo(photo=photo, caption=caption, reply_markup=keyboard)
             else:
                 await message_or_cb.message.answer(caption, reply_markup=keyboard)
-
-
-
-
 
 # --- Обработка команды /skills ---
 @router.message(Command("skills"))
@@ -1122,10 +1046,6 @@ async def cmd_skills(message: Message):
     await send_skill_card(message, 0, edit_mode=False)
 
 
-
-
-
-
 # --- Возврат из режима редактирования ---
 
 @router.callback_query(lambda c: c.data and c.data.startswith("back_to_skill_list:"))
@@ -1135,6 +1055,7 @@ async def handle_back_to_skill_list(callback: CallbackQuery):
         return
     index = int(callback.data.split(":")[1])
     await send_skill_card(callback, index, edit_mode=False)
+    await callback.answer()
 
 # --- Навигация по карточкам скиллов (следующая, предыдущая) ---
 @router.callback_query(lambda c: c.data and c.data.startswith("edit_skill_cards:navigate"))
@@ -1160,7 +1081,7 @@ async def navigate_skill_cards(callback: CallbackQuery):
         new_index = current_index
 
     await send_skill_card(callback, new_index)
-
+    await callback.answer()
 
 
 # --- При нажатии на центральную кнопку с номером показываем список скиллов постранично ---
@@ -1181,31 +1102,16 @@ async def show_skill_list(callback: CallbackQuery):
     if page >= total_pages:
         page = total_pages - 1
 
-    builder = InlineKeyboardBuilder()
-    start = page * per_page
-    end = min(start + per_page, total)
-    for i in range(start, end):
-        card_name = cards[i].get("name", "Без имени")
-        builder.row(
-            types.InlineKeyboardButton(text=f"{i + 1}. {card_name}", callback_data=f"select_skill:{i}")
-        )
-
-    prev_page = max(0, page - 1)
-    next_page = min(total_pages - 1, page + 1)
-    builder.row(
-        types.InlineKeyboardButton(text="◀️", callback_data=f"navigate_skill_page:{prev_page}"),
-        types.InlineKeyboardButton(text=f"{page + 1}/{total_pages}", callback_data="noop"),
-        types.InlineKeyboardButton(text="▶️", callback_data=f"navigate_skill_page:{next_page}")
-    )
-    builder.row(
-        types.InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu")
-    )
-
+    keyboard = get_skill_list_page_keyboard(page, per_page, total, cards, prefix="select_skill")
     text = f"Список суперспособностей, страница {page+1}/{total_pages}:"
+
     try:
-        await safe_edit_message(callback.message, text, reply_markup=builder.as_markup())
+        await callback.message.edit_text(text, reply_markup=keyboard)
     except TelegramBadRequest:
-        await callback.message.answer(text, reply_markup=builder.as_markup())
+        try: await callback.message.delete()
+        except: pass
+        await callback.message.answer(text, reply_markup=keyboard)
+    await callback.answer()
 
 
 @router.callback_query(lambda c: c.data and c.data.startswith("navigate_skill_page:"))
@@ -1224,31 +1130,13 @@ async def navigate_skill_page(callback: CallbackQuery):
     if page >= total_pages:
         page = total_pages - 1
 
-    builder = InlineKeyboardBuilder()
-    start = page * per_page
-    end = min(start + per_page, total)
-    for i in range(start, end):
-        card_name = cards[i].get("name", "Без имени")
-        builder.row(
-            types.InlineKeyboardButton(text=f"{i + 1}. {card_name}", callback_data=f"select_skill:{i}")
-        )
-
-    prev_page = max(0, page - 1)
-    next_page = min(total_pages - 1, page + 1)
-    builder.row(
-        types.InlineKeyboardButton(text="◀️", callback_data=f"navigate_skill_page:{prev_page}"),
-        types.InlineKeyboardButton(text=f"{page + 1}/{total_pages}", callback_data="noop"),
-        types.InlineKeyboardButton(text="▶️", callback_data=f"navigate_skill_page:{next_page}")
-    )
-    builder.row(
-        types.InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu")
-    )
-
+    keyboard = get_skill_list_page_keyboard(page, per_page, total, cards, prefix="select_skill")
     text = f"Список суперспособностей, страница {page+1}/{total_pages}:"
     try:
-        await safe_edit_message(callback.message, text, reply_markup=builder.as_markup())
+        await callback.message.edit_text(text, reply_markup=keyboard)
     except TelegramBadRequest:
-        await callback.message.answer(text, reply_markup=builder.as_markup())
+        pass
+    await callback.answer()
 
 @router.callback_query(lambda c: c.data and c.data.startswith("select_skill:"))
 async def select_skill(callback: CallbackQuery):
@@ -1257,14 +1145,7 @@ async def select_skill(callback: CallbackQuery):
         return
     index = int(callback.data.split(":")[1])
     await send_skill_card(callback, index, edit_mode=False)
-
-
-
-
-
-
-
-
+    await callback.answer()
 
 
 # --- SKILL EDITING: enter edit mode for skills ---
@@ -1276,6 +1157,7 @@ async def enter_skill_edit_mode(callback: CallbackQuery):
     _, index_str = callback.data.split(":")
     index = int(index_str)
     await send_skill_card(callback, index, edit_mode=True)
+    await callback.answer()
 
 
 @router.callback_query(lambda c: c.data and c.data.startswith("edit_skill_name:"))
@@ -1287,6 +1169,7 @@ async def handle_edit_skill_name(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(f"Введите новое имя суперспособности для карточки #{index + 1}:" )
     await state.update_data(edit_skill_index=index)
     await state.set_state(EditSkillCardStates.waiting_for_new_skill_name)
+    await callback.answer()
 
 
 @router.callback_query(lambda c: c.data and c.data.startswith("edit_skill_rarity:"))
@@ -1298,6 +1181,7 @@ async def handle_edit_skill_rarity(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(f"Введите новую редкость для суперспособности #{index + 1}:", reply_markup=get_rarity_keyboard())
     await state.update_data(edit_skill_index=index)
     await state.set_state(EditSkillCardStates.waiting_for_skill_rarity)
+    await callback.answer()
 
 
 @router.message(EditSkillCardStates.waiting_for_new_skill_name)
@@ -1335,6 +1219,7 @@ async def process_new_skill_rarity_callback(callback: CallbackQuery, state: FSMC
     await callback.message.answer(f"✅ Редкость суперспособности успешно изменена на «{rarity}».")
     await send_skill_card(callback, index, edit_mode=True)
     await state.clear()
+    await callback.answer()
 
 
 @router.callback_query(lambda c: c.data and c.data.startswith("delete_skill:"))
@@ -1364,11 +1249,13 @@ async def prompt_delete_skill(callback: CallbackQuery):
     )
 
     try:
-        await safe_edit_message(callback.message, text, reply_markup=builder.as_markup())
+        if callback.message.photo:
+            await callback.message.edit_caption(caption=text, reply_markup=builder.as_markup())
+        else:
+            await callback.message.edit_text(text, reply_markup=builder.as_markup())
     except TelegramBadRequest:
-        # Если нет текста в сообщении (например, карточка с фото)
-        await callback.message.delete()
-        await callback.message.answer(text, reply_markup=builder.as_markup())
+        pass
+    await callback.answer()
 
 @router.callback_query(lambda c: c.data and c.data.startswith("confirm_delete_skill:"))
 async def confirm_delete_skill(callback: CallbackQuery):
@@ -1398,37 +1285,17 @@ async def confirm_delete_skill(callback: CallbackQuery):
         new_index = index if index < len(cards) else len(cards) - 1
         await send_skill_card(callback, new_index, edit_mode=False)
     else:
-        try:
-            await safe_edit_message(callback.message, "Список суперспособностей пуст.")
-        except TelegramBadRequest:
-            await callback.message.answer("Список суперспособностей пуст.")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        try: await callback.message.delete()
+        except: pass
+        await callback.message.answer("Список суперспособностей пуст.")
+    await callback.answer()
 
 
 # === ADD KAZINO UPGRADES ===
 KAZINO_UPGRADES_PATH = "data/cards/kazin_upgrades.json"
 
-
-
-
-# FSM states
-class EditSkillCardStates(StatesGroup):
+# Новое имя стейта, чтобы избежать пересечения с EditSkillCardStates
+class EditKazinUpgradeStates(StatesGroup):
     waiting_for_new_kazino_upgrade_name = State()
     waiting_for_kazino_upgrade_rarity = State()
     waiting_for_new_kazino_upgrade_effect = State()
@@ -1467,6 +1334,7 @@ async def kazin_upgrade_get_rarity(callback: CallbackQuery, state: FSMContext):
     await state.update_data(rarity=rarity)
     await callback.message.answer("Введите эффект улучшения (краткое описание):")
     await state.set_state(AddKazinUpgrade.waiting_for_upgrade_effect)
+    await callback.answer()
 
 
 @router.message(AddKazinUpgrade.waiting_for_upgrade_effect)
@@ -1478,7 +1346,6 @@ async def kazin_upgrade_get_effect(message: Message, state: FSMContext):
 
     upgrades = load_kazin_upgrades()
 
-    # Prevent duplicate names (case-insensitive)
     if any(u.get('name','').lower() == name.lower() for u in upgrades):
         await message.answer("❗ Улучшение с таким названием уже существует!")
         await state.clear()
@@ -1509,13 +1376,13 @@ async def enter_kazin_edit_mode(callback: CallbackQuery):
         await callback.answer("Апгрейд не найден.", show_alert=True)
         return
 
-    # show edit-mode keyboard
     keyboard = get_edit_mode_kazin_keyboard(index, len(upgrades))
     text = format_kazin_upgrade_text(upgrades[index])
     try:
-        await safe_edit_message(callback.message, text, reply_markup=keyboard)
+        await callback.message.edit_text(text, reply_markup=keyboard)
     except TelegramBadRequest:
-        await callback.message.answer(text, reply_markup=keyboard)
+        pass
+    await callback.answer()
 
 
 @router.callback_query(lambda c: c.data and c.data.startswith("edit_kazin_name:"))
@@ -1526,10 +1393,11 @@ async def handle_edit_kazin_name(callback: CallbackQuery, state: FSMContext):
     index = int(callback.data.split(":")[1])
     await callback.message.answer(f"Введите новое название улучшения для #{index+1}:")
     await state.update_data(edit_kazin_index=index)
-    await state.set_state(EditSkillCardStates.waiting_for_new_kazino_upgrade_name)
+    await state.set_state(EditKazinUpgradeStates.waiting_for_new_kazino_upgrade_name)
+    await callback.answer()
 
 
-@router.message(EditSkillCardStates.waiting_for_new_kazino_upgrade_name)
+@router.message(EditKazinUpgradeStates.waiting_for_new_kazino_upgrade_name)
 async def process_new_kazin_name(message: Message, state: FSMContext):
     data = await state.get_data()
     index = data.get("edit_kazin_index")
@@ -1543,7 +1411,6 @@ async def process_new_kazin_name(message: Message, state: FSMContext):
         await state.clear()
         return
     new_name = message.text.strip()
-    # check duplicate
     if any(i != index and u.get('name','').lower() == new_name.lower() for i,u in enumerate(upgrades)):
         await message.answer("❗ Улучшение с таким названием уже существует!")
         await state.clear()
@@ -1563,7 +1430,8 @@ async def handle_edit_kazin_rarity(callback: CallbackQuery, state: FSMContext):
     index = int(callback.data.split(":")[1])
     await callback.message.answer(f"Введите новую редкость для апгрейда #{index + 1}:", reply_markup=get_rarity_keyboard())
     await state.update_data(edit_kazin_index=index)
-    await state.set_state(EditSkillCardStates.waiting_for_kazino_upgrade_rarity)
+    await state.set_state(EditKazinUpgradeStates.waiting_for_kazino_upgrade_rarity)
+    await callback.answer()
 
 
 @router.callback_query(lambda c: c.data and c.data.startswith("edit_kazin_effect:"))
@@ -1574,14 +1442,13 @@ async def handle_edit_kazin_effect(callback: CallbackQuery, state: FSMContext):
     index = int(callback.data.split(":")[1])
     await callback.message.answer(f"Введите новый эффект для апгрейда #{index + 1}:")
     await state.update_data(edit_kazin_index=index)
-    await state.set_state(EditSkillCardStates.waiting_for_new_kazino_upgrade_effect)
+    await state.set_state(EditKazinUpgradeStates.waiting_for_new_kazino_upgrade_effect)
+    await callback.answer()
 
 
-@router.message(EditSkillCardStates.waiting_for_kazino_upgrade_rarity)
+@router.message(EditKazinUpgradeStates.waiting_for_kazino_upgrade_rarity)
 async def process_new_kazin_rarity_callback(message: Message, state: FSMContext):
-    # this handler receives a Message because get_rarity_keyboard sends callback data as text; support both
     rarity = message.text.strip() if isinstance(message, Message) else None
-    # attempt to read from message text or callback data via state
     data = await state.get_data()
     index = data.get('edit_kazin_index')
     if rarity not in RARITY_CHANCES:
@@ -1600,7 +1467,7 @@ async def process_new_kazin_rarity_callback(message: Message, state: FSMContext)
     await state.clear()
 
 
-@router.message(EditSkillCardStates.waiting_for_new_kazino_upgrade_effect)
+@router.message(EditKazinUpgradeStates.waiting_for_new_kazino_upgrade_effect)
 async def process_new_kazin_effect(message: Message, state: FSMContext):
     data = await state.get_data()
     index = data.get('edit_kazin_index')
@@ -1642,10 +1509,10 @@ async def prompt_delete_kazin(callback: CallbackQuery):
         f"Вы уверены, что хотите удалить апгрейд #{index + 1} — «{upgrades[index].get('name','—')}»?\nЭто действие нельзя отменить."
     )
     try:
-        await safe_edit_message(callback.message, text, reply_markup=builder.as_markup())
+        await callback.message.edit_text(text, reply_markup=builder.as_markup())
     except TelegramBadRequest:
-        await callback.message.delete()
-        await callback.message.answer(text, reply_markup=builder.as_markup())
+        pass
+    await callback.answer()
 
 
 @router.callback_query(lambda c: c.data and c.data.startswith("confirm_delete_kazin:"))
@@ -1670,9 +1537,11 @@ async def confirm_delete_kazin(callback: CallbackQuery):
         await send_kazino_upgrade(callback, new_index)
     else:
         try:
-            await safe_edit_message(callback.message, "Список апгрейдов пуст.")
-        except TelegramBadRequest:
-            await callback.message.answer("Список апгрейдов пуст.")
+            await callback.message.delete()
+        except:
+            pass
+        await callback.message.answer("Список апгрейдов пуст.")
+    await callback.answer()
 
 
 # === Загрузка/сохранение казин-апгрейдов ===
@@ -1693,6 +1562,7 @@ def format_kazin_upgrade_text(upgrade):
         f"⭐ Редкость: <b>{upgrade.get('rarity','—')}</b>\n"
         f"🔧 Эффект: <b>{upgrade.get('effect','—')}</b>"
     )
+
 # --- Отправка казин-апгрейда с навигацией ---
 async def send_kazino_upgrade(message_or_cb, index: int):
     upgrades = load_kazin_upgrades()
@@ -1713,8 +1583,10 @@ async def send_kazino_upgrade(message_or_cb, index: int):
         await message_or_cb.answer(caption, reply_markup=keyboard)
     else:
         try:
-            await safe_edit_message(message_or_cb.message, caption, reply_markup=keyboard)
+            await message_or_cb.message.edit_text(caption, reply_markup=keyboard)
         except TelegramBadRequest:
+            try: await message_or_cb.message.delete()
+            except: pass
             await message_or_cb.message.answer(caption, reply_markup=keyboard)
 
 # --- Обработка команды /kazino_upgrades ---
@@ -1740,7 +1612,7 @@ async def handle_kazino_upgrades(message: Message):
     await send_kazino_upgrade(message, 0)
 
 # --- Навигация по казино-апгрейдам (следующая, предыдущая) ---
-@router.callback_query(lambda c: c.data and c.data.startswith("edit_kazino_upgrades:navigate"))
+@router.callback_query(lambda c: c.data and c.data.startswith("edit_kazin_upgrades:navigate"))
 async def navigate_kazino_upgrades(callback: CallbackQuery):
     if not await is_admin(callback.from_user.id):
         await callback.answer("❌ Нет доступа", show_alert=True)
@@ -1763,6 +1635,7 @@ async def navigate_kazino_upgrades(callback: CallbackQuery):
         new_index = current_index
 
     await send_kazino_upgrade(callback, new_index)
+    await callback.answer()
 
 # --- При нажатии на центральную кнопку с номером показываем список казин-апгрейдов постранично ---
 @router.callback_query(lambda c: c.data and c.data.startswith("show_kazin_upgrade_list:"))
@@ -1806,7 +1679,8 @@ async def show_kazin_upgrade_list(callback: CallbackQuery):
     try:
         await callback.message.edit_text(text, reply_markup=builder.as_markup())
     except TelegramBadRequest:
-        await callback.message.answer(text, reply_markup=builder.as_markup())
+        pass
+    await callback.answer()
 
 @router.callback_query(lambda c: c.data and c.data.startswith("navigate_kazin_upgrade_page:"))
 async def navigate_kazin_upgrade_page(callback: CallbackQuery):
@@ -1848,7 +1722,8 @@ async def navigate_kazin_upgrade_page(callback: CallbackQuery):
     try:
         await callback.message.edit_text(text, reply_markup=builder.as_markup())
     except TelegramBadRequest:
-        await callback.message.answer(text, reply_markup=builder.as_markup())
+        pass
+    await callback.answer()
 
 @router.callback_query(lambda c: c.data and c.data.startswith("select_kazin_upgrade:"))
 async def select_kazin_upgrade(callback: CallbackQuery):
@@ -1857,43 +1732,4 @@ async def select_kazin_upgrade(callback: CallbackQuery):
         return
     index = int(callback.data.split(":")[1])
     await send_kazino_upgrade(callback, index)
-
-# --- KAZIN UPGRADE EDITING: enter edit mode for kazin upgrades ---
-@router.callback_query(lambda c: c.data and c.data.startswith("edit_kazin_upgrade:"))
-async def enter_kazin_upgrade_edit_mode(callback: CallbackQuery):
-    if not await is_admin(callback.from_user.id):
-        await callback.answer("❌ Нет доступа", show_alert=True)
-        return
-    _, index_str = callback.data.split(":")
-    index = int(index_str)
-    await send_kazino_upgrade(callback, index)
-
-@router.callback_query(lambda c: c.data and c.data.startswith("edit_kazin_name:"))
-async def handle_edit_kazin_name(callback: CallbackQuery, state: FSMContext):
-    if not await is_admin(callback.from_user.id):
-        await callback.answer("❌ Нет доступа", show_alert=True)
-        return
-    index = int(callback.data.split(":")[1])
-    await callback.message.answer(f"Введите новое имя апгрейда для карточки #{index + 1}:" )
-    await state.update_data(edit_kazin_index=index)
-    await state.set_state(EditSkillCardStates.waiting_for_new_kazino_upgrade_name)
-
-@router.callback_query(lambda c: c.data and c.data.startswith("edit_kazin_rarity:"))
-async def handle_edit_kazin_rarity(callback: CallbackQuery, state: FSMContext):
-    if not await is_admin(callback.from_user.id):
-        await callback.answer("❌ Нет доступа", show_alert=True)
-        return
-    index = int(callback.data.split(":")[1])
-    await callback.message.answer(f"Введите новую редкость для апгрейда #{index + 1}:", reply_markup=get_rarity_keyboard())
-    await state.update_data(edit_kazin_index=index)
-    await state.set_state(EditSkillCardStates.waiting_for_new_kazino_upgrade_rarity)
-
-@router.callback_query(lambda c: c.data and c.data.startswith("edit_kazin_effect:"))
-async def handle_edit_kazin_effect(callback: CallbackQuery, state: FSMContext):
-    if not await is_admin(callback.from_user.id):
-        await callback.answer("❌ Нет доступа", show_alert=True)
-        return
-    index = int(callback.data.split(":")[1])
-    await callback.message.answer(f"Введите новый эффект для апгрейда #{index + 1}:" )
-    await state.update_data(edit_kazin_index=index)
-    await state.set_state(EditSkillCardStates.waiting_for_new_kazino_upgrade_effect)
+    await callback.answer()
