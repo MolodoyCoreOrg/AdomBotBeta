@@ -733,15 +733,15 @@ async def handle_edit_member_work(callback: CallbackQuery, state: FSMContext):
     builder.row(
         types.InlineKeyboardButton(
             text="Участник объединения",
-            callback_data=f"set_member_work:{index}:Участник объединения"
+            callback_data=f"set_work:{index}:Участник объединения"
         ),
         types.InlineKeyboardButton(
             text="Саппортер",
-            callback_data=f"set_member_work:{index}:Саппортер"
+            callback_data=f"set_work:{index}:Саппортер"
         ),
         types.InlineKeyboardButton(
             text="Победитель конкурса",
-            callback_data=f"set_member_work:{index}:Победитель конкурса"
+            callback_data=f"set_work:{index}:Победитель конкурса"
         ),
         width=2
     )
@@ -859,8 +859,8 @@ async def add_member_rank_image(callback: CallbackQuery, state: FSMContext):
 
 # --- Выбор ранга для загрузки изображения ---
 
-@router.callback_query(lambda c: c.data and c.data.startswith("upload_rank_image:"))
-async def upload_rank_image(callback: CallbackQuery, state: FSMContext):
+@router.callback_query(lambda c: c.data and c.data.startswith("upload_member_rank_image:"))
+async def upload_member_rank_image(callback: CallbackQuery, state: FSMContext):
     if not await is_admin(callback.from_user.id):
         await callback.answer("❌ Нет доступа", show_alert=True)
         return
