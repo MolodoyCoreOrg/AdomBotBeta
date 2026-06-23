@@ -16,16 +16,10 @@ dp = Dispatcher()
 
 router = Router()
 
-# Config/constants
-MAX_SPINS = 10
-INCREMENT = 2  # сколько круток выдаётся
-INTERVAL = 3600  # раз в час
-
 active_spins = {}
 
 # --- Улучшения казика за 🔥 ---
 CASINO_UPGRADES_POOL = [
-    # Обычные улучшения (вес 70%)
     {"id": "spin_per_hour_plus", "name": "+1 крутка в час", "rarity": "common", "weight": 15, "max_count": None},
     {"id": "max_spins_plus", "name": "+1 к максимальному накапливаемому количеству круток", "rarity": "common", "weight": 15, "max_count": None},
     {"id": "jopa_fire_2", "name": "Выпадение поджопника дает 2🔥", "rarity": "common", "weight": 12, "max_count": None},
@@ -33,11 +27,8 @@ CASINO_UPGRADES_POOL = [
     {"id": "meow_fire", "name": "При мяуканьи больше 5 раз дается 1🔥", "rarity": "common", "weight": 10, "max_count": None},
     {"id": "kiss_kiss_kiss_fire", "name": "При выпадении 💋💋💋 дается 300 🔥", "rarity": "common", "weight": 6, "max_count": None},
     {"id": "dopa_mechanic", "name": "Открыта механика ДОДЕПА - ставьте 🔥 и получайте x10 при любой комбинации", "rarity": "common", "weight": 10, "max_count": None},
-    # Редкие улучшения (вес 20%)
     {"id": "timer_reduce_10min", "name": "Минус 10 минут к таймеру пополнения круток", "rarity": "rare", "weight": 20, "max_count": 3},
-    # Эпическое улучшение (вес 7%)
     {"id": "double_casino", "name": "Можно крутить сразу два казика", "rarity": "epic", "weight": 7, "max_count": 1},
-    # Легендарное улучшение (вес 3%)
     {"id": "fast_spin", "name": "Появляется возможность быстрой прокрутки", "rarity": "legendary", "weight": 3, "max_count": 1},
 ]
 
@@ -50,7 +41,6 @@ def get_available_upgrades(user_data: dict) -> list:
         current_count = upgrades.get(upgrade["id"], 0)
         max_count = upgrade.get("max_count")
         
-        # Если есть лимит и он достигнут - пропускаем
         if max_count is not None and current_count >= max_count:
             continue
         
@@ -82,38 +72,29 @@ def apply_upgrade(user_data: dict, upgrade: dict) -> tuple[str, dict]:
     upgrades = user_data.get("kazino_upgrades", {})
     upgrade_id = upgrade["id"]
     current_count = upgrades.get(upgrade_id, 0)
-    new_count = current_count + 1
-    upgrades[upgrade_id] = new_count
+    upgrades[upgrade_id] = current_count + 1
     user_data["kazino_upgrades"] = upgrades
     
     description = f"🎁 Получено улучшение: {upgrade['name']} ({upgrade['rarity']})"
     
-    # Применяем эффекты улучшений
-    if upgrade_id == "spin_per_hour_plus":
-        # Это будет учитываться в roulette_increment_task
-        pass
-    elif upgrade_id == "max_spins_plus":
-        # Увеличиваем MAX_SPINS для пользователя
-        pass
-    elif upgrade_id == "timer_reduce_10min":
+    if upgrade_id == "timer_reduce_10min":
         user_data["upgrade_timer_reduce"] = user_data.get("upgrade_timer_reduce", 0) + 1
     elif upgrade_id == "double_casino":
         user_data["has_double_casino"] = True
     elif upgrade_id == "fast_spin":
         user_data["has_fast_spin"] = True
-    elif upgrade_id == "dopa_mechanic":
-        # Механика ДОДЕПА доступна
-        pass
     
     return description, user_data
 
 # --- Inline клавиатура под сообщением рулетки ---
 def get_roulette_inline_keyboard(user_data=None):
     builder = InlineKeyboardBuilder()
+    
+    spin_callback = "spin_fast_roulette" if user_data and user_data.get("has_fast_spin") else "spin_roulette"
+    
     builder.row(
-        types.InlineKeyboardButton(text="🎰 Крутить казик", callback_data="spin_roulette"),
+        types.InlineKeyboardButton(text="🎰 Крутить казик", callback_data=spin_callback),
     )
-    # Добавляем кнопку магазина улучшений, если есть 🔥 или доступна механика ДОДЕПА
     if user_data:
         fire_points = user_data.get("fire_points", 0)
         upgrades = user_data.get("kazino_upgrades", {})
@@ -131,7 +112,6 @@ def get_roulette_inline_keyboard(user_data=None):
 
 def get_roulette_again_keyboard(user_data=None):
     builder = InlineKeyboardBuilder()
-    # Проверяем, доступна ли быстрая прокрутка
     spin_callback = "spin_fast_roulette" if user_data and user_data.get("has_fast_spin") else "spin_roulette"
     builder.row(
         types.InlineKeyboardButton(text="🎰 Крутить ещё раз", callback_data=spin_callback)
@@ -141,7 +121,7 @@ def get_roulette_again_keyboard(user_data=None):
     )
     return builder.as_markup()
 
-def get_roulette_again_fast_keyboard():
+def get_roulette_again_fast_keyboard(user_data=None):
     builder = InlineKeyboardBuilder()
     builder.row(
         types.InlineKeyboardButton(text="🎰 Крутить ещё раз", callback_data="spin_fast_roulette")
@@ -172,17 +152,6 @@ def get_roulette_SDVG_button():
     )
     return builder.as_markup()
 
-
-
-
-
-
-
-
-
-
-
-# безопасная отправка
 async def _safe_send(user_id: int, text: str, reply_markup=None):
     from aiogram.exceptions import TelegramRetryAfter, TelegramForbiddenError, TelegramBadRequest
 
@@ -199,37 +168,43 @@ async def _safe_send(user_id: int, text: str, reply_markup=None):
         print(f"[safe_send] Ошибка {user_id}: {e}")
     return False
 
-
-
-# объединённая задача: инкремент + уведомление
+# объединённая задача: инкремент + уведомление с учетом улучшений
 async def roulette_increment_task():
     from database.db import connect
     while True:
         now = datetime.datetime.utcnow()
-
         conn = connect()
         cursor = conn.cursor()
 
-        cursor.execute("SELECT user_id, roulette_count, last_increment, notified_max FROM roulette_user")
+        cursor.execute("SELECT user_id, roulette_count, last_increment, notified_max, kazino_upgrades FROM roulette_user")
         rows = cursor.fetchall()
 
-        for user_id, roulette_count, last_increment, notified_max in rows:
+        for user_id, roulette_count, last_increment, notified_max, kazino_upgrades_json in rows:
+            upgrades = json.loads(kazino_upgrades_json) if kazino_upgrades_json else {}
+            
+            # Применяем эффекты улучшений
+            max_spins = 10 + upgrades.get("max_spins_plus", 0)
+            increment = 2 + upgrades.get("spin_per_hour_plus", 0)
+            interval = 3600 - (upgrades.get("timer_reduce_10min", 0) * 600)
+            if interval < 600: 
+                interval = 600
+
             try:
                 last_inc = datetime.datetime.fromisoformat(last_increment)
             except Exception:
                 last_inc = now
 
-            hours_passed = (now - last_inc).total_seconds() // 3600
-            if hours_passed >= 1:
-                if roulette_count < MAX_SPINS:
-                    new_count = min(MAX_SPINS, roulette_count + INCREMENT * int(hours_passed))
+            intervals_passed = (now - last_inc).total_seconds() // interval
+            
+            if intervals_passed >= 1:
+                if roulette_count < max_spins:
+                    new_count = min(max_spins, roulette_count + increment * int(intervals_passed))
                     cursor.execute(
                         "UPDATE roulette_user SET roulette_count = ?, last_increment = ? WHERE user_id = ?",
                         (new_count, now.isoformat(), user_id),
                     )
 
-                    # уведомляем, если накопилось максимум
-                    if new_count >= MAX_SPINS and not notified_max:
+                    if new_count >= max_spins and not notified_max:
                         sent = await _safe_send(
                             user_id,
                             f"🎰 У тебя накопилось {new_count} круток! Самое время испытать удачу!", reply_markup=get_roulette_notify_keyboard()
@@ -240,7 +215,6 @@ async def roulette_increment_task():
                                 (user_id,)
                             )
                 else:
-                    # если уже был максимум — сбрасываем дату
                     cursor.execute(
                         "UPDATE roulette_user SET last_increment = ? WHERE user_id = ?",
                         (now.isoformat(), user_id)
@@ -249,40 +223,39 @@ async def roulette_increment_task():
         conn.commit()
         conn.close()
 
-        await asyncio.sleep(INTERVAL)  # ждём заданный интервал (например, 3600)
+        await asyncio.sleep(600)  # Спим меньше, чтобы чаще проверять таймеры, если у кого-то он сокращен
 
 
-
-
-
-
-
-def seconds_until_next_increment(last_increment_iso: str) -> int:
+def seconds_until_next_increment(last_increment_iso: str, interval: int = 3600) -> int:
     last_increment = datetime.datetime.fromisoformat(last_increment_iso)
     now = datetime.datetime.utcnow()
     seconds_passed = (now - last_increment).total_seconds()
-    seconds_until_next = 3600 - (seconds_passed % 3600)
-    return int(seconds_until_next)
-
+    return int(interval - (seconds_passed % interval))
 
 async def send_roulette_status_message(target: Message | CallbackQuery, user_id: str, edit: bool = False):
     from database.db import connect
     conn = connect()
     cursor = conn.cursor()
-    cursor.execute("SELECT roulette_count, last_increment, total_opened, meow_count, meow_count_all, jopa_count, fire_points, kazino_upgrades FROM roulette_user WHERE user_id = ?", (user_id,))
+    cursor.execute("SELECT roulette_count, last_increment, total_opened, meow_count, meow_count_all, jopa_count, fire_points, kazino_upgrades, has_fast_spin FROM roulette_user WHERE user_id = ?", (user_id,))
     row = cursor.fetchone()
     conn.close()
 
     if not row:
         return
 
-    roulette_count, last_increment, total_opened, meow_count, meow_count_all, jopa_count, fire_points, kazino_upgrades_json = row
+    roulette_count, last_increment, total_opened, meow_count, meow_count_all, jopa_count, fire_points, kazino_upgrades_json, has_fast_spin = row
     kazino_upgrades = json.loads(kazino_upgrades_json) if kazino_upgrades_json else {}
 
-    seconds_left = seconds_until_next_increment(last_increment)
+    # Применяем эффекты улучшений
+    max_spins = 10 + kazino_upgrades.get("max_spins_plus", 0)
+    increment = 2 + kazino_upgrades.get("spin_per_hour_plus", 0)
+    interval = 3600 - (kazino_upgrades.get("timer_reduce_10min", 0) * 600)
+    if interval < 600:
+        interval = 600
+
+    seconds_left = seconds_until_next_increment(last_increment, interval)
     formatted_time_left = format_time_left(seconds_left)
 
-    # Учитываем улучшения
     upgrades_count = len(kazino_upgrades)
     fire_text = f"🔥 Огоньки: {fire_points}\n" if fire_points > 0 else ""
     upgrades_text = f"🎁 Улучшений: {upgrades_count}\n" if upgrades_count > 0 else ""
@@ -297,12 +270,13 @@ async def send_roulette_status_message(target: Message | CallbackQuery, user_id:
         f"Наибольший стрик : {meow_count}\n"
         f"Всего мяуканий: {meow_count_all}\n\n"
         f"💣 Всего поджопников: {jopa_count}\n\n"
-        "Каждый час бот выдаёт 2 крутки. Максимум может быть 10."
+        f"Каждые {interval//60} мин. бот выдаёт {increment} круток. Максимум может быть {max_spins}."
     )
 
     user_data = {
         "fire_points": fire_points,
-        "kazino_upgrades": kazino_upgrades
+        "kazino_upgrades": kazino_upgrades,
+        "has_fast_spin": bool(has_fast_spin)
     }
 
     if isinstance(target, CallbackQuery):
@@ -316,7 +290,6 @@ async def send_roulette_status_message(target: Message | CallbackQuery, user_id:
         await target.answer(text, reply_markup=get_roulette_inline_keyboard(user_data))
 
 # ДАТА РУЛЕТКИ
-
 STATS_FILE = "data/table/stats.json"
 
 DEFAULT_PRIZES = {
@@ -340,7 +313,6 @@ def save_stats(stats: dict):
         json.dump(stats, f, ensure_ascii=False, indent=2)
 
 def ensure_day(stats: dict, today: str):
-    """Создаёт блок для дня, если его ещё нет"""
     if today not in stats["daily"]:
         stats["daily"][today] = {
             "roulette_opened": 0,
@@ -351,15 +323,12 @@ def update_stats(prize_key: str):
     stats = load_stats()
     today = datetime.datetime.now().strftime("%Y-%m-%d")
 
-    # создаём блок для сегодняшнего дня
     ensure_day(stats, today)
 
-    # глобальная статистика
     stats["global"]["roulette_opened"] += 1
     if prize_key in stats["global"]["roulette_prizes"]:
         stats["global"]["roulette_prizes"][prize_key] += 1
 
-    # статистика за день
     stats["daily"][today]["roulette_opened"] += 1
     if prize_key in stats["daily"][today]["roulette_prizes"]:
         stats["daily"][today]["roulette_prizes"][prize_key] += 1
@@ -375,22 +344,12 @@ SLOT_CHANCES = {
     "💋": 5.0,
 }
 
-SPECIAL_REWARDS = {
-    "😹": "draw_member",
-    "✅": "draw_skill",
-    "👻": "add_spins",
-    "💣": "die_spins",
-    "💋": "full_die"
-}
-
 def _get_symbols_and_weights():
     symbols = list(SLOT_CHANCES.keys())
     weights = [max(0.0, float(SLOT_CHANCES[s])) for s in symbols]
     if sum(weights) == 0:
         weights = [1.0] * len(symbols)
     return symbols, weights
-
-
 
 meow_stats = {}
 
@@ -406,46 +365,53 @@ async def spin_roulette(callback: CallbackQuery):
 
     try:
         data = load_roulette_data(user_id)
+        upgrades = data.get("kazino_upgrades", {})
         now = datetime.datetime.utcnow()
         today_str = now.strftime("%Y-%m-%d")
+        
+        # Характеристики казика с учетом апгрейдов
+        max_spins = 10 + upgrades.get("max_spins_plus", 0)
+        increment = 2 + upgrades.get("spin_per_hour_plus", 0)
+        interval = 3600 - (upgrades.get("timer_reduce_10min", 0) * 600)
+        if interval < 600:
+            interval = 600
 
         # --- Сброс дневного лимита ---
         if data["last_reset"] != today_str:
             data["opened_today"] = 0
             data["last_reset"] = today_str
 
-        # --- Авто-прибавка рулеток ---
+        # --- Авто-прибавка рулеток с новыми правилами ---
         last_increment = datetime.datetime.fromisoformat(data["last_increment"])
-        hours_passed = (now - last_increment).total_seconds() // 3600
-        if hours_passed >= 1:
-            if data["roulette_count"] < MAX_SPINS:
-                data["roulette_count"] = min(MAX_SPINS, data["roulette_count"] + 2 * int(hours_passed))
+        intervals_passed = (now - last_increment).total_seconds() // interval
+        if intervals_passed >= 1:
+            if data["roulette_count"] < max_spins:
+                data["roulette_count"] = min(max_spins, data["roulette_count"] + increment * int(intervals_passed))
             data["last_increment"] = now.isoformat()
 
-        if data["roulette_count"] == 0:
+        if data["roulette_count"] <= 0:
             await callback.answer("🎰 У тебя нет круток.", show_alert=True)
             return
 
-        if data["opened_today"] >= 100000:
+        if data.get("opened_today", 0) >= 100000:
             await callback.answer("🎰 Ты уже открыл 100000 круток сегодня.", show_alert=True)
             return
 
         # --- Уменьшаем рулетку ---
         data["roulette_count"] -= 1
-        data["opened_today"] += 1
-        data["total_opened"] += 1
+        data["opened_today"] = data.get("opened_today", 0) + 1
+        data["total_opened"] = data.get("total_opened", 0) + 1
         data["notified_max"] = False
         save_roulette_data(user_id, data)
 
         # --- Сообщение со слотами ---
         await safe_delete(callback)
-        slot_msg = await callback.message.answer("🎰 Крутим...\n⬛ ⬛ ⬛")
+        slot_msg = await callback.message.answer("🎰 Крутим...\n⬛ ⬛ ⬛", reply_markup=get_roulette_SDVG_button())
 
-        # --- Символы ---
+        # --- Анимация ---
         symbols, weights = _get_symbols_and_weights()
         result = random.choices(symbols, weights=weights, k=3)
 
-        # --- Анимация ---
         async def animate():
             last_text = None
             rounds = 12
@@ -457,16 +423,15 @@ async def spin_roulette(callback: CallbackQuery):
                     try:
                         await slot_msg.edit_text(
                             interim_text,
-                            reply_markup=get_roulette_SDVG_button()  # <<< всегда передаём клавиатуру
+                            reply_markup=get_roulette_SDVG_button()
                         )
                         last_text = interim_text
                     except TelegramBadRequest as e:
                         if "message is not modified" not in str(e):
                             raise
 
-                await asyncio.sleep(0.04 + (i / (rounds - 1)) * 0.46)  # от 0.04 до 0.5 сек
+                await asyncio.sleep(0.04 + (i / (rounds - 1)) * 0.46)
 
-            # финальный результат
             final_text = " ".join(result)
             if final_text != last_text:
                 await slot_msg.edit_text(final_text)
@@ -476,239 +441,167 @@ async def spin_roulette(callback: CallbackQuery):
         except asyncio.TimeoutError:
             await slot_msg.edit_text(" ".join(result))
         except Exception:
-            # если во время анимации краш — вернем крутку пользователю
             data["roulette_count"] = data.get("roulette_count", 0) + 1
             data["opened_today"] = max(0, data.get("opened_today", 1) - 1)
             data["total_opened"] = max(0, data.get("total_opened", 1) - 1)
             save_roulette_data(user_id, data)
             raise
 
-
-        # ждём гарантированного окончания
         await asyncio.sleep(0.6)
 
-
+        # Обновляем инфу (могла измениться во время анимации)
+        data = load_roulette_data(user_id)
+        upgrades = data.get("kazino_upgrades", {})
+        
+        # --- Подсчет мяуканий (Mяу апгрейд) ---
         stats = meow_stats.pop(int(user_id), None)
+        meow_str = ""
         if stats and stats.get("count", 0) > 0:
-            data = load_roulette_data(user_id)
-
-            stats_old = data.get("meow_count") or 0
-            stats_old_all = data.get("meow_count_all") or 0
+            stats_old = data.get("meow_count", 0)
+            stats_old_all = data.get("meow_count_all", 0)
             stats_new = stats.get("count", 0)
 
-            # сохраняем только если новое больше старого
             if stats_new > stats_old:
                 data["meow_count"] = stats_new
-                save_roulette_data(user_id, data)
-
             data["meow_count_all"] = stats_old_all + stats_new
+            
+            # Апгрейд meow_fire
+            meow_fire_bonus = 0
+            if stats_new > 5 and "meow_fire" in upgrades:
+                meow_fire_bonus = 1 * upgrades["meow_fire"]
+                data["fire_points"] = data.get("fire_points", 0) + meow_fire_bonus
+                
             save_roulette_data(user_id, data)
 
-            # удаляем все "Мяу"-сообщения
             for msg_id in stats["messages"]:
                 try:
                     await slot_msg.bot.delete_message(callback.message.chat.id, msg_id)
                 except Exception:
-                    pass  # если сообщение уже удалено
+                    pass
 
-            if result[0] == result[1] == result[2]:
-                symbol = result[0]
-                reward_text = None
+            meow_str = f"\n😺 Вы мяукнули {stats_new} раз"
+            if meow_fire_bonus > 0:
+                meow_str += f" (+{meow_fire_bonus}🔥 за улучшение)"
 
-                if symbol == "😹":
-                    add_member_bonus(user_id)
-                    update_stats("members_bonus")
-                    reward_text = "🎁 Возможность открыть карточку участника"
-                    await slot_msg.edit_text("🎉 3 кота! Ты получил возможность открыть карточку участника 😺\n"
-                                            f"🎰 У тебя осталось {data['roulette_count']} круток.\n"
-                                            f"😺 Вы мяукнули {stats['count']} раз", reply_markup=get_roulette_again_keyboard())
+        # --- Проверка результата ---
+        if result[0] == result[1] == result[2]:
+            symbol = result[0]
+            reward_text = None
 
-                elif symbol == "✅":
-                    add_skill_bonus(user_id)
-                    update_stats("skills_bonus")
-                    reward_text = "🎁 Возможность открыть суперспособность"
-                    await slot_msg.edit_text("🎉 3 галочки! Ты получил возможность открыть суперспособность ✅\n"
-                                            f"🎰 У тебя осталось {data['roulette_count']} круток.\n"
-                                            f"😺 Вы мяукнули {stats['count']} раз", reply_markup=get_roulette_again_keyboard())
+            if symbol == "😹":
+                add_member_bonus(user_id)
+                update_stats("members_bonus")
+                reward_text = "🎁 Возможность открыть карточку участника"
+                await slot_msg.edit_text(f"🎉 3 кота! Ты получил возможность открыть карточку участника 😺\n🎰 У тебя осталось {data['roulette_count']} круток.{meow_str}", reply_markup=get_roulette_again_keyboard(data))
 
-                elif symbol == "👻":
-                    data["roulette_count"] += 10
-                    save_roulette_data(user_id, data)
-                    update_stats("+10")
-                    reward_text = "🎁 +10 Круток"
-                    await slot_msg.edit_text("👻 3 призрака! +10 круток!\n"
-                                            f"🎰 У тебя осталось {data['roulette_count']} круток.\n"
-                                            f"😺 Вы мяукнули {stats['count']} раз", reply_markup=get_roulette_again_keyboard())
-                    
-                elif symbol == "💣":
-                    # increment jopa_count in roulette_user
-                    data["jopa_count"] = data.get("jopa_count", 0) + 1
-                    
-                    # Проверяем улучшение: выпадение поджопника дает 2🔥
-                    upgrades = data.get("kazino_upgrades", {})
-                    if "jopa_fire_2" in upgrades:
-                        data["fire_points"] = data.get("fire_points", 0) + 2
-                        fire_text = " (+2🔥)"
-                    else:
-                        fire_text = ""
-                    
-                    save_roulette_data(user_id, data)
-                    update_stats("JOPA")
-                    reward_text = f"💣 Поджопник ^_^{fire_text}"
-                    await slot_msg.edit_text(f"💣 Ты чертовски крут! Ты выиграл поджопник!{fire_text}\n"
-                                            f"🎰 У тебя осталось {data['roulette_count']} круток.\n"
-                                            f"😺 Вы мяукнули {stats['count']} раз", reply_markup=get_roulette_again_keyboard(data))
+            elif symbol == "✅":
+                add_skill_bonus(user_id)
+                update_stats("skills_bonus")
+                reward_text = "🎁 Возможность открыть суперспособность"
+                await slot_msg.edit_text(f"🎉 3 галочки! Ты получил возможность открыть суперспособность ✅\n🎰 У тебя осталось {data['roulette_count']} круток.{meow_str}", reply_markup=get_roulette_again_keyboard(data))
 
-                elif symbol == "💋":
-                    # Пранк: ничего не удаляем, но сначала пугаем пользователя, затем успокаиваем и даём небольшую компенсацию
-                    save_roulette_data(user_id, data)
-                    update_stats("POCELUI")
-                    reward_text = "💋 Пранк — ничего не удалено (+1 крутка)"
+            elif symbol == "👻":
+                # Апгрейд ghost_spins_plus5
+                base_spins = 10
+                bonus_spins = 5 * upgrades.get("ghost_spins_plus5", 0)
+                total_spins = base_spins + bonus_spins
+                
+                data["roulette_count"] += total_spins
+                save_roulette_data(user_id, data)
+                update_stats("+10")
+                
+                reward_text = f"🎁 +{total_spins} Круток"
+                ghost_str = f" (+{bonus_spins} от улучшения)" if bonus_spins > 0 else ""
+                
+                await slot_msg.edit_text(f"👻 3 призрака! +{total_spins} круток!{ghost_str}\n🎰 У тебя осталось {data['roulette_count']} круток.{meow_str}", reply_markup=get_roulette_again_keyboard(data))
+                
+            elif symbol == "💣":
+                data["jopa_count"] = data.get("jopa_count", 0) + 1
+                
+                # Апгрейд jopa_fire_2
+                fire_bonus = 2 * upgrades.get("jopa_fire_2", 0)
+                fire_text = ""
+                if fire_bonus > 0:
+                    data["fire_points"] = data.get("fire_points", 0) + fire_bonus
+                    fire_text = f" (+{fire_bonus}🔥)"
+                
+                save_roulette_data(user_id, data)
+                update_stats("JOPA")
+                reward_text = f"💣 Поджопник ^_^{fire_text}"
+                await slot_msg.edit_text(f"💣 Ты чертовски крут! Ты выиграл поджопник!{fire_text}\n🎰 У тебя осталось {data['roulette_count']} круток.{meow_str}", reply_markup=get_roulette_again_keyboard(data))
 
-                    # Сначала пугающее сообщение (без reply_markup, чтобы внимание было на тексте)
-                    await slot_msg.edit_text("💋 ТОТАЛЬНОЕ УНИЧТОЖЕНИЕ! ВСЕ ТВОИ КАРТЫ УДАЛЕНЫ!\n"
-                                            f"🎰 У тебя осталось {data['roulette_count']} круток.\n"
-                                            f"😺 Вы мяукнули {stats['count']} раз", reply_markup=None)
+            elif symbol == "💋":
+                # Апгрейд kiss_kiss_kiss_fire (ТОТ САМЫЙ БОНУС НА ОГОНЬКИ!)
+                fire_bonus = 300 * upgrades.get("kiss_kiss_kiss_fire", 0)
+                fire_text = ""
+                if fire_bonus > 0:
+                    data["fire_points"] = data.get("fire_points", 0) + fire_bonus
+                    fire_text = f"\n🔥 Бонус улучшения: +{fire_bonus} огоньков!"
 
-                    await asyncio.sleep(2.0)
-                    data["roulette_count"] += 1
-                    save_roulette_data(user_id, data)
-                    await slot_msg.edit_text("😈 Пранк! Ничего не удалено — всё в безопасности.\n"
-                                            f"🎁 В качестве компенсации: +1 крутка.\n"
-                                            f"🎰 У тебя теперь {data['roulette_count']} круток.\n"
-                                            f"😺 Вы мяукнули {stats['count']} раз", reply_markup=get_roulette_again_keyboard())
+                save_roulette_data(user_id, data)
+                update_stats("POCELUI")
+                reward_text = f"💋 Пранк — ничего не удалено (+1 крутка){fire_text}"
 
-                    # Добавляем награду в историю
-                if reward_text:
-                    append_roulette_history(int(user_id), reward_text)
+                await slot_msg.edit_text(f"💋 ТОТАЛЬНОЕ УНИЧТОЖЕНИЕ! ВСЕ ТВОИ КАРТЫ УДАЛЕНЫ!\n🎰 У тебя осталось {data['roulette_count']} круток.{meow_str}", reply_markup=None)
 
-            else:
-                update_stats("nothing")
-                fail_msg = (f"😿 Увы, ничего не выпало.\nУ тебя было: {' '.join(result)}\n"
-                        f"🎰 У тебя осталось {data['roulette_count']} круток.\n"
-                        f"😺 Вы мяукнули {stats['count']} раз")
-                await slot_msg.edit_text(fail_msg, reply_markup=get_roulette_again_keyboard())
+                await asyncio.sleep(2.0)
+                
+                data["roulette_count"] += 1
+                save_roulette_data(user_id, data)
+                await slot_msg.edit_text(f"😈 Пранк! Ничего не удалено — всё в безопасности.\n🎁 В качестве компенсации: +1 крутка.{fire_text}\n🎰 У тебя теперь {data['roulette_count']} круток.{meow_str}", reply_markup=get_roulette_again_keyboard(data))
 
-        else:            
-            if result[0] == result[1] == result[2]:
-                symbol = result[0]
-                reward_text = None
+            if reward_text:
+                append_roulette_history(int(user_id), reward_text)
 
-                if symbol == "😹":
-                    add_member_bonus(user_id)
-                    update_stats("members_bonus")
-                    reward_text = "🎁 Возможность открыть карточку участника"
-                    await slot_msg.edit_text("🎉 3 кота! Ты получил возможность открыть карточку участника 😺\n"
-                                            f"🎰 У тебя осталось {data['roulette_count']} круток.", reply_markup=get_roulette_again_keyboard())
-
-                elif symbol == "✅":
-                    add_skill_bonus(user_id)
-                    update_stats("skills_bonus")
-                    reward_text = "🎁 Возможность открыть суперспособность"
-                    await slot_msg.edit_text("🎉 3 галочки! Ты получил возможность открыть суперспособность ✅\n"
-                                            f"🎰 У тебя осталось {data['roulette_count']} круток.", reply_markup=get_roulette_again_keyboard())
-
-                elif symbol == "👻":
-                    data["roulette_count"] += 10
-                    save_roulette_data(user_id, data)
-                    update_stats("+10")
-                    reward_text = "🎁 +10 Круток"
-                    await slot_msg.edit_text("👻 3 призрака! +10 круток!\n"
-                                            f"🎰 У тебя осталось {data['roulette_count']} круток.", reply_markup=get_roulette_again_keyboard())
-                    
-                elif symbol == "💣":
-                    data["jopa_count"] = data.get("jopa_count", 0) + 1
-        
-                    # Проверяем улучшение: выпадение поджопника дает 2🔥
-                    upgrades = data.get("kazino_upgrades", {})
-                    if "jopa_fire_2" in upgrades:
-                        data["fire_points"] = data.get("fire_points", 0) + 2
-                        fire_text = " (+2🔥)"
-                    else:
-                        fire_text = ""
-        
-                    save_roulette_data(user_id, data)
-                    update_stats("JOPA")
-                    fire_text = " (+2🔥)" if "jopa_fire_2" in upgrades else ""
-                    await slot_msg.edit_text(f"💣 Ты чертовски крут! Ты выиграл поджопник!{fire_text}\n"
-                                            f"🎰 У тебя осталось {data['roulette_count']} круток.", reply_markup=get_roulette_again_keyboard(data))
-
-                elif symbol == "💋":
-                    # Пранк: ничего не удаляем, но сначала пугаем пользователя, затем успокаиваем и даём небольшую компенсацию
-                    save_roulette_data(user_id, data)
-                    update_stats("POCELUI")
-                    reward_text = "💋 Пранк — ничего не удалено (+1 крутка)"
-
-                    # Сначала пугающее сообщение (без reply_markup, чтобы внимание было на тексте)
-                    await slot_msg.edit_text("💋 ТОТАЛЬНОЕ УНИЧТОЖЕНИЕ! ВСЕ ТВОИ КАРТЫ УДАЛЕНЫ!\n"
-                                            f"🎰 У тебя осталось {data['roulette_count']} круток.", reply_markup=None)
-
-                    await asyncio.sleep(2.0)
-                    data["roulette_count"] += 1
-                    save_roulette_data(user_id, data)
-                    await slot_msg.edit_text("😈 Пранк! Ничего не удалено — всё в безопасности.\n"
-                                            f"🎁 В качестве компенсации: +1 крутка.\n"
-                                            f"🎰 У тебя теперь {data['roulette_count']} круток.", reply_markup=get_roulette_again_keyboard())
-
-                # Добавляем награду в истории
-                if reward_text:
-                    append_roulette_history(int(user_id), reward_text)
-
-            else:
-                update_stats("nothing")
-                fail_msg = (f"😿 Увы, ничего не выпало.\nУ тебя было: {' '.join(result)}\n"
-                        f"🎰 У тебя осталось {data['roulette_count']} круток.")
-                await slot_msg.edit_text(fail_msg, reply_markup=get_roulette_again_keyboard())
+        else:
+            update_stats("nothing")
+            fail_msg = f"😿 Увы, ничего не выпало.\nУ тебя было: {' '.join(result)}\n🎰 У тебя осталось {data['roulette_count']} круток.{meow_str}"
+            await slot_msg.edit_text(fail_msg, reply_markup=get_roulette_again_keyboard(data))
 
     finally:
-        # снимаем блокировку
         active_spins.pop(user_id, None)
-
-
 
 @router.callback_query(F.data == "SDVG_meow")
 async def sdvg_meow(callback: CallbackQuery):
     user_id = callback.from_user.id
     msg = await callback.message.answer("Мяу ^_^")
 
-    # инициализируем, если первый раз
     if user_id not in meow_stats:
         meow_stats[user_id] = {"count": 0, "messages": []}
 
-    # увеличиваем счётчик и запоминаем сообщение
     meow_stats[user_id]["count"] += 1
     meow_stats[user_id]["messages"].append(msg.message_id)
 
-    await callback.answer()  # чтобы кнопка не "висела"
+    await callback.answer()
 
-
-
-
-
-
-
-
-# --- Быстрая верcия крутилки: мгновенно показываем результат (без анимации) ---
+# --- Быстрая верcия крутилки: мгновенно показываем результат ---
 @router.callback_query(F.data == "spin_fast_roulette")
 async def spin_fast_roulette(callback: CallbackQuery):
     user_id = str(callback.from_user.id)
     data = load_roulette_data(user_id)
+    upgrades = data.get("kazino_upgrades", {})
 
     now = datetime.datetime.utcnow()
     today_str = now.strftime("%Y-%m-%d")
+
+    max_spins = 10 + upgrades.get("max_spins_plus", 0)
+    increment = 2 + upgrades.get("spin_per_hour_plus", 0)
+    interval = 3600 - (upgrades.get("timer_reduce_10min", 0) * 600)
+    if interval < 600:
+        interval = 600
 
     if data["last_reset"] != today_str:
         data["opened_today"] = 0
         data["last_reset"] = today_str
 
     last_increment = datetime.datetime.fromisoformat(data["last_increment"])
-    hours_passed = (now - last_increment).total_seconds() // 3600
-    if hours_passed >= 1:
-        if data["roulette_count"] < MAX_SPINS:
-            data["roulette_count"] = min(MAX_SPINS, data["roulette_count"] + 2 * int(hours_passed))
+    intervals_passed = (now - last_increment).total_seconds() // interval
+    if intervals_passed >= 1:
+        if data["roulette_count"] < max_spins:
+            data["roulette_count"] = min(max_spins, data["roulette_count"] + increment * int(intervals_passed))
         data["last_increment"] = now.isoformat()
 
-    if data["roulette_count"] == 0:
+    if data["roulette_count"] <= 0:
         await callback.answer("🎰 У тебя нет круток.", show_alert=True)
         return
 
@@ -716,14 +609,12 @@ async def spin_fast_roulette(callback: CallbackQuery):
         await callback.answer("🎰 Ты уже открыл 100000 круток сегодня.", show_alert=True)
         return
 
-    # Снимаем крутку и сохраняем состояние
     data["roulette_count"] -= 1
     data["opened_today"] = data.get("opened_today", 0) + 1
     data["total_opened"] = data.get("total_opened", 0) + 1
     data["notified_max"] = False
     save_roulette_data(user_id, data)
 
-    # Моментальный выбор результата
     symbols, weights = _get_symbols_and_weights()
     try:
         result = random.choices(symbols, weights=weights, k=3)
@@ -735,80 +626,68 @@ async def spin_fast_roulette(callback: CallbackQuery):
             if symbol == "😹":
                 add_member_bonus(user_id)
                 reward_text = "🎁 Возможность открыть карточку участника"
-                await callback.message.edit_text(
-                    "🎉 3 кота! Ты получил возможность открыть карточку участника 😺\n"
-                    f"🎰 У тебя осталось {data['roulette_count']} круток.",
-                    reply_markup=get_roulette_again_fast_keyboard()
-                )
+                await callback.message.edit_text(f"🎉 3 кота! Ты получил возможность открыть карточку участника 😺\n🎰 У тебя осталось {data['roulette_count']} круток.", reply_markup=get_roulette_again_fast_keyboard(data))
 
             elif symbol == "✅":
                 add_skill_bonus(user_id)
                 reward_text = "🎁 Возможность открыть суперспособность"
-                await callback.message.edit_text(
-                    "🎉 3 галочки! Ты получил возможность открыть суперспособность ✅\n"
-                    f"🎰 У тебя осталось {data['roulette_count']} круток.",
-                    reply_markup=get_roulette_again_fast_keyboard()
-                )
+                await callback.message.edit_text(f"🎉 3 галочки! Ты получил возможность открыть суперспособность ✅\n🎰 У тебя осталось {data['roulette_count']} круток.", reply_markup=get_roulette_again_fast_keyboard(data))
 
             elif symbol == "👻":
-                data["roulette_count"] += 10
+                # Апгрейд на призраков
+                base_spins = 10
+                bonus_spins = 5 * upgrades.get("ghost_spins_plus5", 0)
+                total_spins = base_spins + bonus_spins
+                
+                data["roulette_count"] += total_spins
                 save_roulette_data(user_id, data)
-                reward_text = "🎁 +10 Круток"
-                await callback.message.edit_text(
-                    "👻 3 призрака! +10 круток!\n"
-                    f"🎰 У тебя осталось {data['roulette_count']} круток.",
-                    reply_markup=get_roulette_again_fast_keyboard()
-                )
+                
+                reward_text = f"🎁 +{total_spins} Круток"
+                ghost_str = f" (+{bonus_spins} от улучшения)" if bonus_spins > 0 else ""
+                
+                await callback.message.edit_text(f"👻 3 призрака! +{total_spins} круток!{ghost_str}\n🎰 У тебя осталось {data['roulette_count']} круток.", reply_markup=get_roulette_again_fast_keyboard(data))
 
             elif symbol == "💣":
-                    # increment jopa_count in roulette_user
-                    data["jopa_count"] = data.get("jopa_count", 0) + 1
-                    
-                    # Проверяем улучшение: выпадение поджопника дает 2🔥
-                    upgrades = data.get("kazino_upgrades", {})
-                    if "jopa_fire_2" in upgrades:
-                        data["fire_points"] = data.get("fire_points", 0) + 2
-                        fire_text = " (+2🔥)"
-                    else:
-                        fire_text = ""
-                    
-                    save_roulette_data(user_id, data)
-                    update_stats("JOPA")
-                    reward_text = f"💣 Поджопник ^_^{fire_text}"
-                    await slot_msg.edit_text(f"💣 Ты чертовски крут! Ты выиграл поджопник!{fire_text}\n"
-                                            f"🎰 У тебя осталось {data['roulette_count']} круток.\n"
-                                            f"😺 Вы мяукнули {stats['count']} раз", reply_markup=get_roulette_again_keyboard(data))
+                data["jopa_count"] = data.get("jopa_count", 0) + 1
+                fire_bonus = 2 * upgrades.get("jopa_fire_2", 0)
+                fire_text = ""
+                if fire_bonus > 0:
+                    data["fire_points"] = data.get("fire_points", 0) + fire_bonus
+                    fire_text = f" (+{fire_bonus}🔥)"
+                
+                save_roulette_data(user_id, data)
+                update_stats("JOPA")
+                reward_text = f"💣 Поджопник ^_^{fire_text}"
+                await callback.message.edit_text(f"💣 Ты чертовски крут! Ты выиграл поджопник!{fire_text}\n🎰 У тебя осталось {data['roulette_count']} круток.", reply_markup=get_roulette_again_fast_keyboard(data))
 
             elif symbol == "💋":
-                # Для быстрой версии пропускаем драму — сразу даём компенсацию
+                # Апгрейд на поцелуи (+300🔥)
+                fire_bonus = 300 * upgrades.get("kiss_kiss_kiss_fire", 0)
+                fire_text = ""
+                if fire_bonus > 0:
+                    data["fire_points"] = data.get("fire_points", 0) + fire_bonus
+                    fire_text = f"\n🔥 Бонус улучшения: +{fire_bonus} огоньков!"
+                
                 data["roulette_count"] += 1
                 save_roulette_data(user_id, data)
-                reward_text = "💋 Пранк — ничего не удалено (+1 крутка)"
-                await callback.message.edit_text(
-                    "😈 Пранк! Ничего не удалено — всё в безопасности.\n"
-                    f"🎁 В качестве компенсации: +1 крутка.\n"
-                    f"🎰 У тебя теперь {data['roulette_count']} круток.",
-                    reply_markup=get_roulette_again_fast_keyboard()
-                )
+                reward_text = f"💋 Пранк — ничего не удалено (+1 крутка){fire_text}"
+                await callback.message.edit_text(f"😈 Пранк! Ничего не удалено — всё в безопасности.\n🎁 В качестве компенсации: +1 крутка.{fire_text}\n🎰 У тебя теперь {data['roulette_count']} круток.", reply_markup=get_roulette_again_fast_keyboard(data))
 
             if reward_text:
                 append_roulette_history(int(user_id), reward_text)
 
         else:
-            fail_msg = (f"😿 Увы, ничего не выпало.\nУ тебя было: {' '.join(result)}\n"
-                       f"🎰 У тебя осталось {data['roulette_count']} круток.")
-            await callback.message.edit_text(fail_msg, reply_markup=get_roulette_again_fast_keyboard())
+            fail_msg = f"😿 Увы, ничего не выпало.\nУ тебя было: {' '.join(result)}\n🎰 У тебя осталось {data['roulette_count']} круток."
+            await callback.message.edit_text(fail_msg, reply_markup=get_roulette_again_fast_keyboard(data))
 
     except Exception:
-        # Откатываем списание при ошибке
         data["roulette_count"] = data.get("roulette_count", 0) + 1
         data["opened_today"] = max(0, data.get("opened_today", 1) - 1)
         data["total_opened"] = max(0, data.get("total_opened", 1) - 1)
         save_roulette_data(user_id, data)
         raise
 
-
-# --- Обработка нажатия кнопки "Список последних 10 наград" ---
+# --- Обработка списка наград и магазина ---
 @router.callback_query(F.data == "show_history")
 async def show_history(callback: CallbackQuery):
     user_id = str(callback.from_user.id)
@@ -820,21 +699,18 @@ async def show_history(callback: CallbackQuery):
     else:
         text = "📜 Последние 10 наград:\n" + "\n".join(f"{idx+1}. {prize}" for idx, prize in enumerate(history))
 
-    await callback.answer() # закрыть "часики"
+    await callback.answer()
     await callback.message.edit_text(text, reply_markup=get_roulette_inline_keyboard_2())
 
-
-
 @router.message(F.text == "🎰 Крутить казик")
-async def show_roulette_status(message: Message):
+async def trigger_roulette_status_msg(message: Message):
     user_id = str(message.from_user.id)
     await send_roulette_status_message(message, user_id)
 
 @router.callback_query(F.data == "roulette_button")
-async def show_roulette_status(callback: CallbackQuery):
+async def trigger_roulette_status_cb(callback: CallbackQuery):
     user_id = str(callback.from_user.id)
     await send_roulette_status_message(callback.message, user_id)
-
 
 @router.callback_query(F.data == "go_back_button")
 async def go_back(callback: CallbackQuery):
@@ -850,7 +726,6 @@ async def casino_upgrades_shop(callback: CallbackQuery):
     fire_points = data.get("fire_points", 0)
     upgrades = data.get("kazino_upgrades", {})
     
-    # Формируем текст с текущими улучшениями
     upgrades_text = ""
     if upgrades:
         upgrades_text = "<b>🎁 Твои улучшения:</b>\n"
@@ -892,23 +767,18 @@ async def buy_random_upgrade(callback: CallbackQuery):
         await callback.answer(f"❌ Недостаточно 🔥! Нужно {upgrade_price}, у тебя {fire_points}", show_alert=True)
         return
     
-    # Выбираем случайное улучшение
     upgrade = get_random_upgrade(data)
     if not upgrade:
         await callback.answer("❌ Все доступные улучшения уже получены!", show_alert=True)
         return
     
-    # Списываем огоньки
     data["fire_points"] = fire_points - upgrade_price
     
-    # Применяем улучшение
     description, data = apply_upgrade(data, upgrade)
     save_roulette_data(user_id, data)
     
-    # Добавляем в историю
     append_roulette_history(int(user_id), f"🎁 Улучшение: {upgrade['name']}")
     
-    # Показываем результат
     rarity_emoji = {"common": "⚪", "rare": "🔵", "epic": "🟣", "legendary": "🟠"}.get(upgrade["rarity"], "⚪")
     
     text = (
