@@ -34,3 +34,6 @@ elif MODE == "TEST":
     TOKEN = TOKEN_TEST
 else:
     raise ValueError("Укажи корректный MODE: DEV, PROD или TEST")
+
+# --- НОВЫЕ ПЕРЕМЕННЫЕ ДЛЯ LLM (Шуточный модератор) ---
+LLM_API_KEY = "AQ.Ab8RN6J9qKW0h42nwieoYnxHqvFC-X1Hs1jdzlYN3f799H4K8A"

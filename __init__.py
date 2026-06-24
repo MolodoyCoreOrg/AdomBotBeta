@@ -20,6 +20,7 @@ from handlers.motivation import router as motivation_router
 from handlers.presave import router as presave_router
 from handlers.exchange import router as exchange_router
 from handlers.pidaraz import router as pidaraz_router
+from handlers.drug_moderator import router as drug_moderator_router
 
 routers = [
     menu_router,
@@ -44,4 +45,5 @@ routers = [
     presave_router,
     exchange_router,
     pidaraz_router,
+    drug_moderator_router,
 ]
