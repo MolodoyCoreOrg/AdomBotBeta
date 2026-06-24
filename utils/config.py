@@ -18,7 +18,7 @@ ADMIN_USERNAMES = {"djozeph1", "echo_raya", "taka4212", "flameasfuck", "pixor448
 DA_TOKEN = "pqtvXdJ2EdIogi87hGzK"
 
 # Указываем режим работы
-MODE = "PROD"   # DEV / PROD / TEST
+MODE = "TEST"   # DEV / PROD / TEST
 
 # Токены
 TOKEN_DEV = "8068425537:AAGgB-LwUWai_2Zqld5SEEKqAEjzBKYkEvI"
