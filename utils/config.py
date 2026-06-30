@@ -36,4 +36,4 @@ else:
     raise ValueError("Укажи корректный MODE: DEV, PROD или TEST")
 
 # --- НОВЫЕ ПЕРЕМЕННЫЕ ДЛЯ LLM (Шуточный модератор) ---
-#LLM_API_KEY = "AQ.Ab8RN6J9qKW0h42nwieoYnxHqvFCX1Hs1jdzlYN3f799H4K8A"
+LLM_API_KEY = "AQ.Ab8RN6J9qKW0h42nwieoYnxHqvFCX1Hs1jdzlYN3f799H4K8A"
