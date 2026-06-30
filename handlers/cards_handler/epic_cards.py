@@ -16,7 +16,7 @@ from database.db import (
     connect, get_skill_cards, update_skill_cards, add_balance,
     load_roulette_data, save_roulette_data, get_all_user_ids,
     find_user_by_username, get_user_full_data, add_skill_card,
-    add_skill_bonus # Добавлен импорт для начисления карточек
+    add_skill_bonus
 )
 from handlers.picture import find_image_file
 from utils.helpers import safe_delete
@@ -179,15 +179,16 @@ async def use_uraaa(callback: CallbackQuery, bot):
         InlineKeyboardButton(text="❌ Отмена", callback_data="cancel_epic_card")
     )
 
-    # Меняем текущее сообщение на меню выбора действий
-    await callback.message.edit_text(
+    # Удаляем фото, чтобы избежать ошибки edit_text, и отправляем новое сообщение
+    await safe_delete(callback.message)
+    await callback.message.answer(
         "Выберите действие для карты \"УРААА\":\n\n"
         "🎯 <b>Использовать на себя</b> — сбросить таймер карты участника\n"
         "🎁 <b>Подарить другу</b> — отправить карту другу по username",
         reply_markup=builder.as_markup(),
         parse_mode="HTML"
     )
-    # Обязательно убираем "часики" с кнопки
+    # Убираем "часики" с кнопки
     await callback.answer()
 
 
@@ -231,7 +232,8 @@ async def handle_uraaa_self(callback: CallbackQuery, bot):
     with open(MEMBER_TIMER_PATH, "w", encoding="utf-8") as f:
         json.dump(timers, f, ensure_ascii=False, indent=2)
 
-    await callback.message.edit_text(
+    await safe_delete(callback.message)
+    await callback.message.answer(
         "🎉 Таймер карты участника сброшен! Теперь ты можешь открыть новую карту!",
         reply_markup=None
     )
@@ -250,7 +252,8 @@ async def handle_uraaa_gift(callback: CallbackQuery, state: FSMContext):
         await safe_delete(callback.message)
         return
 
-    await callback.message.edit_text(
+    await safe_delete(callback.message)
+    await callback.message.answer(
         "Введите @username пользователя, которому хотите подарить карту УРААА:",
         reply_markup=get_back_button()
     )
