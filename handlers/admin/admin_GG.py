@@ -5,12 +5,14 @@ from aiogram import types, Router, F, Bot
 from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.filters import Command
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import StatesGroup, State
 
 from handlers.notify import send_reminder
 from utils.config import ADMINS_LIST
 from handlers.cards_handler.members import set_check_member_enabled, load_timers
 from handlers.cards_handler.skills import set_check_skill_enabled, load_timers
-from database.db import add_member_bonus, add_skill_bonus, load_roulette_data, save_roulette_data, append_roulette_history, add_balance, get_all_user_ids
+from database.db import add_member_bonus, add_skill_bonus, load_roulette_data, save_roulette_data, append_roulette_history, add_balance, get_all_user_ids, admin_grant_word_access
 
 router = Router()
 
@@ -564,3 +566,36 @@ async def cmd_presale(message: Message, bot: Bot):
         await asyncio.sleep(BROADCAST_DELAY)  # задержка 2 секунды
 
     await message.answer(f"✅ Отправлено {success} пользователям.\n❌ Ошибок: {failed}")
+
+# ==================== ВЫДАТЬ ДОСТУП К МАТЮКАМ ====================
+
+class AdminGiveWordState(StatesGroup):
+    waiting_for_username = State()
+
+@router.callback_query(F.data == "admin_give_word_access")
+async def admin_give_word_access_cb(callback: types.CallbackQuery, state: FSMContext):
+    if not is_admin(callback.from_user.id):
+        await callback.answer("❌ У вас нет доступа.", show_alert=True)
+        return
+    
+    await callback.message.answer(
+        "📝 Введите username пользователя (с @ или без), которому нужно выдать доступ к матюкам:\n\n"
+        "<i>(Для отмены просто напишите /cancel)</i>",
+        parse_mode="HTML"
+    )
+    await state.set_state(AdminGiveWordState.waiting_for_username)
+    await callback.answer()
+
+@router.message(AdminGiveWordState.waiting_for_username)
+async def process_give_word_username(message: Message, state: FSMContext):
+    if message.text == "/cancel":
+        await message.answer("❌ Действие отменено.")
+        await state.clear()
+        return
+        
+    username = message.text.strip()
+    # Вызываем нашу новую функцию из db.py
+    result_text = admin_grant_word_access(username)
+    
+    await message.answer(result_text)
+    await state.clear()

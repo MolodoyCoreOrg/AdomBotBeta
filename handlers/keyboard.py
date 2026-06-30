@@ -745,6 +745,9 @@ def admin_menu_ui():
         InlineKeyboardButton(text="🎵 Создать пресейв", callback_data="admin_create_presave"),
     )
     builder.row(
+        InlineKeyboardButton(text="🤬 Выдать матюк пользователю", callback_data="admin_give_word_access"),
+    )
+    builder.row(
         InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
     )
     return builder.as_markup()

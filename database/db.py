@@ -720,31 +720,7 @@ def get_roulette_history(user_id: int, limit: int = 10) -> list[str]:
         rows = conn.execute(
             "SELECT entry FROM roulette_history WHERE user_id = ? ORDER BY ts DESC LIMIT ?", (user_id, limit)
         ).fetchall()
-        return [r["entry"] for r in rows]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return [r["entry"] for r in rows]                           
 
 
 
@@ -1028,3 +1004,40 @@ def init_exchange_tables():
         """)
         
         conn.commit()
+
+def admin_grant_word_access(username: str) -> str:
+    """Выдает пользователю доступ к матюкам (добавляет/обновляет запись о донате)."""
+    clean_username = username.lstrip('@')
+    with connect() as conn:
+        cur = conn.cursor()
+        
+        # Ищем пользователя в основной таблице users
+        cur.execute("SELECT user_id, username FROM users WHERE LOWER(username) = LOWER(?)", (clean_username,))
+        user_row = cur.fetchone()
+        
+        if not user_row:
+            return f"❌ Пользователь @{clean_username} не найден в базе данных бота."
+
+        user_id = user_row["user_id"]
+        actual_username = user_row["username"]
+
+        # Проверяем, есть ли он уже в таблице user_donations
+        cur.execute("SELECT id, all_amount FROM user_donations WHERE user_id = ?", (user_id,))
+        don_row = cur.fetchone()
+
+        if don_row:
+            # Если запись есть, но донатов по факту 0 — ставим 1
+            if don_row["all_amount"] == 0:
+                cur.execute("UPDATE user_donations SET all_amount = 1 WHERE user_id = ?", (user_id,))
+                conn.commit()
+                return f"✅ Пользователю @{actual_username} обновлен статус доната (выдан доступ к матюкам)."
+            else:
+                return f"⚠️ У пользователя @{actual_username} уже есть донат в базе. Доступ к матюкам и так должен быть открыт."
+        else:
+            # Если вообще не было записи, создаем новую с all_amount = 1
+            cur.execute(
+                "INSERT INTO user_donations (user_id, username, biggest_amount, all_amount, words) VALUES (?, ?, 0, 1, '[]')",
+                (user_id, actual_username)
+            )
+            conn.commit()
+            return f"✅ Пользователю @{actual_username} успешно создана запись донатера. Доступ к матюкам теперь открыт!"
