@@ -86,14 +86,6 @@ async def safe_delete(obj):
         return
 
 
-
-
-
-
-
-
-
-
 def format_time_left(seconds: float) -> str:
     minutes = int(seconds // 60)
     secs = int(seconds % 60)
@@ -123,12 +115,11 @@ def get_combo_text(dice_value: int):
     return result
 
 
-
-
 # === IMAGE PATH MEMBERS CARD ===
 def get_member_card_image_path(card_data: dict, card_info: dict) -> str:
     """
     Получает путь к изображению карточки участника в зависимости от ранга.
+    Выполняет гибкий поиск без учета регистра и с проверкой всех популярных расширений (.jpeg, .jpg, .png и др.).
     """
     rank = max(1, min(card_data.get("rank", 1), 4))  # Защита от выхода за диапазон
 
@@ -136,33 +127,51 @@ def get_member_card_image_path(card_data: dict, card_info: dict) -> str:
     if not image_filename:
         return None
 
-    image_path = os.path.join(
-        "data/images/members",
-        f"rank_{rank}",
-        image_filename
-    )
+    def _find_file_flexible(folder_path: str, filename: str) -> str | None:
+        if not os.path.exists(folder_path):
+            return None
+        
+        # 1. Прямая проверка точного пути
+        exact_path = os.path.join(folder_path, filename)
+        if os.path.exists(exact_path):
+            return exact_path
+        
+        # 2. Гибкий поиск без учета регистра и с вариациями расширений (.jpeg, .jpg, .png и т.д.)
+        base_name, _ = os.path.splitext(filename)
+        base_name_lower = base_name.lower()
+        valid_exts = [".jpeg", ".jpg", ".png", ".webp", ".gif"]
+        
+        try:
+            for file in os.listdir(folder_path):
+                file_base, file_ext = os.path.splitext(file)
+                if file_base.lower() == base_name_lower:
+                    if file_ext.lower() in valid_exts or not file_ext:
+                        return os.path.join(folder_path, file)
+        except Exception:
+            pass
+        return None
 
-    if not os.path.exists(image_path):
-        # fallback на rank_1
-        fallback_path = os.path.join("data/images/members", "rank_1", image_filename)
-        return fallback_path if os.path.exists(fallback_path) else None
+    base_dir = "data/images/members"
 
-    return image_path
+    # Ищем в папке текущего ранга
+    image_path = _find_file_flexible(os.path.join(base_dir, f"rank_{rank}"), image_filename)
+    if image_path:
+        return image_path
 
+    # Фоллбек на rank_1, если для текущего ранга изображение не найдено
+    fallback_path = _find_file_flexible(os.path.join(base_dir, "rank_1"), image_filename)
+    if fallback_path:
+        return fallback_path
 
+    # Последняя попытка: проверяем все остальные папки рангов (на случай нетипичного расположения)
+    for r in range(1, 5):
+        if r == rank or r == 1:
+            continue
+        any_rank_path = _find_file_flexible(os.path.join(base_dir, f"rank_{r}"), image_filename)
+        if any_rank_path:
+            return any_rank_path
 
-
-
-
-
-
-
-
-
-
-
-
-
+    return None
 
 
 def get_timer_status(user_id: int, file_path: str, label: str) -> str:
@@ -187,10 +196,6 @@ def get_timer_status(user_id: int, file_path: str, label: str) -> str:
     except FileNotFoundError:
         pass
     return status
-
-
-
-
 
 
 async def safe_edit_message(message, new_text: str, reply_markup=None):

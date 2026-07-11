@@ -205,11 +205,6 @@ async def navigate_my_member_cards(event: CallbackQuery):
         await event.answer()
         return
 
-    image_name = card_info.get("image", "").split(".")[0]
-    if not image_name:
-        await event.message.answer("❌ Ошибка: у карточки не указано изображение.")
-        return
-
     image_path = get_member_card_image_path(card_data, card_info)
     if not image_path or not os.path.exists(image_path):
         await event.message.answer("❌ Ошибка: изображение карточки не найдено.")

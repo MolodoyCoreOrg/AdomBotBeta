@@ -13,6 +13,7 @@ from database.db import get_member_cards, update_member_cards, increment_stat, g
 from ..keyboard import get_main_keyboard
 from ..picture import find_image_file
 from utils.config import RARITY_WEIGHTS
+from utils.helpers import get_member_card_image_path
 from database.stats import increment_stat
 
 router = Router()
@@ -46,11 +47,6 @@ def consume_bonus(user_id: int):
         conn.commit()
 
 
-
-
-
-
-
 # --- Работа с таймерами ---
 def get_last_sunday_22_msk(now_utc: datetime = None) -> datetime:
     now_utc = now_utc or datetime.utcnow()
@@ -59,9 +55,6 @@ def get_last_sunday_22_msk(now_utc: datetime = None) -> datetime:
     last_sunday = now_msk - timedelta(days=days_since_sunday)
     sunday_22_msk = last_sunday.replace(hour=22, minute=0, second=0, microsecond=0)
     return sunday_22_msk - MSK_OFFSET  # вернуть в UTC
-
-
-
 
 
 def load_timers():
@@ -137,13 +130,6 @@ def update_user_timer_after_open(user_id: int):
     save_timers(timers)
 
 
-
-
-
-
-
-
-
 def weighted_random_choice(cards, user_id: int, user_cards=None,
                            duplicate_penalty=1.0, count_penalty_factor=1.0, noise_level=0.3):
     if user_cards is None:
@@ -181,15 +167,6 @@ def weighted_random_choice(cards, user_id: int, user_cards=None,
     return cards[-1]
 
 
-
-
-
-
-
-
-
-
-
 async def draw_member(event: CallbackQuery | Message):
     user_id = event.from_user.id
     can_open, msg, used_bonus = await can_open_card(user_id)
@@ -197,12 +174,10 @@ async def draw_member(event: CallbackQuery | Message):
         await event.answer(msg, show_alert=True)
         return
     
-
     if active_open_members.get(user_id):
         await event.answer("⏳ Подожди, карта уже открывается.", show_alert=True)
         return
     active_open_members[user_id] = True
-
 
     try:
         user_cards = get_member_cards(user_id)
@@ -212,7 +187,6 @@ async def draw_member(event: CallbackQuery | Message):
         skill = card["skill"]
         rarity = card["rarity"]
         work = card["work"]
-        image_filename = card["image"]
 
         if name in user_cards:
             # При получении повторки карты участника - просто повышаем ранг (без сжигания и без огоньков)
@@ -236,8 +210,8 @@ async def draw_member(event: CallbackQuery | Message):
                 f"🔰 Ранг: <b>{rank}</b>"
             )
 
-        # Получаем путь к изображению по рангу
-        image_path = f"data/images/members/rank_{rank}/{image_filename}"
+        # Получаем путь к изображению через нашу умную функцию
+        image_path = get_member_card_image_path(user_cards[name], card)
 
         # Списываем бонус или обновляем таймер
         if used_bonus:
@@ -254,7 +228,7 @@ async def draw_member(event: CallbackQuery | Message):
 
         reply_markup = await get_main_keyboard(spins, user_id)
 
-        if os.path.exists(image_path):
+        if image_path and os.path.exists(image_path):
             photo = FSInputFile(image_path)
             try:
                 if isinstance(event, CallbackQuery):
