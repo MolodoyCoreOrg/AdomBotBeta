@@ -15,7 +15,7 @@ client = AsyncOpenAI(
     base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
 )
 
-# Вероятность срабатывания бота повышена до 30% (0.3)
+# Вероятность срабатывания бота (0.3 = 30%)
 TRIGGER_CHANCE = 0.3
 
 SYSTEM_PROMPT = """Ты саркастичный и немного поехавший бот-модератор. Твоя задача — взять одно совершенно случайное и безобидное слово из сообщения пользователя и придумать абсурдную, притянутую за уши причину, почему это слово якобы является сленгом для наркотиков или их пропагандой.
@@ -34,13 +34,17 @@ SYSTEM_PROMPT = """Ты саркастичный и немного поехав�
 async def random_drug_moderator(message: Message):
     # 1. Проверяем шанс срабатывания
     if random.random() > TRIGGER_CHANCE:
+        logging.info(" [Drug Moderator] Сообщение пропущено по рандому (шанс 30%).")
         return
         
     # 2. Если сообщение слишком короткое, пропускаем
     if len(message.text.split()) < 2:
+        logging.info(" [Drug Moderator] Сообщение слишком короткое (< 2 слов).")
         return
         
     try:
+        logging.info(f" [Drug Moderator] Сработало на сообщение: '{message.text}'. Отправляю запрос в Gemini...")
+        
         # 3. Делаем асинхронный запрос к нейросети (используем модель Gemini)
         response = await client.chat.completions.create(
             model="gemini-1.5-flash",
@@ -57,6 +61,7 @@ async def random_drug_moderator(message: Message):
         
         # 4. Отправляем ответ в чат
         await message.reply(ai_text, parse_mode="HTML")
+        logging.info(" [Drug Moderator] Ответ успешно отправлен в чат!")
         
     except Exception as e:
-        logging.error(f"Ошибка при обращении к LLM в random_drug_moderator: {e}")
+        logging.error(f" [Drug Moderator] Ошибка при обращении к LLM: {e}")
