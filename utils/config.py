@@ -35,6 +35,6 @@ elif MODE == "TEST":
 else:
     raise ValueError("Укажи корректный MODE: DEV, PROD или TEST")
 
-# --- ПЕРЕМЕННЫЕ ДЛЯ LLM (Шуточный модератор) ---
+# ПЕРЕМЕННЫЕ ДЛЯ LLM (Шуточный модератор)
 # Вставлен твой актуальный рабочий ключ от Google AI Studio:
 LLM_API_KEY = "AIzaSyDHlX7zKXrGV_SOUXmT6YF9_bGCY-WOlaU"
