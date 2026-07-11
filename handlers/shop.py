@@ -402,6 +402,8 @@ async def broadcast_media_to_all_users(media_type: str, file_id: str = None, tex
             sender_name = first_name
         else:
             sender_name = f"пользователь {sender_id}"
+    else:
+        sender_name = f"пользователь {sender_id}" if sender_id else "Аноним"
             
     # Получаем клавиатуру для оценки (если известен sender_id)
     reply_markup = get_broadcast_kb(sender_id) if sender_id else None
@@ -412,24 +414,34 @@ async def broadcast_media_to_all_users(media_type: str, file_id: str = None, tex
                 message_text = f"📢 <b>Публичное сообщение от {sender_name}</b>:\n\n{text}"
                 message = await bot.send_message(chat_id=uid, text=message_text, parse_mode="HTML", reply_markup=reply_markup)
             elif media_type == "photo":
-                caption = f"🖼️ <b>Фото от {sender_name}</b>"
-                message = await bot.send_photo(chat_id=uid, photo=file_id, caption=caption, parse_mode="HTML", reply_markup=reply_markup)
+                caption_text = f"🖼️ <b>Фото от {sender_name}</b>:\n\n{text}" if text else f"🖼️ <b>Фото от {sender_name}</b>"
+                message = await bot.send_photo(chat_id=uid, photo=file_id, caption=caption_text, parse_mode="HTML", reply_markup=reply_markup)
             elif media_type == "gif":
-                caption = f"🎬 <b>GIF от {sender_name}</b>"
-                message = await bot.send_animation(chat_id=uid, animation=file_id, caption=caption, parse_mode="HTML", reply_markup=reply_markup)
+                caption_text = f"🎬 <b>GIF от {sender_name}</b>:\n\n{text}" if text else f"🎬 <b>GIF от {sender_name}</b>"
+                message = await bot.send_animation(chat_id=uid, animation=file_id, caption=caption_text, parse_mode="HTML", reply_markup=reply_markup)
             elif media_type == "video":
-                caption = f"🎥 <b>Видео от {sender_name}</b>"
-                message = await bot.send_video(chat_id=uid, video=file_id, caption=caption, parse_mode="HTML", reply_markup=reply_markup)
+                caption_text = f"🎥 <b>Видео от {sender_name}</b>:\n\n{text}" if text else f"🎥 <b>Видео от {sender_name}</b>"
+                message = await bot.send_video(chat_id=uid, video=file_id, caption=caption_text, parse_mode="HTML", reply_markup=reply_markup)
+            elif media_type == "video_note":
+                if text:
+                    try:
+                        await bot.send_message(chat_id=uid, text=f"🎥 <b>Видеосообщение от {sender_name}</b>:\n\n{text}", parse_mode="HTML")
+                    except Exception:
+                        pass
+                message = await bot.send_video_note(chat_id=uid, video_note=file_id, reply_markup=reply_markup)
             elif media_type == "audio":
-                caption = f"🎙️ <b>Аудио от {sender_name}</b>"
-                message = await bot.send_audio(chat_id=uid, audio=file_id, caption=caption, parse_mode="HTML", reply_markup=reply_markup)
+                caption_text = f"🎙️ <b>Аудио от {sender_name}</b>:\n\n{text}" if text else f"🎙️ <b>Аудио от {sender_name}</b>"
+                message = await bot.send_audio(chat_id=uid, audio=file_id, caption=caption_text, parse_mode="HTML", reply_markup=reply_markup)
+            elif media_type == "voice":
+                caption_text = f"🎙️ <b>Голосовое сообщение от {sender_name}</b>:\n\n{text}" if text else f"🎙️ <b>Голосовое сообщение от {sender_name}</b>"
+                message = await bot.send_voice(chat_id=uid, voice=file_id, caption=caption_text, parse_mode="HTML", reply_markup=reply_markup)
             else:
                 message = None
 
             if sender_id and message:
                 broadcast_message_authors[(uid, message.message_id)] = sender_id
             sent_count += 1
-        except Exception as e:
+        except Exception:
             # Игнорируем ошибки отправки (бот заблокирован и т.д.)
             pass
         # Задержка 2 секунды между сообщениями = 30 сообщений в минуту
@@ -461,15 +473,9 @@ async def shop_broadcast_text(callback: CallbackQuery, state: FSMContext):
     await safe_edit_message(callback.message, "💬 Введите текст сообщения, которое вы хотите отправить всем пользователям бота:\n\nЦена: 50🔥\n\nИспользуйте /cancel для отмены или кнопку \"Назад\".", reply_markup=broadcast_cancel_kb())
 
 
-@router.message(MediaBroadcastState.waiting_for_text)
+@router.message(MediaBroadcastState.waiting_for_text, F.text)
 async def process_broadcast_text(message: Message, state: FSMContext):
     user_id = message.from_user.id
-    
-    # Проверяем, что это текст, а не медиа
-    if message.photo or message.animation or message.video or message.audio or message.voice:
-        await message.answer("❌ Вы отправили медиафайл вместо текста. Для отправки фото/видео/GIF/аудио выберите соответствующий товар в магазине (от 75🔥).")
-        return
-    
     text = message.text
     
     if text == "/cancel":
@@ -502,6 +508,11 @@ async def process_broadcast_text(message: Message, state: FSMContext):
     asyncio.create_task(run_broadcast())
 
 
+@router.message(MediaBroadcastState.waiting_for_text)
+async def process_invalid_text(message: Message):
+    await message.answer("❌ Вы отправили медиафайл вместо текста! Для отправки фото/видео/GIF/аудио выберите соответствующий товар в магазине (от 50🔥).\n\nПожалуйста, отправьте текстовое сообщение или используйте команду /cancel для отмены.")
+
+
 # ====== ОБРАБОТЧИКИ ДЛЯ ОТПРАВКИ ФОТО ======
 
 @router.callback_query(F.data == "shop_broadcast_photo")
@@ -522,22 +533,14 @@ async def shop_broadcast_photo(callback: CallbackQuery, state: FSMContext):
         return
     
     await state.set_state(MediaBroadcastState.waiting_for_photo)
-    await safe_edit_message(callback.message, "🖼️ Отправьте фото, которое вы хотите показать всем пользователям бота:\n\nЦена: 75🔥\n\nИспользуйте /cancel для отмены или кнопку «Назад».", reply_markup=broadcast_cancel_kb())
+    await safe_edit_message(callback.message, "🖼️ Отправьте фото, которое вы хотите показать всем пользователям бота (вы можете прикрепить к нему текст/подпись):\n\nЦена: 75🔥\n\nИспользуйте /cancel для отмены или кнопку «Назад».", reply_markup=broadcast_cancel_kb())
 
 
 @router.message(MediaBroadcastState.waiting_for_photo, F.photo)
 async def process_broadcast_photo(message: Message, state: FSMContext):
     user_id = message.from_user.id
-    
-    # Проверяем, что это именно фото, а не видео или GIF
-    if message.animation:
-        await message.answer("❌ Вы отправили GIF. Для отправки GIF выберите соответствующий товар в магазине (100🔥).")
-        return
-    if message.video:
-        await message.answer("❌ Вы отправили видео. Для отправки видео выберите соответствующий товар в магазине (150🔥).")
-        return
-    
     photo_file_id = message.photo[-1].file_id
+    user_caption = message.caption or None
     
     with connect() as conn:
         cur = conn.cursor()
@@ -554,14 +557,19 @@ async def process_broadcast_photo(message: Message, state: FSMContext):
     await state.clear()
     
     # Сразу отвечаем пользователю
-    await message.answer("⏱ Ваше сообщение будет разослано в течении нескольких минут.")
+    await message.answer("⏱ Ваша фотография будет разослана в течении нескольких минут.")
     
     # Запускаем рассылку в фоновом режиме
     async def run_broadcast():
-        sent_count = await broadcast_media_to_all_users("photo", file_id=photo_file_id, sender_id=user_id)
+        sent_count = await broadcast_media_to_all_users("photo", file_id=photo_file_id, text=user_caption, sender_id=user_id)
         await message.answer(f"✅ Фото отправлено всем пользователям! Получателей: {sent_count}\nСписано: 75🔥")
     
     asyncio.create_task(run_broadcast())
+
+
+@router.message(MediaBroadcastState.waiting_for_photo)
+async def process_invalid_photo(message: Message):
+    await message.answer("❌ Вы отправили неверный формат! В этом режиме принимается только фотография (к ней можно добавить текст/подпись).\n\nПожалуйста, отправьте фото или используйте команду /cancel для отмены.")
 
 
 # ====== ОБРАБОТЧИКИ ДЛЯ ОТПРАВКИ GIF ======
@@ -583,22 +591,15 @@ async def shop_broadcast_gif(callback: CallbackQuery, state: FSMContext):
         await callback.answer("❌ Недостаточно средств (нужно 100🔥).", show_alert=True)
         return
     
-    await safe_edit_message(callback.message, "🎬 Отправьте GIF, который вы хотите показать всем пользователям бота:\n\nЦена: 100🔥\n\nИспользуйте /cancel для отмены или кнопку «Назад».", reply_markup=broadcast_cancel_kb())
+    await state.set_state(MediaBroadcastState.waiting_for_gif)
+    await safe_edit_message(callback.message, "🎬 Отправьте GIF, который вы хотите показать всем пользователям бота (можно прикрепить текст/подпись):\n\nЦена: 100🔥\n\nИспользуйте /cancel для отмены или кнопку «Назад».", reply_markup=broadcast_cancel_kb())
 
 
 @router.message(MediaBroadcastState.waiting_for_gif, F.animation)
 async def process_broadcast_gif(message: Message, state: FSMContext):
     user_id = message.from_user.id
-    
-    # Проверяем, что это именно GIF, а не видео или фото
-    if message.video:
-        await message.answer("❌ Вы отправили видео. Для отправки видео выберите соответствующий товар в магазине (150🔥).")
-        return
-    if message.photo:
-        await message.answer("❌ Вы отправили фото. Для отправки фото выберите соответствующий товар в магазине (75🔥).")
-        return
-    
     gif_file_id = message.animation.file_id
+    user_caption = message.caption or None
     
     with connect() as conn:
         cur = conn.cursor()
@@ -615,14 +616,19 @@ async def process_broadcast_gif(message: Message, state: FSMContext):
     await state.clear()
     
     # Сразу отвечаем пользователю
-    await message.answer("⏱ Ваше сообщение будет разослано в течении нескольких минут.")
+    await message.answer("⏱ Ваш GIF будет разослан в течении нескольких минут.")
     
     # Запускаем рассылку в фоновом режиме
     async def run_broadcast():
-        sent_count = await broadcast_media_to_all_users("gif", file_id=gif_file_id, sender_id=user_id)
+        sent_count = await broadcast_media_to_all_users("gif", file_id=gif_file_id, text=user_caption, sender_id=user_id)
         await message.answer(f"✅ GIF отправлен всем пользователям! Получателей: {sent_count}\nСписано: 100🔥")
     
     asyncio.create_task(run_broadcast())
+
+
+@router.message(MediaBroadcastState.waiting_for_gif)
+async def process_invalid_gif(message: Message):
+    await message.answer("❌ Вы отправили неверный формат! В этом режиме принимается только GIF-анимация (к ней можно добавить текст/подпись).\n\nПожалуйста, отправьте GIF или используйте команду /cancel для отмены.")
 
 
 # ====== ОБРАБОТЧИКИ ДЛЯ ОТПРАВКИ ВИДЕО ======
@@ -644,22 +650,22 @@ async def shop_broadcast_video(callback: CallbackQuery, state: FSMContext):
         await callback.answer("❌ Недостаточно средств (нужно 150🔥).", show_alert=True)
         return
     
-    await safe_edit_message(callback.message, "🎥 Отправьте видео, которое вы хотите показать всем пользователям бота:\n\nЦена: 150🔥\n\nИспользуйте /cancel для отмены или кнопку «Назад».", reply_markup=broadcast_cancel_kb())
+    await state.set_state(MediaBroadcastState.waiting_for_video)
+    await safe_edit_message(callback.message, "🎥 Отправьте видеоролик или видеосообщение-кружок, который вы хотите показать всем пользователям бота:\n\nЦена: 150🔥\n\nИспользуйте /cancel для отмены или кнопку «Назад».", reply_markup=broadcast_cancel_kb())
 
 
-@router.message(MediaBroadcastState.waiting_for_video, F.video)
+@router.message(MediaBroadcastState.waiting_for_video, F.video | F.video_note)
 async def process_broadcast_video(message: Message, state: FSMContext):
     user_id = message.from_user.id
     
-    # Проверяем, что это именно видео, а не GIF или фото
-    if message.animation:
-        await message.answer("❌ Вы отправили GIF. Для отправки GIF выберите соответствующий товар в магазине (100🔥).")
-        return
-    if message.photo:
-        await message.answer("❌ Вы отправили фото. Для отправки фото выберите соответствующий товар в магазине (75🔥).")
-        return
-    
-    video_file_id = message.video.file_id
+    if message.video:
+        video_file_id = message.video.file_id
+        media_type = "video"
+    else:
+        video_file_id = message.video_note.file_id
+        media_type = "video_note"
+        
+    user_caption = message.caption or None
     
     with connect() as conn:
         cur = conn.cursor()
@@ -676,17 +682,22 @@ async def process_broadcast_video(message: Message, state: FSMContext):
     await state.clear()
     
     # Сразу отвечаем пользователю
-    await message.answer("⏱ Ваше сообщение будет разослано в течении нескольких минут.")
+    await message.answer("⏱ Ваше видео будет разослано в течении нескольких минут.")
     
     # Запускаем рассылку в фоновом режиме
     async def run_broadcast():
-        sent_count = await broadcast_media_to_all_users("video", file_id=video_file_id, sender_id=user_id)
+        sent_count = await broadcast_media_to_all_users(media_type, file_id=video_file_id, text=user_caption, sender_id=user_id)
         await message.answer(f"✅ Видео отправлено всем пользователям! Получателей: {sent_count}\nСписано: 150🔥")
     
     asyncio.create_task(run_broadcast())
 
 
-# ====== ОБРАБОТЧИКИ ДЛЯ ОТПРАВКИ АУДИО ======
+@router.message(MediaBroadcastState.waiting_for_video)
+async def process_invalid_video(message: Message):
+    await message.answer("❌ Вы отправили неверный формат! В этом режиме принимается только видеоролик или видеосообщение-кружок (к видео можно добавить текст/подпись).\n\nПожалуйста, отправьте видео или используйте команду /cancel для отмены.")
+
+
+# ====== ОБРАБОТЧИКИ ДЛЯ ОТПРАВКИ АУДИО И ГОЛОСОВЫХ СООБЩЕНИЙ ======
 
 @router.callback_query(F.data == "shop_broadcast_audio")
 async def shop_broadcast_audio(callback: CallbackQuery, state: FSMContext):
@@ -705,32 +716,22 @@ async def shop_broadcast_audio(callback: CallbackQuery, state: FSMContext):
         await callback.answer("❌ Недостаточно средств (нужно 50🔥).", show_alert=True)
         return
     
-    await safe_edit_message(callback.message, "🎙️ Отправьте аудиосообщение, которое вы хотите показать всем пользователям бота:\n\nЦена: 50🔥\n\nИспользуйте /cancel для отмены или кнопку «Назад».", reply_markup=broadcast_cancel_kb())
+    await state.set_state(MediaBroadcastState.waiting_for_audio)
+    await safe_edit_message(callback.message, "🎙️ Отправьте аудиосообщение (голосовой кружок или mp3-файл), которое вы хотите показать всем пользователям бота:\n\nЦена: 50🔥\n\nИспользуйте /cancel для отмены или кнопку «Назад».", reply_markup=broadcast_cancel_kb())
 
 
 @router.message(MediaBroadcastState.waiting_for_audio, F.audio | F.voice)
 async def process_broadcast_audio(message: Message, state: FSMContext):
     user_id = message.from_user.id
     
-    # Определяем тип аудиофайла
     if message.audio:
         audio_file_id = message.audio.file_id
-    elif message.voice:
-        audio_file_id = message.voice.file_id
+        media_type = "audio"
     else:
-        await message.answer("❌ Это не аудиосообщение. Пожалуйста, отправьте аудио или голосовое сообщение.")
-        return
-    
-    # Проверяем, что это не другой тип медиа
-    if message.photo:
-        await message.answer("❌ Вы отправили фото. Для отправки фото выберите соответствующий товар в магазине (75🔥).")
-        return
-    if message.animation:
-        await message.answer("❌ Вы отправили GIF. Для отправки GIF выберите соответствующий товар в магазине (100🔥).")
-        return
-    if message.video:
-        await message.answer("❌ Вы отправили видео. Для отправки видео выберите соответствующий товар в магазине (150🔥).")
-        return
+        audio_file_id = message.voice.file_id
+        media_type = "voice"
+        
+    user_caption = message.caption or None
     
     with connect() as conn:
         cur = conn.cursor()
@@ -747,14 +748,19 @@ async def process_broadcast_audio(message: Message, state: FSMContext):
     await state.clear()
     
     # Сразу отвечаем пользователю
-    await message.answer("⏱ Ваше сообщение будет разослано в течении нескольких минут.")
+    await message.answer("⏱ Ваше аудиосообщение будет разослано в течении нескольких минут.")
     
     # Запускаем рассылку в фоновом режиме
     async def run_broadcast():
-        sent_count = await broadcast_media_to_all_users("audio", file_id=audio_file_id, sender_id=user_id)
+        sent_count = await broadcast_media_to_all_users(media_type, file_id=audio_file_id, text=user_caption, sender_id=user_id)
         await message.answer(f"✅ Аудио отправлено всем пользователям! Получателей: {sent_count}\nСписано: 50🔥")
     
     asyncio.create_task(run_broadcast())
+
+
+@router.message(MediaBroadcastState.waiting_for_audio)
+async def process_invalid_audio(message: Message):
+    await message.answer("❌ Вы отправили неверный формат! В этом режиме принимается только аудиофайл (.mp3) или голосовое сообщение (записанное через микрофон).\n\nПожалуйста, отправьте аудио/голосовое сообщение или используйте команду /cancel для отмены.")
 
 
 # ====== ОТМЕНА ======
