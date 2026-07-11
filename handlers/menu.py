@@ -11,7 +11,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
 from .keyboard import get_main_keyboard, get_card_open_ui_keyboard, get_card_collection_ui_keyboard, profile_ui, support_ui, donate_ui, top_menu_ui, get_persistent_bottom_keyboard, shop_ui
-from database.db import add_user, user_exists, add_bonus, update_referral_bonuses, get_referral_message
+from database.db import add_user, user_exists, add_bonus, update_referral_bonuses, get_referral_message, update_user_info
 from utils.helpers import get_timer_status
 
 
@@ -182,6 +182,13 @@ async def process_partner_input(message: Message, state: FSMContext):
 async def start_handler(message: Message):
 
     user_id = message.from_user.id
+
+    update_user_info(
+        user_id,
+        message.from_user.username or "",
+        message.from_user.first_name or "",
+        message.from_user.last_name or ""
+    )
 
     conn = connect()
     cur = conn.cursor()
@@ -539,6 +546,14 @@ async def start_trade_callback_handler(callback: CallbackQuery, state: FSMContex
 @router.callback_query(F.data == "main_profile")
 async def handle_profile_button(callback: CallbackQuery):
     user_id = callback.from_user.id
+
+    update_user_info(
+        user_id,
+        callback.from_user.username or "",
+        callback.from_user.first_name or "",
+        callback.from_user.last_name or ""
+    )
+
     text = get_profile_text(user_id)
     reply_markup = profile_ui(user_id)
 
@@ -604,6 +619,13 @@ async def show_main_menu(message: Message):
     """Главное меню — и по кнопке, и по команде /menu."""
     user_id = message.from_user.id
 
+    update_user_info(
+        user_id,
+        message.from_user.username or "",
+        message.from_user.first_name or "",
+        message.from_user.last_name or ""
+    )
+
     from database.db import load_roulette_data
     data = load_roulette_data(str(user_id))
     spins = data.get("roulette_count", 0)
@@ -626,6 +648,13 @@ async def show_main_menu(message: Message):
 @router.callback_query(F.data == "go_back_menu")
 async def go_back(callback: CallbackQuery):
     user_id = callback.from_user.id
+
+    update_user_info(
+        user_id,
+        callback.from_user.username or "",
+        callback.from_user.first_name or "",
+        callback.from_user.last_name or ""
+    )
 
     from database.db import load_roulette_data
     data = load_roulette_data(str(user_id))
@@ -939,4 +968,3 @@ async def process_presave_card_image(message: Message, state: FSMContext, bot: B
         "Теперь пользователи могут нажать кнопку 'Сделать пресейв' в главном меню.",
         parse_mode="HTML"
     )
-

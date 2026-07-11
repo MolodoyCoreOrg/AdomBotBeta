@@ -230,6 +230,17 @@ def user_exists(user_id):
         cur.execute("SELECT 1 FROM users WHERE user_id = ?", (user_id,))
         return cur.fetchone() is not None
 
+def update_user_info(user_id: int, username: str, first_name: str, last_name: str):
+    """Обновляет username и имя пользователя в базе при каждом обращении."""
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            UPDATE users 
+            SET username = ?, first_name = ?, last_name = ? 
+            WHERE user_id = ?
+        """, (username, first_name, last_name, user_id))
+        conn.commit()
+
 def add_user(user_id, username, first_name, last_name, referrer_id=None):
     conn = connect()
     cursor = conn.cursor()
