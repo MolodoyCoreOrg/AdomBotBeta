@@ -1,4 +1,4 @@
-import os, sqlite3, asyncio, random, json, datetime
+import os, sqlite3, asyncio, random, json, datetime, uuid
 from datetime import date
 
 from aiogram import types, Router, F, Bot
@@ -12,7 +12,8 @@ from handlers.notify import send_reminder
 from utils.config import ADMINS_LIST
 from handlers.cards_handler.members import set_check_member_enabled, load_timers
 from handlers.cards_handler.skills import set_check_skill_enabled, load_timers
-from database.db import add_member_bonus, add_skill_bonus, load_roulette_data, save_roulette_data, append_roulette_history, add_balance, get_all_user_ids, admin_grant_word_access
+from database.db import add_member_bonus, add_skill_bonus, load_roulette_data, save_roulette_data, append_roulette_history, add_balance, get_all_user_ids, find_user_by_username
+from handlers.donate import get_random_word_for_user, save_donation
 
 router = Router()
 
@@ -592,15 +593,70 @@ async def admin_give_word_access_cb(callback: types.CallbackQuery, state: FSMCon
     await callback.answer()
 
 @router.message(AdminGiveWordState.waiting_for_username)
-async def process_give_word_username(message: Message, state: FSMContext):
+async def process_give_word_username(message: Message, state: FSMContext, bot: Bot):
     if message.text == "/cancel":
         await message.answer("❌ Действие отменено.")
         await state.clear()
         return
         
     username = message.text.strip()
-    # Вызываем нашу новую функцию из db.py
-    result_text = admin_grant_word_access(username)
+    clean_username = username.lstrip('@')
     
-    await message.answer(result_text)
+    # Находим пользователя
+    user = find_user_by_username(clean_username)
+    if not user:
+        await message.answer(f"❌ Пользователь @{clean_username} не найден в базе данных бота.")
+        await state.clear()
+        return
+        
+    user_id = user["user_id"]
+    actual_username = user["username"]
+    
+    # Получаем рандомный матюк
+    word = get_random_word_for_user(user_id)
+    if not word:
+        word = "БЛЯТЬ" # fallback
+
+    id_op = f"ADMIN_{uuid.uuid4().hex[:8]}"
+    
+    # Сохраняем донат с нулевой суммой для выдачи матюка
+    is_duplicate = save_donation(id_op, user_id, actual_username, 0, "ADMIN", word)
+    
+    if is_duplicate:
+        # Если матюк повторный
+        add_balance(user_id, 10)
+        await message.answer(
+            f"✅ Пользователю @{actual_username} выдан доступ к матюкам!\n"
+            f"Ему выпал повторный матюк: <b>{word}</b>, который конвертировался в 10🔥.", 
+            parse_mode="HTML"
+        )
+        try:
+            await bot.send_message(
+                user_id,
+                f"🎉 <b>Администратор выдал вам доступ к матюкам!</b>\n"
+                f"Теперь вы можете ругаться матом в боте.\n\n"
+                f"🔁 Вам выпал повторный матюк: <b>{word}</b>\n"
+                f"🔥 Он автоматически сожгся, и вы получили <b>10🔥</b> на свой счёт!",
+                parse_mode="HTML"
+            )
+        except Exception:
+            await message.answer("⚠️ Доступ выдан, но в ЛС написать не удалось (пользователь заблокировал бота).")
+    else:
+        # Если матюк новый
+        await message.answer(
+            f"✅ Пользователю @{actual_username} выдан доступ к матюкам!\n"
+            f"Ему выпал матюк: <b>{word}</b>", 
+            parse_mode="HTML"
+        )
+        try:
+            await bot.send_message(
+                user_id,
+                f"🎉 <b>Администратор выдал вам доступ к матюкам!</b>\n"
+                f"Теперь вы можете ругаться матом в боте.\n\n"
+                f"🎁 Ваш первый матюк: <b>{word}</b>",
+                parse_mode="HTML"
+            )
+        except Exception:
+            await message.answer("⚠️ Доступ выдан, но в ЛС написать не удалось (пользователь заблокировал бота).")
+    
     await state.clear()
