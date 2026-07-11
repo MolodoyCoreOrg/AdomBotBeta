@@ -113,6 +113,11 @@ async def get_chat_id(message: Message):
 # АДМИНКИ
 
 def is_admin(user_id: int) -> bool:
+    # СНАЧАЛА проверяем наличие пользователя в конфиге ADMINS_LIST
+    if user_id in ADMINS_LIST:
+        return True
+        
+    # ЕСЛИ в конфиге нет, проверяем уровень в базе данных
     with connect() as conn:
         cur = conn.cursor()
         cur.execute("SELECT admin_lvl FROM users WHERE user_id = ?", (user_id,))

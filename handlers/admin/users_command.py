@@ -70,14 +70,22 @@ def build_users_keyboard(page):
 
 @router.message(F.text == "/users")
 async def handle_users_command(message: Message):
-    # проверка на админа (admin_lvl > 0)
     user_id = message.from_user.id
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute("SELECT admin_lvl FROM users WHERE user_id = ?", (user_id,))
-    row = cursor.fetchone()
-    conn.close()
-    if not row or row[0] <= 0:
+    
+    # проверка на админа (сначала конфиг, потом БД)
+    is_adm = False
+    if user_id in ADMINS_LIST:
+        is_adm = True
+    else:
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("SELECT admin_lvl FROM users WHERE user_id = ?", (user_id,))
+        row = cursor.fetchone()
+        conn.close()
+        if row and row[0] > 0:
+            is_adm = True
+
+    if not is_adm:
         await message.answer("У тебя нет прав для этой команды.")
         return
 
@@ -188,13 +196,6 @@ async def clear_skill_cards(callback: CallbackQuery):
 async def view_user_back(callback: CallbackQuery):
     user_id = int(callback.data.split(":")[1])
     await handle_view_user(callback, user_id)
-
-
-
-
-
-
-
 
 
 def remove_user_from_timer_files(user_id: int):
