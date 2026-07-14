@@ -602,61 +602,75 @@ async def process_give_word_username(message: Message, state: FSMContext, bot: B
     username = message.text.strip()
     clean_username = username.lstrip('@')
     
-    # Находим пользователя
-    user = find_user_by_username(clean_username)
-    if not user:
-        await message.answer(f"❌ Пользователь @{clean_username} не найден в базе данных бота.")
-        await state.clear()
-        return
+    # Оборачиваем ВЕСЬ процесс в try-except, чтобы админ 100% получил обратную связь даже при сбое БД или файлов!
+    try:
+        # 1. Находим пользователя
+        user = find_user_by_username(clean_username)
+        if not user:
+            await message.answer(f"❌ Пользователь @{clean_username} не найден в базе данных бота.")
+            await state.clear()
+            return
+            
+        user_id = user["user_id"]
+        actual_username = user["username"]
         
-    user_id = user["user_id"]
-    actual_username = user["username"]
-    
-    # Получаем рандомный матюк
-    word = get_random_word_for_user(user_id)
-    if not word:
-        word = "БЛЯТЬ" # fallback
+        # 2. Безопасно получаем слово (с защитой от отсутствия файла words.json)
+        try:
+            word = get_random_word_for_user(user_id)
+        except Exception as e_word:
+            print(f"Ошибка чтения слов: {e_word}")
+            word = None
+            
+        if not word:
+            word = "БЛЯТЬ" # Надежный fallback, если файл не прочитался
+            
+        id_op = f"ADMIN_{uuid.uuid4().hex[:8]}"
+        
+        # 3. Сохраняем донат
+        is_duplicate = save_donation(id_op, user_id, actual_username, 0, "ADMIN", word)
+        
+        # 4. Отправляем гарантированный ответ АДМИНУ
+        if is_duplicate:
+            add_balance(user_id, 10)
+            await message.answer(
+                f"✅ Пользователю @{actual_username} выдан доступ к матюкам!\n"
+                f"🔁 Ему выпал повторный матюк: <b>{word}</b>, который конвертировался в 10🔥.", 
+                parse_mode="HTML"
+            )
+        else:
+            await message.answer(
+                f"✅ Пользователю @{actual_username} выдан доступ к матюкам!\n"
+                f"🎁 Ему выпал матюк: <b>{word}</b>", 
+                parse_mode="HTML"
+            )
 
-    id_op = f"ADMIN_{uuid.uuid4().hex[:8]}"
-    
-    # Сохраняем донат с нулевой суммой для выдачи матюка
-    is_duplicate = save_donation(id_op, user_id, actual_username, 0, "ADMIN", word)
-    
-    if is_duplicate:
-        # Если матюк повторный
-        add_balance(user_id, 10)
-        await message.answer(
-            f"✅ Пользователю @{actual_username} выдан доступ к матюкам!\n"
-            f"Ему выпал повторный матюк: <b>{word}</b>, который конвертировался в 10🔥.", 
-            parse_mode="HTML"
-        )
+        # 5. Попытка уведомить пользователя в ЛС (отдельный блок, чтобы блокировка бота юзером не роняла хэндлер)
         try:
-            await bot.send_message(
-                user_id,
-                f"🎉 <b>Администратор выдал вам доступ к матюкам!</b>\n"
-                f"Теперь вы можете ругаться матом в боте.\n\n"
-                f"🔁 Вам выпал повторный матюк: <b>{word}</b>\n"
-                f"🔥 Он автоматически сожгся, и вы получили <b>10🔥</b> на свой счёт!",
-                parse_mode="HTML"
-            )
-        except Exception:
-            await message.answer("⚠️ Доступ выдан, но в ЛС написать не удалось (пользователь заблокировал бота).")
-    else:
-        # Если матюк новый
-        await message.answer(
-            f"✅ Пользователю @{actual_username} выдан доступ к матюкам!\n"
-            f"Ему выпал матюк: <b>{word}</b>", 
-            parse_mode="HTML"
-        )
-        try:
-            await bot.send_message(
-                user_id,
-                f"🎉 <b>Администратор выдал вам доступ к матюкам!</b>\n"
-                f"Теперь вы можете ругаться матом в боте.\n\n"
-                f"🎁 Ваш первый матюк: <b>{word}</b>",
-                parse_mode="HTML"
-            )
-        except Exception:
-            await message.answer("⚠️ Доступ выдан, но в ЛС написать не удалось (пользователь заблокировал бота).")
-    
-    await state.clear()
+            if is_duplicate:
+                await bot.send_message(
+                    user_id,
+                    f"🎉 <b>Администратор выдал вам доступ к матюкам!</b>\n"
+                    f"Теперь вы можете ругаться матом в боте.\n\n"
+                    f"🔁 Вам выпал повторный матюк: <b>{word}</b>\n"
+                    f"🔥 Он автоматически сожгся, и вы получили <b>10🔥</b> на свой счёт!",
+                    parse_mode="HTML"
+                )
+            else:
+                await bot.send_message(
+                    user_id,
+                    f"🎉 <b>Администратор выдал вам доступ к матюкам!</b>\n"
+                    f"Теперь вы можете ругаться матом в боте.\n\n"
+                    f"🎁 Ваш первый матюк: <b>{word}</b>",
+                    parse_mode="HTML"
+                )
+        except Exception as send_err:
+            await message.answer(f"ℹ️ Доступ выдан, но написать юзеру в ЛС не удалось (возможно, он заблокировал бота).")
+
+    except Exception as fatal_error:
+        # Если упала база данных, SQLite или что-то еще — админ увидит точную причину в чате!
+        await message.answer(f"⚠️ <b>Произошла ошибка при выдаче прав:</b>\n<code>{fatal_error}</code>", parse_mode="HTML")
+        print(f"❌ Критическая ошибка в process_give_word_username: {fatal_error}")
+        
+    finally:
+        # Гарантированно сбрасываем состояние, чтобы админ не застрял в режиме ввода юзернейма
+        await state.clear()
