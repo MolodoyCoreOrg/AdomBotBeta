@@ -91,9 +91,22 @@ def create_user_donate_table():
                 username TEXT,
                 biggest_amount INTEGER DEFAULT 0,
                 all_amount INTEGER DEFAULT 0,
-                words TEXT DEFAULT '[]'
+                words TEXT DEFAULT '[]',
+                word_count INTEGER DEFAULT 0,
+                word_send_count INTEGER DEFAULT 0
             )
         """)
+        
+        # Миграция: добавляем новые колонки в user_donations, если таблица была создана ранее без них
+        columns_to_add = [
+            ("word_count", "INTEGER DEFAULT 0"),
+            ("word_send_count", "INTEGER DEFAULT 0")
+        ]
+        existing_columns = [row[1] for row in cur.execute("PRAGMA table_info(user_donations)").fetchall()]
+        for col_name, col_def in columns_to_add:
+            if col_name not in existing_columns:
+                cur.execute(f"ALTER TABLE user_donations ADD COLUMN {col_name} {col_def}")
+                
         conn.commit()
         cur.execute("""
         CREATE TABLE IF NOT EXISTS donate_history (

@@ -594,7 +594,7 @@ async def admin_give_word_access_cb(callback: types.CallbackQuery, state: FSMCon
 
 @router.message(AdminGiveWordState.waiting_for_username)
 async def process_give_word_username(message: Message, state: FSMContext, bot: Bot):
-    if message.text == "/cancel":
+    if not message.text or message.text == "/cancel":
         await message.answer("❌ Действие отменено.")
         await state.clear()
         return
@@ -670,7 +670,9 @@ async def process_give_word_username(message: Message, state: FSMContext, bot: B
         # Если упала база данных, SQLite или что-то еще — админ увидит точную причину в чате!
         await message.answer(f"⚠️ <b>Произошла ошибка при выдаче прав:</b>\n<code>{fatal_error}</code>", parse_mode="HTML")
         print(f"❌ Критическая ошибка в process_give_word_username: {fatal_error}")
+        return
         
     finally:
         # Гарантированно сбрасываем состояние, чтобы админ не застрял в режиме ввода юзернейма
         await state.clear()
+        return
