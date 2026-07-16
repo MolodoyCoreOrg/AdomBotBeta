@@ -31,7 +31,7 @@ async def show_pidaraz_menu(callback: CallbackQuery, state: FSMContext):
     if current_num:
         text += f"✅ Твой номер: <b>Пидараз {current_num}</b>\n\nТы можешь линковать свой статус в любых чатах, просто напиши юзернейм бота!"
     else:
-        text += f"У тебя ещё нет номера. Доступно слотов: {MAX_PIDARAZ_SLOTS}.\nВыбери свой уникальный номер навсегда!"
+        text += f"У тебя ещё нет номера. Всего доступно {MAX_PIDARAZ_SLOTS} уникальных слотов.\nВыбери свой любимый номер до 4 символов навсегда!"
 
     await callback.message.edit_text(text, reply_markup=pidaraz_ui(), parse_mode="HTML")
     await callback.answer()
@@ -44,7 +44,8 @@ async def start_pick_pidaraz_deeplink(message: Message, state: FSMContext):
     await state.set_state(PidarazState.waiting_for_number)
     await message.answer(
         "🔥 <b>Добро пожаловать в Пересчет!</b>\n\n"
-        f"Напиши в чат число от 1 до {MAX_PIDARAZ_SLOTS}, чтобы забронировать его за собой.\n"
+        f"Напиши в чат любое число до 4 цифр (например: 7, 228, 666, 9999), чтобы забронировать его за собой.\n"
+        f"Всего доступно {MAX_PIDARAZ_SLOTS} слотов!\n"
         "⚠️ <b>Внимание:</b> номер выбирается ОДИН раз и навсегда!",
         parse_mode="HTML"
     )
@@ -60,20 +61,29 @@ async def ask_for_number(callback: CallbackQuery, state: FSMContext):
 
     await state.set_state(PidarazState.waiting_for_number)
     await callback.message.edit_text(
-        f"🔢 Напиши в чат число от 1 до {MAX_PIDARAZ_SLOTS}, чтобы забронировать номер.",
+        "🔢 Напиши в чат любое число от 1 до 4 знаков (например: 1, 7, 228, 666, 9999), чтобы забронировать номер.",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Отмена", callback_data="pidaraz_menu")]])
     )
     await callback.answer()
 
 @router.message(StateFilter(PidarazState.waiting_for_number))
 async def process_number_input(message: Message, state: FSMContext):
-    if not message.text.isdigit():
-        await message.answer("❌ Пожалуйста, отправь только число.")
+    if not message.text or not message.text.isdigit():
+        await message.answer("❌ Пожалуйста, отправь только число (например: 7, 228, 666).")
         return
         
     number = int(message.text)
-    if number < 1 or number > MAX_PIDARAZ_SLOTS:
-        await message.answer(f"❌ Число должно быть от 1 до {MAX_PIDARAZ_SLOTS}.")
+    
+    # Проверка на пасхалку 1488
+    if number == 1488:
+        await message.answer(
+            "вы че натсы???\nhttps://youtu.be/UkonY2vBMHg?si=_ll1NUbGOyaScoiZ"
+        )
+        return
+
+    # Проверка на ограничение в 4 символа (и положительность числа)
+    if number < 1 or number > 9999 or len(message.text.strip()) > 4:
+        await message.answer("❌ Число должно состоять от 1 до 4 цифр (от 1 до 9999).")
         return
         
     user_id = message.from_user.id

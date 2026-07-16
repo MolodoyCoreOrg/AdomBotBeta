@@ -198,6 +198,11 @@ def claim_pidaraz_number(user_id: int, pid_number: int, username: str, first_nam
         if has_num:
             return False, f"У тебя уже есть номер: {has_num['pid_number']}. Изменить нельзя!"
         
+        # Проверяем общий лимит слотов (максимум 100 человек всего)
+        total_count_row = cur.execute("SELECT COUNT(*) as cnt FROM pidaraz_registry").fetchone()
+        if total_count_row and total_count_row["cnt"] >= 100:
+            return False, "❌ Все 100 слотов уже заняты! Больше номеров нет."
+        
         is_taken = cur.execute("SELECT user_id FROM pidaraz_registry WHERE pid_number = ?", (pid_number,)).fetchone()
         if is_taken:
             return False, "Этот номер уже занят другим пидаразом. Выбери другой!"
