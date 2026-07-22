@@ -21,3 +21,13 @@ venv/
 .vscode/
 .idea/
 ```
+# Databases (SQLite)
+*.db
+*.db-wal
+*.db-shm
+*.sqlite3
+
+# Virtual environment (ваша папка)
+venvdev/
+
+# Python cache (уже есть, но дублировать не страшно)

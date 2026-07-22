@@ -1,18 +1,18 @@
 {
-  "total_users": 1107,
+  "total_users": 1109,
   "cards_opened": {
-    "members": 9257,
-    "skills": 28006
+    "members": 9264,
+    "skills": 28016
   },
   "global": {
-    "roulette_opened": 89163,
+    "roulette_opened": 89170,
     "roulette_prizes": {
       "JOPA": 1974,
-      "+10": 2351,
+      "+10": 2352,
       "skills_bonus": 952,
       "members_bonus": 244,
       "POCELUI": 18,
-      "nothing": 83624
+      "nothing": 83630
     }
   },
   "daily": {
@@ -2643,6 +2643,28 @@
         "members_bonus": 2,
         "POCELUI": 0,
         "nothing": 228
+      }
+    },
+    "2026-07-19": {
+      "roulette_opened": 1,
+      "roulette_prizes": {
+        "JOPA": 0,
+        "+10": 1,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 0
+      }
+    },
+    "2026-07-22": {
+      "roulette_opened": 6,
+      "roulette_prizes": {
+        "JOPA": 0,
+        "+10": 0,
+        "skills_bonus": 0,
+        "members_bonus": 0,
+        "POCELUI": 0,
+        "nothing": 6
       }
     }
   }
