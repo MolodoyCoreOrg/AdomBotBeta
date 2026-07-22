@@ -676,3 +676,84 @@ async def process_give_word_username(message: Message, state: FSMContext, bot: B
         # Гарантированно сбрасываем состояние, чтобы админ не застрял в режиме ввода юзернейма
         await state.clear()
         return
+
+# ==================== УДАЛИТЬ СЛОТ ПИДАРАЗА ====================
+
+class AdminDeletePidarazState(StatesGroup):
+    waiting_for_number = State()
+
+@router.callback_query(F.data == "admin_delete_pidaraz_slot")
+async def admin_delete_pidaraz_slot_cb(callback: types.CallbackQuery, state: FSMContext):
+    if not is_admin(callback.from_user.id):
+        await callback.answer("❌ У вас нет доступа.", show_alert=True)
+        return
+    
+    await callback.message.answer(
+        "🗑 <b>Введите номер слота (от 1 до 9999)</b>, который нужно освободить:\n\n"
+        "<i>(Для отмены напишите /cancel)</i>",
+        parse_mode="HTML"
+    )
+    await state.set_state(AdminDeletePidarazState.waiting_for_number)
+    await callback.answer()
+
+@router.message(AdminDeletePidarazState.waiting_for_number)
+async def process_delete_pidaraz_slot(message: Message, state: FSMContext):
+    if not message.text or message.text == "/cancel":
+        await message.answer("❌ Действие отменено.")
+        await state.clear()
+        return
+        
+    if not message.text.isdigit():
+        await message.answer("❌ Пожалуйста, отправьте только число.")
+        return
+
+    slot_number = int(message.text)
+    
+    if slot_number < 1 or slot_number > 9999:
+        await message.answer("❌ Номер должен быть от 1 до 9999. Попробуйте еще раз или напишите /cancel:")
+        return
+
+    try:
+        conn = connect()
+        cursor = conn.cursor()
+        
+        # Пытаемся найти, где именно хранится столбец (в users или pidarazs)
+        cursor.execute("PRAGMA table_info(users)")
+        users_columns = [col[1] for col in cursor.fetchall()]
+        
+        deleted = False
+        
+        # Проверяем, есть ли поле pid_number в таблице users
+        if "pid_number" in users_columns:
+            cursor.execute("SELECT user_id FROM users WHERE pid_number = ?", (slot_number,))
+            if cursor.fetchone():
+                cursor.execute("UPDATE users SET pid_number = NULL WHERE pid_number = ?", (slot_number,))
+                deleted = True
+        elif "pidaraz_number" in users_columns:
+            cursor.execute("SELECT user_id FROM users WHERE pidaraz_number = ?", (slot_number,))
+            if cursor.fetchone():
+                cursor.execute("UPDATE users SET pidaraz_number = NULL WHERE pidaraz_number = ?", (slot_number,))
+                deleted = True
+        else:
+            # Возможно, данные хранятся в отдельной таблице
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='pidarazs'")
+            if cursor.fetchone():
+                cursor.execute("SELECT user_id FROM pidarazs WHERE pid_number = ?", (slot_number,))
+                if cursor.fetchone():
+                    cursor.execute("DELETE FROM pidarazs WHERE pid_number = ?", (slot_number,))
+                    deleted = True
+
+        conn.commit()
+        conn.close()
+
+        if deleted:
+            await message.answer(f"✅ Слот <b>Пидараз {slot_number}</b> успешно освобожден! Теперь его можно занять.", parse_mode="HTML")
+        else:
+            await message.answer(f"⚠️ Слот <b>{slot_number}</b> и так уже свободен или не найден.", parse_mode="HTML")
+
+    except Exception as e:
+        await message.answer(f"⚠️ <b>Произошла ошибка при удалении:</b>\n<code>{e}</code>", parse_mode="HTML")
+        print(f"❌ Ошибка в process_delete_pidaraz_slot: {e}")
+        
+    finally:
+        await state.clear()

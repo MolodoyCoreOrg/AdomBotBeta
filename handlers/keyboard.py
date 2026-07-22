@@ -270,26 +270,6 @@ def get_skill_card_navigation_keyboard(index: int, total: int, prefix: str = "my
     )
     return builder.as_markup()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # === СОРТИРОВКА ===
 
 def get_sort_member_menu_keyboard() -> InlineKeyboardMarkup:
@@ -307,10 +287,6 @@ def get_sort_skill_menu_keyboard() -> InlineKeyboardMarkup:
         InlineKeyboardButton(text="По алфавиту", callback_data="sort_by_name")
     )
     return builder.as_markup()
-
-
-
-
 
 def get_rarity_keyboard() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
@@ -746,6 +722,9 @@ def admin_menu_ui():
     )
     builder.row(
         InlineKeyboardButton(text="🤬 Выдать матюк пользователю", callback_data="admin_give_word_access"),
+    )
+    builder.row(
+        InlineKeyboardButton(text="🗑 Удалить Пида раза", callback_data="admin_delete_pidaraz_slot"),
     )
     builder.row(
         InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
