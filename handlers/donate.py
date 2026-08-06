@@ -18,6 +18,7 @@ import uuid
 import socketio
 
 sio = socketio.AsyncClient()  # создаём объект клиента
+DA_CONNECTED = False
 
 
 # создаём один экземпляр бота
@@ -52,10 +53,22 @@ class DonateStates(StatesGroup):
 
 
 # ====== DonationAlerts обработчики ======
+def is_donation_alerts_available() -> bool:
+    return DA_CONNECTED and bool(DA_TOKEN)
+
+
 @sio.on("connect")
 async def on_connect():
+    global DA_CONNECTED
+    DA_CONNECTED = True
     print("✅ Подключились к DonationAlerts")
     await sio.emit("add-user", {"token": DA_TOKEN, "type": "alert_widget"})
+
+
+@sio.on("disconnect")
+async def on_disconnect():
+    global DA_CONNECTED
+    DA_CONNECTED = False
 
 @sio.on("donation")
 async def on_donation(data):
@@ -101,8 +114,15 @@ async def on_donation(data):
         print(f"❌ Донат с кодом {message} не найден или уже использован.")
 
 async def run_da_client():
-    await sio.connect("wss://socket.donationalerts.ru:443", transports=["websocket"])
-    await sio.wait()
+    global DA_CONNECTED
+    try:
+        DA_CONNECTED = False
+        await sio.connect("wss://socket.donationalerts.ru:443", transports=["websocket"])
+        await sio.wait()
+    except Exception as e:
+        DA_CONNECTED = False
+        print(f"⚠️ DonationAlerts недоступен, продолжаем без него: {e}")
+        return
 
 
 
@@ -159,6 +179,14 @@ def generate_da_link(user_id: int, username: str, amount: int = None) -> tuple[s
 
 @router.callback_query(F.data == "prikalyimba_donate_svoysumrub_menu")
 async def donate_custom(callback: CallbackQuery, state: FSMContext):
+    if not is_donation_alerts_available():
+        await callback.answer("В данный момент этот способ оплаты не работает", show_alert=True)
+        await callback.message.edit_text(
+            "В данный момент этот способ оплаты не работает",
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="↪️ Назад", callback_data="donate_menu")]]),
+        )
+        return
+
     # Генерируем ссылку без фиксированной суммы
     link, code = generate_da_link(callback.from_user.id, callback.from_user.username or "")
 

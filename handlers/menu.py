@@ -10,9 +10,10 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
-from .keyboard import get_main_keyboard, get_card_open_ui_keyboard, get_card_collection_ui_keyboard, profile_ui, support_ui, donate_ui, top_menu_ui, get_persistent_bottom_keyboard, shop_ui
-from database.db import add_user, user_exists, add_bonus, update_referral_bonuses, get_referral_message, update_user_info
+from .keyboard import get_main_keyboard, get_card_open_ui_keyboard, get_card_collection_ui_keyboard, profile_ui, support_ui, donate_ui, top_menu_ui, get_persistent_bottom_keyboard, shop_ui, get_human_confirmation_keyboard
+from database.db import add_user, user_exists, add_bonus, update_referral_bonuses, get_referral_message, update_user_info, find_user_by_username, get_user_full_data, get_pidaraz_number, get_pidaraz_stats, confirm_pending_referrer
 from utils.helpers import get_timer_status
+from handlers.cards_handler.skills import award_skill_to_user
 
 
 # Состояния FSM для системы обмена (должны быть определены до использования)
@@ -20,6 +21,11 @@ class TradeState(StatesGroup):
     waiting_for_partner_username = State()
     selecting_card_to_trade = State()
     viewing_partner_cards = State()
+
+
+class AdminGiveSkillState(StatesGroup):
+    waiting_for_target = State()
+    waiting_for_skill_name = State()
 
 
 DB_PATH = "database/users.db"
@@ -177,6 +183,27 @@ async def process_partner_input(message: Message, state: FSMContext):
         parse_mode="HTML"
     )
 
+def finalize_registration(user_id: int, username: str, first_name: str, last_name: str, referrer_id: int | None = None):
+    if user_exists(user_id):
+        return False
+
+    add_user(
+        user_id,
+        username=username,
+        first_name=first_name,
+        last_name=last_name,
+        referrer_id=referrer_id,
+    )
+
+    if referrer_id:
+        with connect() as conn:
+            cur = conn.cursor()
+            cur.execute("UPDATE users SET pending_referrer_id = ? WHERE user_id = ?", (referrer_id, user_id))
+            conn.commit()
+
+    return None, None
+
+
 @router.message(Command("menu"))
 @router.message(Command("start"))
 async def start_handler(message: Message):
@@ -220,7 +247,6 @@ async def start_handler(message: Message):
 
     reply_markup = await get_main_keyboard(spins, user_id)
 
-    # Вытаскиваем аргументы вручную
     text = message.text or ""
     args = text.split(maxsplit=1)[1] if len(text.split()) > 1 else ""
     referrer_id = None
@@ -235,37 +261,63 @@ async def start_handler(message: Message):
 
     if user_exists(user_id):
         print(f"User {user_id} уже есть в базе данных")
-        await message.answer( text_msg1, reply_markup = reply_markup)
+        await message.answer(text_msg1, reply_markup=reply_markup)
 
     else:
-        print(f"Добавляю нового пользователя {user_id} с реферером {referrer_id}")
+        print(f"Добавляю нового пользователя {user_id} с отложенным подтверждением")
         add_user(
             user_id,
             username=message.from_user.username or "",
             first_name=message.from_user.first_name or "",
             last_name=message.from_user.last_name or "",
-            referrer_id=referrer_id
+            referrer_id=referrer_id,
         )
-        if referrer_id:
-            try:
-                with connect() as conn:
-                    cur = conn.cursor()
-                    cur.execute("SELECT referral_bonuses FROM users WHERE user_id = ?", (referrer_id,))
-                    row = cur.fetchone()
-                    if row:
-                        before_given = row["referral_bonuses"]
+        await message.answer(
+            "Чтобы подтвердить, что ты не бот, нажми кнопку ниже.",
+            reply_markup=get_human_confirmation_keyboard(),
+        )
 
-                # Обновляем бонусы
-                update_referral_bonuses(referrer_id)
 
-                # Получаем текст и клавиатуру
-                text, markup = get_referral_message(referrer_id, before_given)
+@router.message(F.text == "Я человек")
+async def confirm_human_handler(message: Message):
+    user_id = message.from_user.id
+    if not user_exists(user_id):
+        await message.answer("⚠️ Сначала нужно пройти стартовый шаг, чтобы подтвердить регистрацию.")
+        return
 
-                await message.bot.send_message(referrer_id, text, reply_markup=markup)
-            except Exception as e:
-                print(f"Не удалось отправить сообщение рефереру {referrer_id}: {e}")
+    referrer_id = confirm_pending_referrer(user_id)
+    if referrer_id:
+        try:
+            with connect() as conn:
+                cur = conn.cursor()
+                cur.execute("SELECT referral_bonuses FROM users WHERE user_id = ?", (referrer_id,))
+                row = cur.fetchone()
+                if row:
+                    before_given = row["referral_bonuses"]
 
-        await message.answer(text_msg2, reply_markup = reply_markup)
+            update_referral_bonuses(referrer_id)
+            text, markup = get_referral_message(referrer_id, before_given)
+            await message.bot.send_message(referrer_id, text, reply_markup=markup)
+        except Exception as e:
+            print(f"Не удалось отправить сообщение рефереру {referrer_id}: {e}")
+
+    from database.db import load_roulette_data
+    data = load_roulette_data(str(user_id))
+    spins = data.get("roulette_count", 0)
+    reply_markup = await get_main_keyboard(spins, user_id)
+
+    member_card_status = get_timer_status(user_id, "data/table/timer_members_card.json", "👥Карта участника")
+    skill_card_status = get_timer_status(user_id, "data/table/timer_skills_card.json", "🃏Суперспособность")
+
+    text = (
+        f"Привет, <b>{message.from_user.first_name}</b>!\n"
+        "Добро пожаловать в СИСЬКИ.\n"
+        "Теперь ты можешь пользоваться ботом.\n\n"
+        f"{member_card_status}\n"
+        f"{skill_card_status}"
+    )
+
+    await message.answer(text, reply_markup=reply_markup)
 
 
 
@@ -317,6 +369,8 @@ def get_profile_text(user_id: int) -> str:
     total_members = len(member_cards)
     total_skills = len(skill_cards)
     referrals_count = get_referrals_count(user_id)
+    pidaraz_number = get_pidaraz_number(user_id)
+    pidaraz_stats = get_pidaraz_stats(user_id)
 
     BOT_USERNAME = "CuCbKu_gg_bot"
     referral_link = f"https://t.me/{BOT_USERNAME}?start={user_id}"
@@ -326,7 +380,9 @@ def get_profile_text(user_id: int) -> str:
         f"📌 Номер: {user_number}\n\n"
         f"👥 Карточки участников: <b>{total_members}</b>\n"
         f"🧠 Суперспособностей: <b>{total_skills}</b>\n"
-        f"🔥 Баланс: <b>{user['balance']}</b>\n\n"
+        f"🔥 Баланс: <b>{user['balance']}</b>\n"
+        f"🎪 Пидараз: <b>{pidaraz_number if pidaraz_number is not None else '—'}</b>\n"
+        f"🔥 Стрик пересчета: <b>{pidaraz_stats['streak_current']}</b> (лучший: <b>{pidaraz_stats['best_streak']}</b>)\n\n"
         f"🆔 ID: {user_id}\n"
         f"💛 Username: @{username}\n"
         f"🗓 Зарегистрирован: {registered_at}\n"
@@ -710,6 +766,81 @@ async def handle_admin_menu(callback: CallbackQuery):
         parse_mode="HTML",
         keep_message=True
     )
+
+
+@router.callback_query(F.data == "admin_give_skill_user")
+async def handle_admin_give_skill_user(callback: CallbackQuery, state: FSMContext):
+    """Начать выдачу конкретной суперспособности конкретному пользователю."""
+    from utils.config import ADMINS_LIST
+
+    if callback.from_user.id not in ADMINS_LIST:
+        await callback.answer("❌ Нет доступа", show_alert=True)
+        return
+
+    await callback.message.edit_text(
+        "🧑‍💼 Введите ID или @username пользователя, которому нужно выдать карту суперспособности.",
+        reply_markup=None,
+        parse_mode="HTML"
+    )
+    await callback.answer()
+    await state.set_state(AdminGiveSkillState.waiting_for_target)
+
+
+@router.message(AdminGiveSkillState.waiting_for_target)
+async def process_admin_give_skill_target(message: Message, state: FSMContext):
+    text = (message.text or "").strip()
+    if not text:
+        await message.answer("❌ Введите ID или @username пользователя.")
+        return
+
+    target_user_id = None
+    target_name = None
+
+    if text.isdigit():
+        target_user_id = int(text)
+    else:
+        user_info = find_user_by_username(text.lstrip("@"))
+        if user_info:
+            target_user_id = user_info["user_id"]
+            target_name = f"@{user_info['username']}"
+
+    if target_user_id is None:
+        await message.answer("❌ Пользователь не найден. Введите корректный ID или @username.")
+        return
+
+    if target_name is None:
+        user_data = get_user_full_data(target_user_id)
+        if user_data:
+            target_name = user_data.get("username") or user_data.get("first_name") or str(target_user_id)
+
+    await state.update_data(target_user_id=target_user_id, target_name=target_name or str(target_user_id))
+    await message.answer("🃏 Введите название карты суперспособности, например: дебик")
+    await state.set_state(AdminGiveSkillState.waiting_for_skill_name)
+
+
+@router.message(AdminGiveSkillState.waiting_for_skill_name)
+async def process_admin_give_skill_name(message: Message, state: FSMContext):
+    skill_name = (message.text or "").strip()
+    if not skill_name:
+        await message.answer("❌ Введите название карты.")
+        return
+
+    data = await state.get_data()
+    target_user_id = data.get("target_user_id")
+    target_name = data.get("target_name", str(target_user_id))
+
+    if target_user_id is None:
+        await state.clear()
+        await message.answer("❌ Сессия завершилась. Попробуйте ещё раз.")
+        return
+
+    ok, result = award_skill_to_user(target_user_id, skill_name)
+    if ok:
+        await message.answer(f"✅ {result}\n🎯 Пользователь: {target_name}")
+    else:
+        await message.answer(f"❌ {result}")
+
+    await state.clear()
 
 
 @router.callback_query(F.data == "admin_give_all_skills")

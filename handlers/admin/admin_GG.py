@@ -12,8 +12,9 @@ from handlers.notify import send_reminder
 from utils.config import ADMINS_LIST
 from handlers.cards_handler.members import set_check_member_enabled, load_timers
 from handlers.cards_handler.skills import set_check_skill_enabled, load_timers
-from database.db import add_member_bonus, add_skill_bonus, load_roulette_data, save_roulette_data, append_roulette_history, add_balance, get_all_user_ids, find_user_by_username
+from database.db import add_member_bonus, add_skill_bonus, load_roulette_data, save_roulette_data, append_roulette_history, add_balance, get_all_user_ids, find_user_by_username, recount_pidaraz_streaks
 from handlers.donate import get_random_word_for_user, save_donation
+from handlers.pidaraz import send_pidaraz_check_requests
 
 router = Router()
 
@@ -60,6 +61,15 @@ async def reload_bot(message: Message, bot: Bot):
     await asyncio.sleep(1)
     os._exit(1)  # Завершение процесса
 
+
+@router.message(Command("pidaraz_recount"))
+async def pidaraz_recount_command(message: Message):
+    if not is_admin(message.from_user.id):
+        await message.answer("❌ У вас нет доступа к этой команде.")
+        return
+
+    processed = recount_pidaraz_streaks()
+    await message.answer(f"🔁 Начат преждевременный пересчет пидаразов. Обработано профилей: {processed}.")
 
 @router.message(Command("say_all"))
 async def say_all(message: Message, bot):
@@ -679,8 +689,42 @@ async def process_give_word_username(message: Message, state: FSMContext, bot: B
 
 # ==================== УДАЛИТЬ СЛОТ ПИДАРАЗА ====================
 
+def delete_pidaraz_slot(slot_number: int) -> bool:
+    try:
+        conn = connect()
+        cursor = conn.cursor()
+
+        deleted = False
+        cursor.execute("SELECT user_id FROM pidaraz_registry WHERE pid_number = ?", (slot_number,))
+        if cursor.fetchone():
+            cursor.execute(
+                "DELETE FROM pidaraz_confirmations WHERE user_id IN (SELECT user_id FROM pidaraz_registry WHERE pid_number = ?)",
+                (slot_number,),
+            )
+            cursor.execute("DELETE FROM pidaraz_registry WHERE pid_number = ?", (slot_number,))
+            deleted = True
+
+        conn.commit()
+        conn.close()
+        return deleted
+    except Exception as e:
+        print(f"❌ Ошибка в delete_pidaraz_slot: {e}")
+        return False
+
+
 class AdminDeletePidarazState(StatesGroup):
     waiting_for_number = State()
+
+@router.callback_query(F.data == "admin_recount_pidaraz_streaks")
+async def admin_recount_pidaraz_streaks_cb(callback: types.CallbackQuery):
+    if not is_admin(callback.from_user.id):
+        await callback.answer("❌ У вас нет доступа.", show_alert=True)
+        return
+
+    processed = recount_pidaraz_streaks()
+    await callback.answer("✅ Утренний пересчет пидаразов запущен преждевременно.", show_alert=True)
+    await callback.message.answer("🔁 Отправляю всем пидаразам запрос на участие в утреннем пересчете.")
+    await send_pidaraz_check_requests(callback.bot)
 
 @router.callback_query(F.data == "admin_delete_pidaraz_slot")
 async def admin_delete_pidaraz_slot_cb(callback: types.CallbackQuery, state: FSMContext):
@@ -714,37 +758,7 @@ async def process_delete_pidaraz_slot(message: Message, state: FSMContext):
         return
 
     try:
-        conn = connect()
-        cursor = conn.cursor()
-        
-        # Пытаемся найти, где именно хранится столбец (в users или pidarazs)
-        cursor.execute("PRAGMA table_info(users)")
-        users_columns = [col[1] for col in cursor.fetchall()]
-        
-        deleted = False
-        
-        # Проверяем, есть ли поле pid_number в таблице users
-        if "pid_number" in users_columns:
-            cursor.execute("SELECT user_id FROM users WHERE pid_number = ?", (slot_number,))
-            if cursor.fetchone():
-                cursor.execute("UPDATE users SET pid_number = NULL WHERE pid_number = ?", (slot_number,))
-                deleted = True
-        elif "pidaraz_number" in users_columns:
-            cursor.execute("SELECT user_id FROM users WHERE pidaraz_number = ?", (slot_number,))
-            if cursor.fetchone():
-                cursor.execute("UPDATE users SET pidaraz_number = NULL WHERE pidaraz_number = ?", (slot_number,))
-                deleted = True
-        else:
-            # Возможно, данные хранятся в отдельной таблице
-            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='pidarazs'")
-            if cursor.fetchone():
-                cursor.execute("SELECT user_id FROM pidarazs WHERE pid_number = ?", (slot_number,))
-                if cursor.fetchone():
-                    cursor.execute("DELETE FROM pidarazs WHERE pid_number = ?", (slot_number,))
-                    deleted = True
-
-        conn.commit()
-        conn.close()
+        deleted = delete_pidaraz_slot(slot_number)
 
         if deleted:
             await message.answer(f"✅ Слот <b>Пидараз {slot_number}</b> успешно освобожден! Теперь его можно занять.", parse_mode="HTML")
@@ -754,6 +768,6 @@ async def process_delete_pidaraz_slot(message: Message, state: FSMContext):
     except Exception as e:
         await message.answer(f"⚠️ <b>Произошла ошибка при удалении:</b>\n<code>{e}</code>", parse_mode="HTML")
         print(f"❌ Ошибка в process_delete_pidaraz_slot: {e}")
-        
+
     finally:
         await state.clear()

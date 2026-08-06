@@ -381,32 +381,42 @@ async def handle_draw_skill_button(callback: CallbackQuery):
 @router.message(F.text == "🎴 Карточка способностей")
 async def handle_draw_skill_command(message: Message):
     await draw_skill(message)
-def award_specific_skill(user_id: int, card_name: str) -> bool:
+def award_skill_to_user(user_id: int, card_name: str) -> tuple[bool, str]:
     """
     Выдаёт пользователю конкретную карту суперспособности по имени.
-    Возвращает True, если карта успешно добавлена (или уже есть), иначе False.
+    Возвращает (True, сообщение) или (False, сообщение).
     """
-    # Загружаем список всех карт
+    if not user_id:
+        return False, "Не указан пользователь."
+
+    if not card_name or not str(card_name).strip():
+        return False, "Не указано название карты."
+
+    normalized_name = str(card_name).strip()
+
     with open("data/cards/skills.json", "r", encoding="utf-8") as f:
         all_cards = json.load(f)
 
-    # Ищем карту с таким именем
     target_card = None
     for card in all_cards:
-        if card["name"].lower() == card_name.lower():
+        if card.get("name", "").lower() == normalized_name.lower():
             target_card = card
             break
 
     if not target_card:
-        return False
+        return False, f"Карта «{normalized_name}» не найдена."
 
-    # Получаем текущие карты пользователя
+    card_display_name = target_card["name"]
     user_cards = get_skill_cards(user_id)
-    if card_name in user_cards:
-        # Карта уже есть, ничего не делаем, но возвращаем True
-        return True
+    if card_display_name in user_cards:
+        return True, f"Карта «{card_display_name}» уже была у пользователя."
 
-    # Добавляем карту
-    user_cards[card_name] = {"rank": 1, "received_at": datetime.utcnow().isoformat()}
+    user_cards[card_display_name] = {"rank": 1, "received_at": datetime.utcnow().isoformat()}
     update_skill_cards(user_id, user_cards)
-    return True
+    return True, f"Карта «{card_display_name}» выдана пользователю."
+
+
+def award_specific_skill(user_id: int, card_name: str) -> bool:
+    """Совместимость с уже существующими вызовами: возвращает только успех/неуспех."""
+    ok, _ = award_skill_to_user(user_id, card_name)
+    return ok

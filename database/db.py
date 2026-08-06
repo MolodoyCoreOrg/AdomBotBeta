@@ -148,7 +148,8 @@ def create_users_table():
             referral_bonuses INTEGER DEFAULT 0,
             timezone TEXT DEFAULT 'UTC',
             balance INTEGER DEFAULT 0,
-            balance_all_time INTEGER DEFAULT 0
+            balance_all_time INTEGER DEFAULT 0,
+            pending_referrer_id INTEGER DEFAULT NULL
         )
         """)
         conn.commit()
@@ -179,9 +180,29 @@ def create_pidaraz_table():
                 pid_number INTEGER UNIQUE,
                 username TEXT,
                 first_name TEXT,
-                registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                streak_current INTEGER DEFAULT 0,
+                streak_best INTEGER DEFAULT 0,
+                last_confirmed_date TEXT DEFAULT NULL
             )
         """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS pidaraz_confirmations (
+                user_id INTEGER NOT NULL,
+                confirmed_date TEXT NOT NULL,
+                PRIMARY KEY (user_id, confirmed_date)
+            )
+        """)
+
+        existing_columns = [row[1] for row in cur.execute("PRAGMA table_info(pidaraz_registry)").fetchall()]
+        for col_name, col_def in [
+            ("streak_current", "INTEGER DEFAULT 0"),
+            ("streak_best", "INTEGER DEFAULT 0"),
+            ("last_confirmed_date", "TEXT DEFAULT NULL"),
+        ]:
+            if col_name not in existing_columns:
+                cur.execute(f"ALTER TABLE pidaraz_registry ADD COLUMN {col_name} {col_def}")
+
         conn.commit()
 
 def get_pidaraz_number(user_id: int):
@@ -189,6 +210,120 @@ def get_pidaraz_number(user_id: int):
         cur = conn.cursor()
         row = cur.execute("SELECT pid_number FROM pidaraz_registry WHERE user_id = ?", (user_id,)).fetchone()
         return row["pid_number"] if row else None
+
+
+def get_pidaraz_stats(user_id: int):
+    with connect() as conn:
+        cur = conn.cursor()
+        row = cur.execute(
+            "SELECT streak_current, streak_best, last_confirmed_date FROM pidaraz_registry WHERE user_id = ?",
+            (user_id,),
+        ).fetchone()
+        if not row:
+            return {"streak_current": 0, "best_streak": 0, "last_confirmed_date": None}
+        return {
+            "streak_current": row["streak_current"] or 0,
+            "best_streak": row["streak_best"] or 0,
+            "last_confirmed_date": row["last_confirmed_date"],
+        }
+
+
+def _recalculate_pidaraz_streak(user_id: int, conn):
+    cur = conn.cursor()
+    rows = cur.execute(
+        "SELECT confirmed_date FROM pidaraz_confirmations WHERE user_id = ? ORDER BY confirmed_date ASC",
+        (user_id,),
+    ).fetchall()
+
+    if not rows:
+        cur.execute(
+            "UPDATE pidaraz_registry SET streak_current = 0, streak_best = 0, last_confirmed_date = NULL WHERE user_id = ?",
+            (user_id,),
+        )
+        conn.commit()
+        return {"streak_current": 0, "best_streak": 0, "last_confirmed_date": None}
+
+    dates = [row["confirmed_date"] for row in rows]
+    current_streak = 1
+    best_streak = 1
+    prev_date = None
+
+    for confirmed_date in dates:
+        if prev_date is None:
+            current_streak = 1
+        else:
+            prev = datetime.date.fromisoformat(prev_date)
+            current = datetime.date.fromisoformat(confirmed_date)
+            delta = (current - prev).days
+            if delta == 1:
+                current_streak += 1
+            elif delta <= 0:
+                current_streak = max(1, current_streak)
+            else:
+                current_streak = 1
+        best_streak = max(best_streak, current_streak)
+        prev_date = confirmed_date
+
+    last_confirmed_date = dates[-1]
+    cur.execute(
+        "UPDATE pidaraz_registry SET streak_current = ?, streak_best = ?, last_confirmed_date = ? WHERE user_id = ?",
+        (current_streak, best_streak, last_confirmed_date, user_id),
+    )
+    conn.commit()
+    return {
+        "streak_current": current_streak,
+        "best_streak": best_streak,
+        "last_confirmed_date": last_confirmed_date,
+    }
+
+
+def mark_pidaraz_confirmed(user_id: int, confirmed_date: str | None = None):
+    if confirmed_date is None:
+        confirmed_date = datetime.date.today().isoformat()
+
+    with connect() as conn:
+        cur = conn.cursor()
+        row = cur.execute(
+            "SELECT 1 FROM pidaraz_registry WHERE user_id = ?",
+            (user_id,),
+        ).fetchone()
+        if not row:
+            return False
+
+        existing = cur.execute(
+            "SELECT 1 FROM pidaraz_confirmations WHERE user_id = ? AND confirmed_date = ?",
+            (user_id, confirmed_date),
+        ).fetchone()
+        if existing:
+            return False
+
+        cur.execute(
+            "INSERT INTO pidaraz_confirmations (user_id, confirmed_date) VALUES (?, ?)",
+            (user_id, confirmed_date),
+        )
+        return _recalculate_pidaraz_streak(user_id, conn)
+
+
+def recount_pidaraz_streaks():
+    with connect() as conn:
+        cur = conn.cursor()
+        users = cur.execute("SELECT user_id FROM pidaraz_registry").fetchall()
+        processed = 0
+        for row in users:
+            _recalculate_pidaraz_streak(row["user_id"], conn)
+            processed += 1
+        return processed
+
+
+def get_pidaraz_leaderboard(limit: int = 10):
+    with connect() as conn:
+        cur = conn.cursor()
+        rows = cur.execute(
+            "SELECT user_id, pid_number, username, streak_current, streak_best FROM pidaraz_registry WHERE pid_number IS NOT NULL ORDER BY streak_best DESC, streak_current DESC, pid_number ASC LIMIT ?",
+            (limit,),
+        ).fetchall()
+        return [dict(row) for row in rows]
+
 
 def claim_pidaraz_number(user_id: int, pid_number: int, username: str, first_name: str):
     with connect() as conn:
@@ -290,8 +425,9 @@ def add_user(user_id, username, first_name, last_name, referrer_id=None):
             referral_bonuses,
             timezone,
             balance,
-            balance_all_time
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            balance_all_time,
+            pending_referrer_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
         next_number,
         user_id,
@@ -305,22 +441,34 @@ def add_user(user_id, username, first_name, last_name, referrer_id=None):
         '{}',       # member_cards
         '{}',       # skill_cards
         '{}',       # ranks
-        referrer_id,
+        None,
         0,           # bonuses
         0,              #способность бонус
         0,
         0,
         'UTC',      # timezone
         0,            # balance
-        0             # balance_all_time
+        0,            # balance_all_time
+        referrer_id  # pending_referrer_id
     ))
-
-    if referrer_id:
-        # Увеличиваем счетчик приглашенных у реферера
-        cursor.execute("UPDATE users SET total_invited = total_invited + 1 WHERE user_id = ?", (referrer_id,))
 
     conn.commit()
     conn.close()
+
+def confirm_pending_referrer(user_id: int):
+    with connect() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT pending_referrer_id FROM users WHERE user_id = ?", (user_id,))
+        row = cur.fetchone()
+        if not row or not row["pending_referrer_id"]:
+            return None
+
+        referrer_id = row["pending_referrer_id"]
+        cur.execute("UPDATE users SET referrer_id = ?, pending_referrer_id = NULL WHERE user_id = ?", (referrer_id, user_id))
+        cur.execute("UPDATE users SET total_invited = total_invited + 1 WHERE user_id = ?", (referrer_id,))
+        conn.commit()
+        return referrer_id
+
 
 def add_bonus(user_id, bonus_amount=1):
     conn = connect()

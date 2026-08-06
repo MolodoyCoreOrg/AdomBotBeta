@@ -6,6 +6,7 @@ from aiogram.exceptions import TelegramBadRequest
 
 from handlers.keyboard import top_leaderboard_ui, top_roulette_ui, top_meow_ui, top_mat_ui, top_jopa_ui, top_cards_ui, top_balance_ui
 from utils.config import DB_FILE, ADMIN_USERNAMES  # путь к твоей базе данных
+from database.db import get_pidaraz_leaderboard
 
 router = Router()
 
@@ -160,6 +161,29 @@ async def show_top_skill_cards(callback: CallbackQuery):
 
 
 
+
+@router.callback_query(F.data == "top_pidaraz_streak")
+async def show_top_pidaraz_streak(callback: CallbackQuery):
+    top_list = get_pidaraz_leaderboard(10)
+    if not top_list:
+        await callback.message.answer("📭 Список пидаразов пуст")
+        await callback.answer()
+        return
+
+    text_lines = ["🏆 <b>Топ по стрику пересчета</b> 🏆\n"]
+    for i, row in enumerate(top_list, start=1):
+        username = row.get("username") or "Пользователь"
+        if username and not username.startswith("@"):
+            username = f"@{username}"
+        medal = {1: '🥇', 2: '🥈', 3: '🥉'}.get(i, f"{i}.")
+        text_lines.append(
+            f"{medal} {username}\n"
+            f"Пидараз {row['pid_number']}\n"
+            f"Стрик: {row['streak_current']} | Лучший: {row['streak_best']}\n"
+        )
+
+    await callback.message.answer("\n".join(text_lines), reply_markup=top_leaderboard_ui())
+    await callback.answer()
 
 @router.callback_query(F.data == "top_donators")
 async def show_top_donators(callback: CallbackQuery):

@@ -9,7 +9,13 @@ from aiogram.types import (
     InputTextMessageContent, InlineKeyboardMarkup, InlineKeyboardButton
 )
 
-from database.db import get_pidaraz_number, claim_pidaraz_number, get_all_pidarazs
+from database.db import (
+    get_pidaraz_number,
+    claim_pidaraz_number,
+    get_all_pidarazs,
+    get_pidaraz_stats,
+    mark_pidaraz_confirmed,
+)
 from handlers.keyboard import pidaraz_ui
 
 router = Router()
@@ -29,7 +35,12 @@ async def show_pidaraz_menu(callback: CallbackQuery, state: FSMContext):
     
     text = "🎪 <b>Пересчет пидаразов</b>\n\n"
     if current_num:
-        text += f"✅ Твой номер: <b>Пидараз {current_num}</b>\n\nТы можешь линковать свой статус в любых чатах, просто напиши юзернейм бота!"
+        stats = get_pidaraz_stats(user_id)
+        text += (
+            f"✅ Твой номер: <b>Пидараз {current_num}</b>\n"
+            f"🔥 Стрик: <b>{stats['streak_current']}</b> (лучший: <b>{stats['best_streak']}</b>)\n\n"
+            "Ты можешь линковать свой статус в любых чатах, просто напиши юзернейм бота!"
+        )
     else:
         text += f"У тебя ещё нет номера. Всего доступно {MAX_PIDARAZ_SLOTS} уникальных слотов.\nВыбери свой любимый номер до 4 символов навсегда!"
 
@@ -162,9 +173,35 @@ async def pidaraz_here_callback(callback: CallbackQuery):
     if not pid_number:
         await callback.answer("У тебя нет номера!", show_alert=True)
         return
-        
+
+    stats = mark_pidaraz_confirmed(user_id)
+    if stats is False:
+        stats = get_pidaraz_stats(user_id)
+
     await callback.answer("Принято!", show_alert=False)
-    await callback.message.edit_text(f"✅ Утренний пересчет пройден!\nПидараз {pid_number} на связи!")
+    await callback.message.edit_text(
+        f"✅ Утренний пересчет пройден!\n"
+        f"Пидараз {pid_number} на связи!\n"
+        f"🔥 Стрик: {stats['streak_current']} (лучший: {stats['best_streak']})"
+    )
+
+async def send_pidaraz_check_requests(bot: Bot):
+    users = get_all_pidarazs()
+    for u in users:
+        try:
+            markup = InlineKeyboardMarkup(inline_keyboard=[[
+                InlineKeyboardButton(text=f"Пидараз {u['pid_number']} на связи", callback_data="pidaraz_here")
+            ]])
+            await bot.send_message(
+                chat_id=u['user_id'],
+                text=f"Утренний пересчет! Пидараз {u['pid_number']} на связи???",
+                reply_markup=markup
+            )
+        except Exception:
+            pass
+
+        await asyncio.sleep(2)
+
 
 async def daily_pidaraz_check(bot: Bot):
     while True:
@@ -177,20 +214,4 @@ async def daily_pidaraz_check(bot: Bot):
         wait_seconds = (target - now).total_seconds()
         await asyncio.sleep(wait_seconds)
         
-        users = get_all_pidarazs()
-        for u in users:
-            try:
-                markup = InlineKeyboardMarkup(inline_keyboard=[[
-                    InlineKeyboardButton(text=f"Пидараз {u['pid_number']} на связи", callback_data="pidaraz_here")
-                ]])
-                await bot.send_message(
-                    chat_id=u['user_id'],
-                    text=f"Утренний пересчет! Пидараз {u['pid_number']} на связи???",
-                    reply_markup=markup
-                )
-            except Exception:
-                pass
-            
-            # БЕЗОПАСНАЯ ЗАДЕРЖКА: 2 секунды между сообщениями
-            # (ровно 30 сообщений в минуту)
-            await asyncio.sleep(2)
+        await send_pidaraz_check_requests(bot)

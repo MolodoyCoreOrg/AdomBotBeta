@@ -94,6 +94,14 @@ def get_start_keyboard():
     )
 
 
+def get_human_confirmation_keyboard():
+    return ReplyKeyboardMarkup(
+        keyboard=[[KeyboardButton(text="Я человек")]],
+        resize_keyboard=True,
+        one_time_keyboard=True,
+    )
+
+
 def get_persistent_bottom_keyboard():
     """Reply keyboard that stays at the bottom of the chat on /start.
     Shows primary actions as large buttons for easy access.
@@ -594,6 +602,9 @@ def top_menu_ui():
         InlineKeyboardButton(text="Количество валюты 🔥", callback_data="top_balance"),
     )
     builder.row(
+        InlineKeyboardButton(text="Стрик пересчета 🔥", callback_data="top_pidaraz_streak"),
+    )
+    builder.row(
         InlineKeyboardButton(text="Матершинники 😈", callback_data="top_mat_count"),
     )
     builder.row(
@@ -712,6 +723,9 @@ def admin_menu_ui():
         InlineKeyboardButton(text="🃏 Выдать все суперспособности", callback_data="admin_give_all_skills"),
     )
     builder.row(
+        InlineKeyboardButton(text="🃏 Выдать суперспособность пользователю", callback_data="admin_give_skill_user"),
+    )
+    builder.row(
         InlineKeyboardButton(text="👥 Выдать все карточки участников", callback_data="admin_give_all_members"),
     )
     builder.row(
@@ -725,6 +739,9 @@ def admin_menu_ui():
     )
     builder.row(
         InlineKeyboardButton(text="🗑 Удалить Пида раза", callback_data="admin_delete_pidaraz_slot"),
+    )
+    builder.row(
+        InlineKeyboardButton(text="🔁 Начать утренний пересчет пидаразов", callback_data="admin_recount_pidaraz_streaks"),
     )
     builder.row(
         InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),

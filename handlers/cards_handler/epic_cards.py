@@ -420,9 +420,22 @@ async def use_hmmm(callback: CallbackQuery, bot):
     # Карта уже удалена в handle_use_epic_card
 
 
+def consume_hmmm_card(user_id: int):
+    """Поглощает карту ХМММ после выбора пользователем одного из вариантов."""
+    remove_skill_card(user_id, "ХМММ")
+
+
 async def hmmm_take_spins(callback: CallbackQuery, spins: int, bot):
     """Пользователь забирает крутки себе"""
     user_id = callback.from_user.id
+
+    epic_chain = load_epic_chain()
+    chain_key = str(user_id)
+    if chain_key not in epic_chain:
+        await callback.answer("⚠️ Ты уже забрал крутки", show_alert=True)
+        return
+
+    consume_hmmm_card(user_id)
     
     # Начисляем крутки
     data = load_roulette_data(user_id)
@@ -430,9 +443,8 @@ async def hmmm_take_spins(callback: CallbackQuery, spins: int, bot):
     save_roulette_data(user_id, data)
     
     # Очищаем цепочку
-    epic_chain = load_epic_chain()
-    if str(user_id) in epic_chain:
-        del epic_chain[str(user_id)]
+    if chain_key in epic_chain:
+        del epic_chain[chain_key]
         save_epic_chain(epic_chain)
     
     # Сообщение всем
@@ -448,9 +460,14 @@ async def hmmm_take_spins(callback: CallbackQuery, spins: int, bot):
 async def hmmm_double_other(callback: CallbackQuery, bot):
     """Удваивает и передает следующему"""
     user_id = callback.from_user.id
-    
+
     epic_chain = load_epic_chain()
     chain_key = str(user_id)
+    if chain_key not in epic_chain:
+        await callback.answer("⚠️ Карта уже была передана", show_alert=True)
+        return
+
+    consume_hmmm_card(user_id)
     
     if chain_key not in epic_chain:
         await callback.answer("Цепочка не найдена", show_alert=True)
@@ -758,7 +775,7 @@ async def handle_use_epic_card(callback: CallbackQuery, bot):
     epic_cards_in_progress[user_id] = card_name
 
     # Карты, которые требуют отложенного удаления (показывают выбор пользователю)
-    deferred_removal_cards = ["УРААА"]
+    deferred_removal_cards = ["УРААА", "ХМММ"]
 
     # Удаляем карту сразу для всех, кроме тех, что требуют отложенного удаления
     if card_name not in deferred_removal_cards:
