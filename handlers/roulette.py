@@ -7,7 +7,14 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
-from database.db import add_skill_bonus, add_member_bonus, load_roulette_data, save_roulette_data, append_roulette_history
+from database.db import (
+    MAX_ROULETTE_SPINS,
+    add_skill_bonus,
+    add_member_bonus,
+    load_roulette_data,
+    save_roulette_data,
+    append_roulette_history,
+)
 from utils.helpers import format_time_left, get_combo_text, safe_edit_message, safe_delete
 from utils.config import TOKEN
 
@@ -15,6 +22,10 @@ bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
 
 router = Router()
+
+MAX_SPINS = MAX_ROULETTE_SPINS
+INCREMENT = 2
+INTERVAL = 3600
 
 active_spins = {}
 
@@ -183,11 +194,9 @@ async def roulette_increment_task():
             upgrades = json.loads(kazino_upgrades_json) if kazino_upgrades_json else {}
             
             # Применяем эффекты улучшений
-            max_spins = 10 + upgrades.get("max_spins_plus", 0)
-            increment = 2 + upgrades.get("spin_per_hour_plus", 0)
-            interval = 3600 - (upgrades.get("timer_reduce_10min", 0) * 600)
-            if interval < 600: 
-                interval = 600
+            max_spins = MAX_SPINS
+            increment = INCREMENT
+            interval = INTERVAL
 
             try:
                 last_inc = datetime.datetime.fromisoformat(last_increment)
@@ -247,11 +256,9 @@ async def send_roulette_status_message(target: Message | CallbackQuery, user_id:
     kazino_upgrades = json.loads(kazino_upgrades_json) if kazino_upgrades_json else {}
 
     # Применяем эффекты улучшений
-    max_spins = 10 + kazino_upgrades.get("max_spins_plus", 0)
-    increment = 2 + kazino_upgrades.get("spin_per_hour_plus", 0)
-    interval = 3600 - (kazino_upgrades.get("timer_reduce_10min", 0) * 600)
-    if interval < 600:
-        interval = 600
+    max_spins = MAX_SPINS
+    increment = INCREMENT
+    interval = INTERVAL
 
     seconds_left = seconds_until_next_increment(last_increment, interval)
     formatted_time_left = format_time_left(seconds_left)
@@ -367,11 +374,9 @@ async def spin_roulette(callback: CallbackQuery):
         today_str = now.strftime("%Y-%m-%d")
         
         # Характеристики казика с учетом апгрейдов
-        max_spins = 10 + upgrades.get("max_spins_plus", 0)
-        increment = 2 + upgrades.get("spin_per_hour_plus", 0)
-        interval = 3600 - (upgrades.get("timer_reduce_10min", 0) * 600)
-        if interval < 600:
-            interval = 600
+        max_spins = MAX_SPINS
+        increment = INCREMENT
+        interval = INTERVAL
 
         # --- Сброс дневного лимита ---
         if data["last_reset"] != today_str:
@@ -581,11 +586,9 @@ async def spin_fast_roulette(callback: CallbackQuery):
     now = datetime.datetime.utcnow()
     today_str = now.strftime("%Y-%m-%d")
 
-    max_spins = 10 + upgrades.get("max_spins_plus", 0)
-    increment = 2 + upgrades.get("spin_per_hour_plus", 0)
-    interval = 3600 - (upgrades.get("timer_reduce_10min", 0) * 600)
-    if interval < 600:
-        interval = 600
+    max_spins = MAX_SPINS
+    increment = INCREMENT
+    interval = INTERVAL
 
     if data["last_reset"] != today_str:
         data["opened_today"] = 0
