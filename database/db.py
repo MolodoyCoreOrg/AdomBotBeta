@@ -5,6 +5,14 @@ from handlers.keyboard import bonus_member_card_open
 
 DB_PATH = "database/users.db"
 
+MAX_ROULETTE_SPINS = 10
+
+
+def clamp_roulette_count(value: int) -> int:
+    """Keep the roulette balance within the documented 0..10 range."""
+    return max(0, min(MAX_ROULETTE_SPINS, int(value)))
+
+
 def connect():
     # Use a longer timeout to wait for locks and allow connections from other threads.
     # Also enable WAL journal mode and foreign_keys to improve concurrency and integrity.
@@ -58,6 +66,14 @@ def create_roulette_tables():
         for col_name, col_def in columns_to_add:
             if col_name not in existing_columns:
                 cur.execute(f"ALTER TABLE roulette_user ADD COLUMN {col_name} {col_def}")
+
+        # Repair balances created before the cap was enforced centrally.
+        cur.execute(
+            "UPDATE roulette_user SET roulette_count = ? WHERE roulette_count > ?",
+            (MAX_ROULETTE_SPINS, MAX_ROULETTE_SPINS)
+        )
+        cur.execute("UPDATE roulette_user SET roulette_count = 0 WHERE roulette_count < 0")
+
         cur.execute("""
         CREATE TABLE IF NOT EXISTS roulette_history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -583,12 +599,18 @@ class Database:
 
     def insert_user(self, user_id: int, roulette_count: int = 0):
         with self.connect() as conn:
-            conn.execute("INSERT INTO roulette_user (user_id, roulette_count) VALUES (?, ?)", (user_id, roulette_count))
+            conn.execute(
+                "INSERT INTO roulette_user (user_id, roulette_count) VALUES (?, ?)",
+                (user_id, clamp_roulette_count(roulette_count))
+            )
             conn.commit()
 
     def update_user_data(self, user_id: int, roulette_count: int):
         with self.connect() as conn:
-            conn.execute("UPDATE roulette_user SET roulette_count = ? WHERE user_id = ?", (roulette_count, user_id))
+            conn.execute(
+                "UPDATE roulette_user SET roulette_count = ? WHERE user_id = ?",
+                (clamp_roulette_count(roulette_count), user_id)
+            )
             conn.commit()
 
 
@@ -825,9 +847,17 @@ def load_roulette_data(user_id: int) -> dict:
             conn.commit()
             row = cur.execute("SELECT * FROM roulette_user WHERE user_id = ?", (user_id,)).fetchone()
 
+        roulette_count = clamp_roulette_count(row["roulette_count"])
+        if roulette_count != row["roulette_count"]:
+            cur.execute(
+                "UPDATE roulette_user SET roulette_count = ? WHERE user_id = ?",
+                (roulette_count, user_id)
+            )
+            conn.commit()
+
         history = cur.execute("SELECT entry FROM roulette_history WHERE user_id = ? ORDER BY ts DESC LIMIT 10", (user_id,))
         return {
-            "roulette_count": row["roulette_count"],
+            "roulette_count": roulette_count,
             "opened_today": row["opened_today"],
             "total_opened": row["total_opened"],
             "last_reset": row["last_reset"],
@@ -846,6 +876,10 @@ def load_roulette_data(user_id: int) -> dict:
         }
 
 def save_roulette_data(user_id: int, data: dict):
+    roulette_count = clamp_roulette_count(data.get("roulette_count", 5))
+    # Keep the caller's in-memory value consistent with what is persisted.
+    data["roulette_count"] = roulette_count
+
     with connect() as conn:
         cur = conn.cursor()
         cur.execute("""
@@ -869,7 +903,7 @@ def save_roulette_data(user_id: int, data: dict):
                 dopa_bet = excluded.dopa_bet
         """, (
             user_id,
-            int(data.get("roulette_count", 5)),
+            roulette_count,
             int(data.get("opened_today", 0)),
             int(data.get("total_opened", 0)),
             data.get("last_reset", ""),
