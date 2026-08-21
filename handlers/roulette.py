@@ -7,7 +7,14 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
-from database.db import add_skill_bonus, add_member_bonus, load_roulette_data, save_roulette_data, append_roulette_history
+from database.db import (
+    MAX_ROULETTE_SPINS,
+    add_skill_bonus,
+    add_member_bonus,
+    load_roulette_data,
+    save_roulette_data,
+    append_roulette_history,
+)
 from utils.helpers import format_time_left, get_combo_text, safe_edit_message, safe_delete
 from utils.config import TOKEN
 
@@ -17,7 +24,7 @@ dp = Dispatcher()
 router = Router()
 
 # Config/constants
-MAX_SPINS = 10
+MAX_SPINS = MAX_ROULETTE_SPINS
 INCREMENT = 2  # сколько круток выдаётся
 INTERVAL = 3600  # раз в час
 
