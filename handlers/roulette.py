@@ -280,11 +280,8 @@ async def send_roulette_status_message(target: Message | CallbackQuery, user_id:
     }
 
     if isinstance(target, CallbackQuery):
-        if edit:
-            await target.message.edit_text(text, reply_markup=get_roulette_inline_keyboard(user_data))
-        else:
-            await target.answer()
-            await target.message.edit_text(text, reply_markup=get_roulette_inline_keyboard(user_data))
+        await target.answer()
+        await target.message.edit_text(text, reply_markup=get_roulette_inline_keyboard(user_data))
     else:
         await safe_delete(target)
         await target.answer(text, reply_markup=get_roulette_inline_keyboard(user_data))
@@ -710,12 +707,12 @@ async def trigger_roulette_status_msg(message: Message):
 @router.callback_query(F.data == "roulette_button")
 async def trigger_roulette_status_cb(callback: CallbackQuery):
     user_id = str(callback.from_user.id)
-    await send_roulette_status_message(callback.message, user_id)
+    await send_roulette_status_message(callback, user_id)
 
 @router.callback_query(F.data == "go_back_button")
 async def go_back(callback: CallbackQuery):
     user_id = str(callback.from_user.id)
-    await send_roulette_status_message(callback.message, user_id, edit=True)
+    await send_roulette_status_message(callback, user_id, edit=True)
 
 # --- Магазин улучшений казика за 🔥 ---
 @router.callback_query(F.data == "casino_upgrades_shop")
