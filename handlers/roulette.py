@@ -31,14 +31,11 @@ active_spins = {}
 
 # --- Улучшения казика за 🔥 ---
 CASINO_UPGRADES_POOL = [
-    {"id": "spin_per_hour_plus", "name": "+1 крутка в час", "rarity": "common", "weight": 15, "max_count": None},
-    {"id": "max_spins_plus", "name": "+1 к максимальному накапливаемому количеству круток", "rarity": "common", "weight": 15, "max_count": None},
     {"id": "jopa_fire_2", "name": "Выпадение поджопника дает 2🔥", "rarity": "common", "weight": 12, "max_count": None},
     {"id": "ghost_spins_plus5", "name": "Выпадение призраков дает на 5 больше круток", "rarity": "common", "weight": 12, "max_count": None},
     {"id": "meow_fire", "name": "При мяуканьи больше 5 раз дается 1🔥", "rarity": "common", "weight": 10, "max_count": None},
     {"id": "kiss_kiss_kiss_fire", "name": "При выпадении 💋💋💋 дается 300 🔥", "rarity": "common", "weight": 6, "max_count": None},
     {"id": "dopa_mechanic", "name": "Открыта механика ДОДЕПА - ставьте 🔥 и получайте x10 при любой комбинации", "rarity": "common", "weight": 10, "max_count": None},
-    {"id": "timer_reduce_10min", "name": "Минус 10 минут к таймеру пополнения круток", "rarity": "rare", "weight": 20, "max_count": 3},
     {"id": "double_casino", "name": "Можно крутить сразу два казика", "rarity": "epic", "weight": 7, "max_count": 1},
     {"id": "fast_spin", "name": "Появляется возможность быстрой прокрутки", "rarity": "legendary", "weight": 3, "max_count": 1},
 ]
