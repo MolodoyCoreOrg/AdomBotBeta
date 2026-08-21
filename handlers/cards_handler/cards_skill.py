@@ -33,6 +33,18 @@ def load_skill_catalog():
         logging.exception("Не удалось загрузить data/cards/skills.json")
         return []
 
+def find_skill_card(card_name: str) -> dict | None:
+    """Find a catalog card while tolerating legacy casing and surrounding spaces."""
+    normalized_name = card_name.strip().casefold()
+    return next(
+        (
+            card
+            for card in load_skill_catalog()
+            if str(card.get("name", "")).strip().casefold() == normalized_name
+        ),
+        None,
+    )
+
 def format_card_text(card_name: str, card_data: dict, rarity: str, user_id: int | None = None) -> str:
     base = (
         f"<b>{card_name}</b>\n"
@@ -84,7 +96,7 @@ async def show_my_cards(event: CallbackQuery | Message):
 async def send_card(event: CallbackQuery | Message, index: int, user_cards: dict, owned_card_names: list[str]):
     card_name = owned_card_names[index]
     card_data = user_cards[card_name]
-    card_info = next((c for c in load_skill_catalog() if c["name"] == card_name), None)
+    card_info = find_skill_card(card_name)
 
     if not card_info:
         return await event.message.answer("Ошибка: карточка не найдена.")
@@ -157,7 +169,7 @@ async def navigate_my_skill_cards(event: CallbackQuery):
 
     card_name = owned_card_names[index]
     card_data = user_cards[card_name]
-    card_info = next((c for c in load_skill_catalog() if c["name"] == card_name), None)
+    card_info = find_skill_card(card_name)
 
     if not card_info:
         return await event.message.answer("Ошибка: карточка не найдена.")
@@ -218,7 +230,7 @@ async def sell_skill_card(event: CallbackQuery | Message):
     
     card_data = user_cards[card_name]
 
-    card_info = next((c for c in load_skill_catalog() if c["name"].strip().lower() == card_name.strip().lower()), None)
+    card_info = find_skill_card(card_name)
     if not card_info:
         msg = "❌ Ошибка: карточка не найдена."
         if isinstance(event, CallbackQuery):
