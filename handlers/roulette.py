@@ -103,6 +103,9 @@ def get_roulette_inline_keyboard(user_data=None):
     builder.row(
         types.InlineKeyboardButton(text="🎰 Крутить казик", callback_data=spin_callback),
     )
+    builder.row(
+        types.InlineKeyboardButton(text="🛒 Магазин", callback_data="shop_menu"),
+    )
     if user_data:
         fire_points = user_data.get("fire_points", 0)
         upgrades = user_data.get("kazino_upgrades", {})

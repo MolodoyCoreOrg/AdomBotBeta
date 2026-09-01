@@ -36,22 +36,10 @@ async def get_main_keyboard(spins, user_id) -> InlineKeyboardMarkup:
 
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text=f"📙 Открыть карточки",callback_data="main_open_cards"),
-    )
-    builder.row(
-        InlineKeyboardButton(text="📦 Коллекции", callback_data="main_card_collection"),
-    )
-    builder.row(
-        InlineKeyboardButton(text="🛒 Магазин", callback_data="shop_menu"),
-    )
-    builder.row(
-        InlineKeyboardButton(text="🔄 Обмен карточками", callback_data="main_trade"),
+        InlineKeyboardButton(text="📙 Карточки", callback_data="main_cards"),
     )
     builder.row(
         InlineKeyboardButton(text=f"🎰 Казик — круток: {spins} ", callback_data="roulette_button"),
-    )
-    builder.row(
-        InlineKeyboardButton(text="🎪 ПИДАРАЗЫ", callback_data="pidaraz_menu"),
     )
     builder.row(
         InlineKeyboardButton(text="👤 Профиль", callback_data="main_profile"),
@@ -63,9 +51,6 @@ async def get_main_keyboard(spins, user_id) -> InlineKeyboardMarkup:
 #    if donate > 0:
     builder.row(
         InlineKeyboardButton(text="⭐️ Матюкнуться", callback_data="word_random"),
-    )
-    builder.row(
-        InlineKeyboardButton(text="🙏 Мотивация", callback_data="motivation_menu"),
     )
     
     # Добавляем кнопку "Админам" только для админов
@@ -82,6 +67,22 @@ def get_back_menu_button():
         InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
     )
     return builder.as_markup()
+
+
+# === КАРТОЧКИ ===
+def cards_menu_ui():
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="📙 Открыть карточки", callback_data="main_open_cards"),
+    )
+    builder.row(
+        InlineKeyboardButton(text="📦 Коллекции", callback_data="main_card_collection"),
+    )
+    builder.row(
+        InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
+    )
+    return builder.as_markup()
+
 
 # === START ===
 def get_start_keyboard():
@@ -134,7 +135,7 @@ def get_card_open_ui_keyboard():
         InlineKeyboardButton(text="🃏 Суперспособность", callback_data="draw_skill"),
     )
     builder.row(
-        InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
+        InlineKeyboardButton(text="↪️ Назад", callback_data="main_cards"),
     )
     return builder.as_markup()
 
@@ -153,7 +154,7 @@ def get_card_collection_ui_keyboard():
         InlineKeyboardButton(text="⭐️ Мои матюки", callback_data="word_collection"),
     )
     builder.row(
-        InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
+        InlineKeyboardButton(text="↪️ Назад", callback_data="main_cards"),
     )
     return builder.as_markup()
 
@@ -552,6 +553,9 @@ def profile_ui(user_id: int):
         ),
     )
     builder.row(
+        InlineKeyboardButton(text="🎪 ПИДАРАЗЫ", callback_data="pidaraz_menu"),
+    )
+    builder.row(
         InlineKeyboardButton(text="🔧 Поддержка и предложения", callback_data="support_menu_button"),
     )
     builder.row(
@@ -710,7 +714,7 @@ def shop_ui():
         InlineKeyboardButton(text="🎰 Бонусные крутки. Цена: 10🔥", callback_data="shop_bonus_spins"),
     )
     builder.row(
-        InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
+        InlineKeyboardButton(text="↪️ Назад", callback_data="roulette_button"),
     )
     return builder.as_markup()
 
@@ -880,6 +884,6 @@ def pidaraz_ui():
         InlineKeyboardButton(text="📋 Список всех пидаразов", callback_data="pidaraz_list"),
     )
     builder.row(
-        InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
+        InlineKeyboardButton(text="↪️ Назад", callback_data="main_profile"),
     )
     return builder.as_markup()

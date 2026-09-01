@@ -10,7 +10,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
-from .keyboard import get_main_keyboard, get_card_open_ui_keyboard, get_card_collection_ui_keyboard, profile_ui, support_ui, donate_ui, top_menu_ui, get_persistent_bottom_keyboard, shop_ui, get_human_confirmation_keyboard
+from .keyboard import get_main_keyboard, cards_menu_ui, get_card_open_ui_keyboard, get_card_collection_ui_keyboard, profile_ui, support_ui, donate_ui, top_menu_ui, get_persistent_bottom_keyboard, shop_ui, get_human_confirmation_keyboard
 from database.db import add_user, user_exists, add_bonus, update_referral_bonuses, get_referral_message, update_user_info, find_user_by_username, get_user_full_data, get_pidaraz_number, get_pidaraz_stats, confirm_pending_referrer
 from utils.helpers import get_timer_status
 from handlers.cards_handler.skills import award_skill_to_user
@@ -420,6 +420,15 @@ async def safe_edit_or_replace(callback: CallbackQuery, new_text: str, reply_mar
     await callback.answer()
 
 # === ОБРАБОТКА Callback ===
+@router.callback_query(F.data == "main_cards")
+async def handle_cards_menu(callback: CallbackQuery):
+    await safe_edit_or_replace(
+        callback,
+        "📙 Выберите действие с карточками:",
+        cards_menu_ui()
+    )
+
+
 @router.callback_query(F.data == "main_open_cards")
 async def handle_open_cards(callback: CallbackQuery):
     await safe_edit_or_replace(
