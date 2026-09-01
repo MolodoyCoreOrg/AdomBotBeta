@@ -30,16 +30,31 @@ def connect():
     return conn
 
 def get_skill_bonuses(user_id: int) -> int:
+    """Return all bonus draws, regardless of which legacy source granted them."""
     with connect() as conn:
         cur = conn.cursor()
-        cur.execute("SELECT skill_bonuses FROM users WHERE user_id = ?", (user_id,))
+        cur.execute("SELECT bonuses, skill_bonuses FROM users WHERE user_id = ?", (user_id,))
         row = cur.fetchone()
-        return row["skill_bonuses"] if row else 0
+        if not row:
+            return 0
+        return int(row["bonuses"] or 0) + int(row["skill_bonuses"] or 0)
 
 def consume_bonus(user_id: int):
+    """Consume one bonus draw, preferring the legacy member-card pool."""
     with connect() as conn:
         cur = conn.cursor()
-        cur.execute("UPDATE users SET skill_bonuses = skill_bonuses - 1 WHERE user_id = ? AND skill_bonuses > 0", (user_id,))
+        cur.execute(
+            """
+            UPDATE users
+            SET bonuses = CASE WHEN bonuses > 0 THEN bonuses - 1 ELSE bonuses END,
+                skill_bonuses = CASE
+                    WHEN bonuses <= 0 AND skill_bonuses > 0 THEN skill_bonuses - 1
+                    ELSE skill_bonuses
+                END
+            WHERE user_id = ?
+            """,
+            (user_id,),
+        )
         conn.commit()
 
 # === Таймеры ===
@@ -212,10 +227,9 @@ def weighted_random_choice(user_cards, skills_path="data/cards/skills.json"):
 # === Основная логика ===
 async def draw_skill(event: CallbackQuery | Message):
     user_id = event.from_user.id
-    can_open, msg, _ = await can_open_card(user_id)
-    used_skill_bonus = get_skill_bonuses(user_id) > 0
+    can_open, msg, used_bonus = await can_open_card(user_id)
 
-    if not can_open and not used_skill_bonus:
+    if not can_open:
         if isinstance(event, CallbackQuery):
             await event.answer(msg, show_alert=True)
         else:
@@ -229,6 +243,16 @@ async def draw_skill(event: CallbackQuery | Message):
 
 
     try:
+        # Одна общая колода: 85% — способность, 15% — участник.
+        if random.random() >= 0.85:
+            from .members import draw_member
+            await draw_member(
+                event,
+                access_already_checked=True,
+                used_bonus=used_bonus,
+            )
+            return
+
         user_cards = get_skill_cards(user_id)
         # Передаем все карточки пользователя, функция weighted_random_choice теперь игнорирует owned_names
         card = weighted_random_choice(user_cards=user_cards)
@@ -298,7 +322,7 @@ async def draw_skill(event: CallbackQuery | Message):
             print(f"Failed to persist last_awarded for {name}")
 
 
-        if used_skill_bonus:
+        if used_bonus:
             consume_bonus(user_id)
         elif can_open:
             update_user_timer_after_open(user_id)
@@ -374,9 +398,18 @@ async def draw_skill(event: CallbackQuery | Message):
         active_open_skills.pop(user_id, None)
 
 # === Хендлеры ===
+@router.callback_query(F.data == "draw_card")
+async def handle_draw_card_button(callback: CallbackQuery):
+    await draw_skill(callback)
+
+# Совместимость со старыми сообщениями и кнопками.
 @router.callback_query(F.data == "draw_skill")
 async def handle_draw_skill_button(callback: CallbackQuery):
     await draw_skill(callback)
+
+@router.message(F.text == "🎴 Открыть карту")
+async def handle_draw_card_command(message: Message):
+    await draw_skill(message)
 
 @router.message(F.text == "🎴 Карточка способностей")
 async def handle_draw_skill_command(message: Message):

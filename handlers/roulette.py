@@ -493,14 +493,14 @@ async def spin_roulette(callback: CallbackQuery):
             if symbol == "😹":
                 add_member_bonus(user_id)
                 update_stats("members_bonus")
-                reward_text = "🎁 Возможность открыть карточку участника"
-                await slot_msg.edit_text(f"🎉 3 кота! Ты получил возможность открыть карточку участника 😺\n🎰 У тебя осталось {data['roulette_count']} круток.{meow_str}", reply_markup=get_roulette_again_keyboard(data))
+                reward_text = "🎁 Дополнительное открытие карты из общей колоды"
+                await slot_msg.edit_text(f"🎉 3 кота! Ты получил дополнительное открытие карты из общей колоды 😺\n🎰 У тебя осталось {data['roulette_count']} круток.{meow_str}", reply_markup=get_roulette_again_keyboard(data))
 
             elif symbol == "✅":
                 add_skill_bonus(user_id)
                 update_stats("skills_bonus")
-                reward_text = "🎁 Возможность открыть суперспособность"
-                await slot_msg.edit_text(f"🎉 3 галочки! Ты получил возможность открыть суперспособность ✅\n🎰 У тебя осталось {data['roulette_count']} круток.{meow_str}", reply_markup=get_roulette_again_keyboard(data))
+                reward_text = "🎁 Дополнительное открытие карты из общей колоды"
+                await slot_msg.edit_text(f"🎉 3 галочки! Ты получил дополнительное открытие карты из общей колоды ✅\n🎰 У тебя осталось {data['roulette_count']} круток.{meow_str}", reply_markup=get_roulette_again_keyboard(data))
 
             elif symbol == "👻":
                 # Апгрейд ghost_spins_plus5
@@ -625,13 +625,13 @@ async def spin_fast_roulette(callback: CallbackQuery):
 
             if symbol == "😹":
                 add_member_bonus(user_id)
-                reward_text = "🎁 Возможность открыть карточку участника"
-                await callback.message.edit_text(f"🎉 3 кота! Ты получил возможность открыть карточку участника 😺\n🎰 У тебя осталось {data['roulette_count']} круток.", reply_markup=get_roulette_again_fast_keyboard(data))
+                reward_text = "🎁 Дополнительное открытие карты из общей колоды"
+                await callback.message.edit_text(f"🎉 3 кота! Ты получил дополнительное открытие карты из общей колоды 😺\n🎰 У тебя осталось {data['roulette_count']} круток.", reply_markup=get_roulette_again_fast_keyboard(data))
 
             elif symbol == "✅":
                 add_skill_bonus(user_id)
-                reward_text = "🎁 Возможность открыть суперспособность"
-                await callback.message.edit_text(f"🎉 3 галочки! Ты получил возможность открыть суперспособность ✅\n🎰 У тебя осталось {data['roulette_count']} круток.", reply_markup=get_roulette_again_fast_keyboard(data))
+                reward_text = "🎁 Дополнительное открытие карты из общей колоды"
+                await callback.message.edit_text(f"🎉 3 галочки! Ты получил дополнительное открытие карты из общей колоды ✅\n🎰 У тебя осталось {data['roulette_count']} круток.", reply_markup=get_roulette_again_fast_keyboard(data))
 
             elif symbol == "👻":
                 # Апгрейд на призраков

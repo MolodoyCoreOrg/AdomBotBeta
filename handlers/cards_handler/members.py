@@ -21,8 +21,7 @@ router = Router()
 active_open_members = {}
 
 DB_PATH = "database/users.db"
-TIMER_PATH = "data/table/timer_members_card.json"
-MSK_OFFSET = timedelta(hours=3)
+TIMER_PATH = "data/table/timer_skills_card.json"
 RESET_HOUR_UTC = 19  # 22:00 по МСК = 19:00 UTC
 
 with open("data/cards/members.json", "r", encoding="utf-8") as f:
@@ -34,29 +33,35 @@ def connect():
     return conn
 
 def get_user_bonuses(user_id: int) -> int:
+    """Return all bonus draws from both legacy bonus pools."""
     with connect() as conn:
         cur = conn.cursor()
-        cur.execute("SELECT bonuses FROM users WHERE user_id = ?", (user_id,))
+        cur.execute("SELECT bonuses, skill_bonuses FROM users WHERE user_id = ?", (user_id,))
         row = cur.fetchone()
-        return row["bonuses"] if row else 0
+        if not row:
+            return 0
+        return int(row["bonuses"] or 0) + int(row["skill_bonuses"] or 0)
 
 def consume_bonus(user_id: int):
+    """Consume one bonus draw, preferring the legacy member-card pool."""
     with connect() as conn:
         cur = conn.cursor()
-        cur.execute("UPDATE users SET bonuses = bonuses - 1 WHERE user_id = ? AND bonuses > 0", (user_id,))
+        cur.execute(
+            """
+            UPDATE users
+            SET bonuses = CASE WHEN bonuses > 0 THEN bonuses - 1 ELSE bonuses END,
+                skill_bonuses = CASE
+                    WHEN bonuses <= 0 AND skill_bonuses > 0 THEN skill_bonuses - 1
+                    ELSE skill_bonuses
+                END
+            WHERE user_id = ?
+            """,
+            (user_id,),
+        )
         conn.commit()
 
 
-# --- Работа с таймерами ---
-def get_last_sunday_22_msk(now_utc: datetime = None) -> datetime:
-    now_utc = now_utc or datetime.utcnow()
-    now_msk = now_utc + MSK_OFFSET
-    days_since_sunday = (now_msk.weekday() + 1) % 7  # 0 = понедельник, 6 = воскресенье
-    last_sunday = now_msk - timedelta(days=days_since_sunday)
-    sunday_22_msk = last_sunday.replace(hour=22, minute=0, second=0, microsecond=0)
-    return sunday_22_msk - MSK_OFFSET  # вернуть в UTC
-
-
+# --- Работа с единым ежедневным таймером ---
 def load_timers():
     if not os.path.exists(TIMER_PATH):
         return {}
@@ -117,7 +122,9 @@ async def can_open_card(user_id: int):
 
 def update_user_timer_after_open(user_id: int):
     now = datetime.utcnow()
-    reset_time = get_last_sunday_22_msk(now) + timedelta(weeks=1)  # следующее воскресенье 22:00 МСК
+    reset_time = now.replace(hour=RESET_HOUR_UTC, minute=0, second=0, microsecond=0)
+    if now >= reset_time:
+        reset_time += timedelta(days=1)
 
     timers = load_timers()
     old_check_enabled = timers.get(str(user_id), {}).get("check_enabled", True)  # берем старое значение или True по умолчанию
@@ -167,12 +174,21 @@ def weighted_random_choice(cards, user_id: int, user_cards=None,
     return cards[-1]
 
 
-async def draw_member(event: CallbackQuery | Message):
+async def draw_member(
+    event: CallbackQuery | Message,
+    *,
+    access_already_checked: bool = False,
+    used_bonus: bool = False,
+):
     user_id = event.from_user.id
-    can_open, msg, used_bonus = await can_open_card(user_id)
-    if not can_open:
-        await event.answer(msg, show_alert=True)
-        return
+    if not access_already_checked:
+        can_open, msg, used_bonus = await can_open_card(user_id)
+        if not can_open:
+            if isinstance(event, CallbackQuery):
+                await event.answer(msg, show_alert=True)
+            else:
+                await event.answer(msg)
+            return
     
     if active_open_members.get(user_id):
         await event.answer("⏳ Подожди, карта уже открывается.", show_alert=True)
@@ -302,10 +318,13 @@ async def draw_member(event: CallbackQuery | Message):
     finally:
         active_open_members.pop(user_id, None)
 
+# Старые кнопки участника тоже открывают общую колоду.
 @router.callback_query(F.data == "draw_member")
 async def handle_draw_member_button(callback: CallbackQuery):
-    await draw_member(callback)
+    from .skills import draw_skill
+    await draw_skill(callback)
 
 @router.message(F.text == "👥 Карточка участника")
 async def handle_draw_member_command(message: Message):
-    await draw_member(message)
+    from .skills import draw_skill
+    await draw_skill(message)

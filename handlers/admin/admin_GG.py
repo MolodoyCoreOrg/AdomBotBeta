@@ -505,8 +505,8 @@ def _get_symbols_and_weights():
     return symbols, weights
 
 SPECIAL_REWARDS = {
-    "😹": "draw_member",
-    "✅": "draw_skill",
+    "😹": "draw_card",
+    "✅": "draw_card",
     "👻": "add_spins",
     "💣": "die_spins",
     "💋": "full_die"

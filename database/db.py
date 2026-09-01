@@ -554,7 +554,7 @@ def get_referral_message(user_id: int, before_given: int) -> tuple[str, InlineKe
         if invited < 10:
             return (
                 "🎉 По твоей реферальной ссылке зарегистрировался пользователь.\n"
-                "Ты получил бонусное открытие карточки 👥",
+                "Ты получил дополнительное открытие карты из общей колоды 🎴",
                 bonus_member_card_open()
             )
 
@@ -574,7 +574,7 @@ def get_referral_message(user_id: int, before_given: int) -> tuple[str, InlineKe
         else:
             return (
                 "🎉 По твоей реферальной ссылке зарегистрировался пользователь.\n"
-                "Ты получил бонусное открытие карточки 👥",
+                "Ты получил дополнительное открытие карты из общей колоды 🎴",
                 bonus_member_card_open()
             )
 

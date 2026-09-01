@@ -227,22 +227,19 @@ async def start_handler(message: Message):
     data = load_roulette_data(str(user_id))
     spins = data.get("roulette_count", 0)
 
-    member_card_status = get_timer_status(user_id, "data/table/timer_members_card.json", "👥Карта участника")
-    skill_card_status = get_timer_status(user_id, "data/table/timer_skills_card.json", "🃏Суперспособность")
+    card_status = get_timer_status(user_id, "data/table/timer_skills_card.json", "🎴Карта из общей колоды")
 
     text_msg1 = (
         f"Привет, <b>{message.from_user.first_name}</b>!\n"
         "Добро пожаловать в СИСЬКИ.\n Ну что, готов вытягивать новые карточки?\n\n"
-        f"{member_card_status}\n"
-        f"{skill_card_status}"
+        f"{card_status}"
     )
 
     text_msg2 = (
         f"Привет, <b>{message.from_user.first_name}</b>!\n"
-        "Добро пожаловать в СИСЬКИ. Здесь ты можешь вытягивать карточки с умениями и участниками ГУЧИГЕНГОВО! Раз в сутки ты можешь вытягигивать карточку с умением и раз в неделю карточку с участником. \n\n"
+        "Добро пожаловать в СИСЬКИ. Все карточки теперь собраны в одну колоду: раз в сутки можно вытянуть суперспособность (85%) или участника (15%). \n\n"
         "Пора начинать, вытягивай свои первые карты 🔮\n\n"
-        f"{member_card_status}\n"
-        f"{skill_card_status}"
+        f"{card_status}"
     )
 
     reply_markup = await get_main_keyboard(spins, user_id)
@@ -306,15 +303,13 @@ async def confirm_human_handler(message: Message):
     spins = data.get("roulette_count", 0)
     reply_markup = await get_main_keyboard(spins, user_id)
 
-    member_card_status = get_timer_status(user_id, "data/table/timer_members_card.json", "👥Карта участника")
-    skill_card_status = get_timer_status(user_id, "data/table/timer_skills_card.json", "🃏Суперспособность")
+    card_status = get_timer_status(user_id, "data/table/timer_skills_card.json", "🎴Карта из общей колоды")
 
     text = (
         f"Привет, <b>{message.from_user.first_name}</b>!\n"
         "Добро пожаловать в СИСЬКИ.\n"
         "Теперь ты можешь пользоваться ботом.\n\n"
-        f"{member_card_status}\n"
-        f"{skill_card_status}"
+        f"{card_status}"
     )
 
     await message.answer(text, reply_markup=reply_markup)
@@ -389,7 +384,7 @@ def get_profile_text(user_id: int) -> str:
         f"👥 <b>Приглашено друзей:</b> {referrals_count}\n\n"
         f"🔗 Твоя реферальная ссылка:\n"
         f"{referral_link}\n"
-        f"За каждого приглашенного друга вы получаете возможность открыть карту участника, после 10 приглашенных друзей возможность выдаётся за каждого второго, после 20 приглашенных друзей возможность выдаётся за каждого третьего"
+        f"За каждого приглашенного друга вы получаете дополнительное открытие карты из общей колоды, после 10 приглашенных друзей — за каждого второго, после 20 — за каждого третьего"
     )
 
  
@@ -433,7 +428,7 @@ async def handle_cards_menu(callback: CallbackQuery):
 async def handle_open_cards(callback: CallbackQuery):
     await safe_edit_or_replace(
         callback,
-        "📙 Какой тип карточек вы хотите открыть?",
+        "🎴 Открой карту из общей колоды: суперспособность — 85%, участник — 15%.",
         get_card_open_ui_keyboard()
     )
 
@@ -696,14 +691,12 @@ async def show_main_menu(message: Message):
     spins = data.get("roulette_count", 0)
 
     # --- Проверяем таймеры ---
-    member_card_status = get_timer_status(user_id, "data/table/timer_members_card.json", "👥Карта участника")
-    skill_card_status = get_timer_status(user_id, "data/table/timer_skills_card.json", "🃏Суперспособность")
+    card_status = get_timer_status(user_id, "data/table/timer_skills_card.json", "🎴Карта из общей колоды")
 
     # --- Текст меню ---
     text = (
         "🏠 Главное меню:\n\n"
-        f"{member_card_status}\n"
-        f"{skill_card_status}"
+        f"{card_status}"
     )
 
     await message.answer(text, reply_markup=await get_main_keyboard(spins, user_id))
@@ -725,13 +718,11 @@ async def go_back(callback: CallbackQuery):
     data = load_roulette_data(str(user_id))
     spins = data.get("roulette_count", 0)
 
-    member_card_status = get_timer_status(user_id, "data/table/timer_members_card.json", "👥Карта участника")
-    skill_card_status = get_timer_status(user_id, "data/table/timer_skills_card.json", "🃏Суперспособность")
+    card_status = get_timer_status(user_id, "data/table/timer_skills_card.json", "🎴Карта из общей колоды")
 
     text = (
         "🏠 Главное меню:\n\n"
-        f"{member_card_status}\n"
-        f"{skill_card_status}"
+        f"{card_status}"
     )
     reply_markup = await get_main_keyboard(spins, user_id)
 

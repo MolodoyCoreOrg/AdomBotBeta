@@ -115,7 +115,7 @@ last_skill_notify_date = None
 def get_notify_skill_keyboard():
     builder = InlineKeyboardBuilder()
     builder.row(
-            InlineKeyboardButton(text="🎴 Суперспособность", callback_data="draw_skill"),
+            InlineKeyboardButton(text="🎴 Открыть карту", callback_data="draw_card"),
         )
     return builder.as_markup()
 
@@ -131,7 +131,7 @@ async def test_notify_skill(event):
     # Проверка, отправлялось ли уведомление сегодня
     if last_skill_notify_date != today_str:
         await send_reminder(
-            "🧠 Пора открыть суперспособность!",
+            "🎴 Пора открыть карту из общей колоды!",
             reply_markup=get_notify_skill_keyboard()
         )
         last_skill_notify_date = today_str

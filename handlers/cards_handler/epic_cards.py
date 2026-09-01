@@ -646,13 +646,13 @@ async def use_megaludik(callback: CallbackQuery):
     if ghost_count > 0:
         result_text += f"👻 {ghost_count} раз(а) выпали призраки\n"
     
-    result_text += f"🎴 {card_count} карта(ы) способности"
+    result_text += f"🎴 {card_count} дополнительное открытие карты из общей колоды"
     
     # Добавляем кнопку открытия карт, если они выпали
     reply_markup = None
     if card_count > 0:
         reply_markup = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="🎁 Открыть карту способности", callback_data="draw_skill")]
+            [InlineKeyboardButton(text="🎁 Открыть карту", callback_data="draw_card")]
         ])
     
     await callback.message.answer(result_text, reply_markup=reply_markup)

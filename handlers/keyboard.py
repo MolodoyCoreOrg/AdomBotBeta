@@ -119,7 +119,7 @@ def get_persistent_bottom_keyboard():
 def bonus_member_card_open():
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="👥 Карточка участника", callback_data="draw_member"),
+        InlineKeyboardButton(text="🎴 Открыть карту", callback_data="draw_card"),
     )
     return builder.as_markup()
 
@@ -129,10 +129,7 @@ def bonus_member_card_open():
 def get_card_open_ui_keyboard():
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="👥 Карточка участника", callback_data="draw_member"),
-    )
-    builder.row(
-        InlineKeyboardButton(text="🃏 Суперспособность", callback_data="draw_skill"),
+        InlineKeyboardButton(text="🎴 Открыть карту", callback_data="draw_card"),
     )
     builder.row(
         InlineKeyboardButton(text="↪️ Назад", callback_data="main_cards"),
