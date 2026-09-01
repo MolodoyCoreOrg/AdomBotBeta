@@ -145,7 +145,13 @@ def get_card_collection_ui_keyboard():
         InlineKeyboardButton(text="📦 Мои участники", callback_data="my_member_cards"),
     )
     builder.row(
+        InlineKeyboardButton(text="📋 Участники списком", callback_data="member_cards_list:original:0"),
+    )
+    builder.row(
         InlineKeyboardButton(text="📦 Мои суперспособности", callback_data="my_skill_cards"),
+    )
+    builder.row(
+        InlineKeyboardButton(text="📋 Способности списком", callback_data="skill_cards_list:original:0"),
     )
     builder.row(
         InlineKeyboardButton(text="⭐️ Мои матюки", callback_data="word_collection"),
@@ -220,7 +226,10 @@ def get_member_card_navigation_keyboard(index: int, total: int, prefix: str = "m
         builder.row(
             InlineKeyboardButton(text="🆙 Апгрейд карты", callback_data=f"upgrade_member_card:{index}"),
         )
-    
+
+    builder.row(
+        InlineKeyboardButton(text="📋 Показать списком", callback_data="member_cards_list:original:0"),
+    )
     builder.row(
         InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
     )
@@ -270,11 +279,77 @@ def get_skill_card_navigation_keyboard(index: int, total: int, prefix: str = "my
         builder.row(
             InlineKeyboardButton(text="🔥 Продать карту", callback_data=f"sell_skill_card:{index}"),
         )
-    
+
+    builder.row(
+        InlineKeyboardButton(text="📋 Показать списком", callback_data="skill_cards_list:original:0"),
+    )
     builder.row(
         InlineKeyboardButton(text="↪️ Назад", callback_data="go_back_menu"),
     )
     return builder.as_markup()
+
+
+def get_collection_list_keyboard(
+    list_prefix: str,
+    cards_callback: str,
+    page: int,
+    total_pages: int,
+    sort_mode: str,
+) -> InlineKeyboardMarkup:
+    """Keyboard shared by member and skill collection list views."""
+    builder = InlineKeyboardBuilder()
+
+    rare_text = "✅ Редкие ↑" if sort_mode == "rarity_desc" else "⭐ Редкие ↑"
+    common_text = "✅ Обычные ↑" if sort_mode == "rarity_asc" else "☆ Обычные ↑"
+    original_text = "✅ Без сортировки" if sort_mode == "original" else "↩️ Без сортировки"
+
+    builder.row(
+        InlineKeyboardButton(
+            text=rare_text,
+            callback_data=f"{list_prefix}:rarity_desc:0",
+        ),
+        InlineKeyboardButton(
+            text=common_text,
+            callback_data=f"{list_prefix}:rarity_asc:0",
+        ),
+    )
+    builder.row(
+        InlineKeyboardButton(
+            text=original_text,
+            callback_data=f"{list_prefix}:original:0",
+        ),
+    )
+
+    total_pages = max(1, total_pages)
+    page = max(0, min(page, total_pages - 1))
+    navigation = []
+    if page > 0:
+        navigation.append(
+            InlineKeyboardButton(
+                text="⬅️",
+                callback_data=f"{list_prefix}:{sort_mode}:{page - 1}",
+            )
+        )
+    navigation.append(
+        InlineKeyboardButton(text=f"{page + 1}/{total_pages}", callback_data="noop")
+    )
+    if page < total_pages - 1:
+        navigation.append(
+            InlineKeyboardButton(
+                text="➡️",
+                callback_data=f"{list_prefix}:{sort_mode}:{page + 1}",
+            )
+        )
+    builder.row(*navigation)
+
+    builder.row(
+        InlineKeyboardButton(text="🎴 Показывать карточками", callback_data=cards_callback),
+    )
+    builder.row(
+        InlineKeyboardButton(text="↪️ Назад к коллекциям", callback_data="main_card_collection"),
+    )
+    return builder.as_markup()
+
 
 # === СОРТИРОВКА ===
 
