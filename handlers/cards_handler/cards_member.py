@@ -9,9 +9,19 @@ from aiogram.filters import Command
 from aiogram.exceptions import TelegramBadRequest
 
 from database.db import get_member_cards, get_user_timezone, connect, update_member_cards, add_balance
-from ..keyboard import get_member_card_navigation_keyboard, get_card_member_ui, get_back_menu_colletion_button
+from ..keyboard import (
+    get_member_card_navigation_keyboard,
+    get_card_member_ui,
+    get_back_menu_colletion_button,
+    get_collection_list_keyboard,
+)
 from ..picture import find_image_file
-from utils.helpers import get_member_card_image_path, format_iso_utc_to_user_tz, safe_delete
+from utils.helpers import (
+    get_member_card_image_path,
+    format_iso_utc_to_user_tz,
+    safe_delete,
+    safe_edit_message,
+)
 
 router = Router()
 
@@ -36,9 +46,105 @@ UPGRADE_COSTS_MEMBER = {
 # Rank multipliers used when calculating sell price (rank 1..4)
 RANK_MULTIPLIERS = {1: 1.0, 2: 2.2, 3: 3.3, 4: 4.4}
 
+RARITY_ORDER = {
+    "Обычная": 1,
+    "Редкая": 2,
+    "Эпическая": 3,
+    "Легендарная": 4,
+}
+RARITY_ICONS = {
+    "Обычная": "⚪️",
+    "Редкая": "🔵",
+    "Эпическая": "🟣",
+    "Легендарная": "🟡",
+}
+LIST_PAGE_SIZE = 20
+SORT_LABELS = {
+    "original": "без сортировки",
+    "rarity_desc": "редкие сначала",
+    "rarity_asc": "обычные сначала",
+}
+
 # Загружаем карточки участников из JSON
 with open("data/cards/members.json", "r", encoding="utf-8") as f:
     MEMBER_CARDS = json.load(f)
+
+
+def find_member_card(card_name: str) -> dict | None:
+    normalized_name = card_name.strip().casefold()
+    return next(
+        (
+            card
+            for card in MEMBER_CARDS
+            if str(card.get("name", "")).strip().casefold() == normalized_name
+        ),
+        None,
+    )
+
+
+def get_owned_member_card_names(user_cards: dict, sort_mode: str = "original") -> list[str]:
+    names = [name for name in user_cards if not name.startswith("_")]
+    if sort_mode not in {"rarity_desc", "rarity_asc"}:
+        return names
+
+    def sort_key(card_name: str):
+        card_info = find_member_card(card_name) or {}
+        rarity = card_info.get("rarity", "")
+        rarity_value = RARITY_ORDER.get(rarity)
+        unknown_rarity = rarity_value is None
+        if rarity_value is None:
+            rarity_value = 0
+        direction_value = -rarity_value if sort_mode == "rarity_desc" else rarity_value
+        return unknown_rarity, direction_value, card_name.casefold()
+
+    return sorted(names, key=sort_key)
+
+
+def parse_collection_list_callback(data: str) -> tuple[str, int]:
+    parts = data.split(":")
+    sort_mode = parts[1] if len(parts) > 1 else "original"
+    if sort_mode not in SORT_LABELS:
+        sort_mode = "original"
+    try:
+        page = max(0, int(parts[2]))
+    except (IndexError, ValueError):
+        page = 0
+    return sort_mode, page
+
+
+def format_member_list_line(
+    position: int,
+    card_name: str,
+    card_data,
+    card_info: dict | None,
+) -> str:
+    card_info = card_info or {}
+    rarity = str(card_info.get("rarity", "Неизвестная"))
+    icon = RARITY_ICONS.get(rarity, "❔")
+
+    rank = 1
+    count = 1
+    if isinstance(card_data, dict):
+        rank = card_data.get("rank", 1)
+        count = card_data.get("count", 1)
+    elif isinstance(card_data, int):
+        count = card_data
+
+    try:
+        rank = max(1, int(rank))
+    except (TypeError, ValueError):
+        rank = 1
+    try:
+        count = max(1, int(count))
+    except (TypeError, ValueError):
+        count = 1
+
+    count_text = f" · ×{count}" if count > 1 else ""
+    return (
+        f"{position}. {icon} <b>{html.escape(str(card_name))}</b> — "
+        f"{html.escape(rarity)} · ранг {rank}{count_text}"
+    )
+
 
 def format_card_text(card_name: str, card_data: dict, rarity: str, work: str, user_id: int | None = None) -> str:
     rank = card_data.get("rank", 1)
@@ -160,7 +266,27 @@ async def show_my_cards(event: CallbackQuery | Message):
                 except Exception:
                     await event.message.answer(text=caption, reply_markup=keyboard)
             else:
-                raise
+                logging.warning(f"Не удалось заменить сообщение карточкой участника: {e}")
+                await safe_delete(event)
+                try:
+                    await event.message.answer_photo(
+                        photo=photo,
+                        caption=caption,
+                        reply_markup=keyboard,
+                    )
+                except TelegramBadRequest as fallback_error:
+                    fallback_message = str(fallback_error)
+                    if "IMAGE_PROCESS_FAILED" in fallback_message or "image process failed" in fallback_message.lower():
+                        try:
+                            await event.message.answer_document(
+                                document=photo,
+                                caption=caption,
+                                reply_markup=keyboard,
+                            )
+                        except Exception:
+                            await event.message.answer(text=caption, reply_markup=keyboard)
+                    else:
+                        raise
         await event.answer()
     else:
         try:
@@ -174,6 +300,53 @@ async def show_my_cards(event: CallbackQuery | Message):
                     await event.bot.send_message(chat_id=event.chat.id, text=caption, reply_markup=keyboard)
             else:
                 raise
+
+async def show_member_cards_list(event: CallbackQuery):
+    user_cards = get_member_cards(event.from_user.id)
+    if not any(not name.startswith("_") for name in user_cards):
+        await safe_edit_message(
+            event.message,
+            "У тебя пока нет карточек 🙁",
+            reply_markup=get_back_menu_colletion_button(),
+        )
+        await event.answer()
+        return
+
+    sort_mode, page = parse_collection_list_callback(event.data or "")
+    owned_card_names = get_owned_member_card_names(user_cards, sort_mode)
+    total_pages = max(1, (len(owned_card_names) + LIST_PAGE_SIZE - 1) // LIST_PAGE_SIZE)
+    page = min(page, total_pages - 1)
+    start = page * LIST_PAGE_SIZE
+    page_card_names = owned_card_names[start:start + LIST_PAGE_SIZE]
+
+    lines = [
+        format_member_list_line(
+            start + offset + 1,
+            card_name,
+            user_cards.get(card_name, {}),
+            find_member_card(card_name),
+        )
+        for offset, card_name in enumerate(page_card_names)
+    ]
+    text = (
+        "👥 <b>Мои участники</b>\n\n"
+        + "\n".join(lines)
+        + (
+            f"\n\nВсего карточек: <b>{len(owned_card_names)}</b>"
+            f"\nСтраница: <b>{page + 1}/{total_pages}</b>"
+            f"\nСортировка: <b>{SORT_LABELS[sort_mode]}</b>"
+        )
+    )
+    keyboard = get_collection_list_keyboard(
+        list_prefix="member_cards_list",
+        cards_callback="my_member_cards",
+        page=page,
+        total_pages=total_pages,
+        sort_mode=sort_mode,
+    )
+    await safe_edit_message(event.message, text, reply_markup=keyboard)
+    await event.answer()
+
 
 async def navigate_my_member_cards(event: CallbackQuery):
     user_id = event.from_user.id
@@ -357,10 +530,16 @@ async def handle_sell_member_card(callback: CallbackQuery):
 async def handle_my_member_cards(callback: CallbackQuery):
     await show_my_cards(callback)
 
+
+@router.callback_query(F.data.startswith("member_cards_list:"))
+async def handle_member_cards_list(callback: CallbackQuery):
+    await show_member_cards_list(callback)
+
+
 # 📥 Обработка команды
 @router.message(lambda message: message.text == "📦 Мои участники")
 async def handle_draw_member_command(message: Message):
-    await navigate_my_member_cards(message)
+    await show_my_cards(message)
 
 # 📥 Обработка навигации
 @router.callback_query(F.data.startswith("my_member_cards:"))

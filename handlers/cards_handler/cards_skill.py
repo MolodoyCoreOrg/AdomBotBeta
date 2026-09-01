@@ -1,15 +1,21 @@
 import os
 import json
 import logging
+import html
 
 from aiogram import Router, F, types
 from aiogram.types import CallbackQuery, FSInputFile, Message, InputMediaPhoto
 from aiogram.exceptions import TelegramBadRequest
 
 from database.db import get_skill_cards, get_user_timezone
-from ..keyboard import get_skill_card_navigation_keyboard, get_back_menu_colletion_button, get_card_skill_ui
+from ..keyboard import (
+    get_skill_card_navigation_keyboard,
+    get_back_menu_colletion_button,
+    get_card_skill_ui,
+    get_collection_list_keyboard,
+)
 from ..picture import find_image_file
-from utils.helpers import format_iso_utc_to_user_tz
+from utils.helpers import format_iso_utc_to_user_tz, safe_edit_message
 
 router = Router()
 
@@ -23,6 +29,26 @@ RARITY_PRICES_SKILL = {
 
 # Reuse member rank multipliers for uniformity (skill cards usually rank 1)
 RANK_MULTIPLIERS = {1: 1.0, 2: 2.2, 3: 3.3, 4: 4.4}
+
+RARITY_ORDER = {
+    "Обычная": 1,
+    "Редкая": 2,
+    "Эпическая": 3,
+    "Легендарная": 4,
+}
+RARITY_ICONS = {
+    "Обычная": "⚪️",
+    "Редкая": "🔵",
+    "Эпическая": "🟣",
+    "Легендарная": "🟡",
+}
+LIST_PAGE_SIZE = 20
+SORT_LABELS = {
+    "original": "без сортировки",
+    "rarity_desc": "редкие сначала",
+    "rarity_asc": "обычные сначала",
+}
+
 
 def load_skill_catalog():
     """Load skill cards catalog from disk each time so changes are picked up without restart."""
@@ -44,6 +70,68 @@ def find_skill_card(card_name: str) -> dict | None:
         ),
         None,
     )
+
+def get_owned_skill_card_names(user_cards: dict, sort_mode: str = "original") -> list[str]:
+    names = [name for name in user_cards if not name.startswith("_")]
+    if sort_mode not in {"rarity_desc", "rarity_asc"}:
+        return names
+
+    catalog = {
+        str(card.get("name", "")).strip().casefold(): card
+        for card in load_skill_catalog()
+    }
+
+    def sort_key(card_name: str):
+        card_info = catalog.get(card_name.strip().casefold(), {})
+        rarity = card_info.get("rarity", "")
+        rarity_value = RARITY_ORDER.get(rarity)
+        unknown_rarity = rarity_value is None
+        if rarity_value is None:
+            rarity_value = 0
+        direction_value = -rarity_value if sort_mode == "rarity_desc" else rarity_value
+        return unknown_rarity, direction_value, card_name.casefold()
+
+    return sorted(names, key=sort_key)
+
+
+def parse_collection_list_callback(data: str) -> tuple[str, int]:
+    parts = data.split(":")
+    sort_mode = parts[1] if len(parts) > 1 else "original"
+    if sort_mode not in SORT_LABELS:
+        sort_mode = "original"
+    try:
+        page = max(0, int(parts[2]))
+    except (IndexError, ValueError):
+        page = 0
+    return sort_mode, page
+
+
+def format_skill_list_line(
+    position: int,
+    card_name: str,
+    card_data,
+    card_info: dict | None,
+) -> str:
+    card_info = card_info or {}
+    rarity = str(card_info.get("rarity", "Неизвестная"))
+    icon = RARITY_ICONS.get(rarity, "❔")
+
+    count = 1
+    if isinstance(card_data, dict):
+        count = card_data.get("count", 1)
+    elif isinstance(card_data, int):
+        count = card_data
+    try:
+        count = max(1, int(count))
+    except (TypeError, ValueError):
+        count = 1
+
+    count_text = f" · ×{count}" if count > 1 else ""
+    return (
+        f"{position}. {icon} <b>{html.escape(str(card_name))}</b> — "
+        f"{html.escape(rarity)}{count_text}"
+    )
+
 
 def format_card_text(card_name: str, card_data: dict, rarity: str, user_id: int | None = None) -> str:
     base = (
@@ -151,6 +239,53 @@ async def send_card(event: CallbackQuery | Message, index: int, user_cards: dict
                     await event.bot.send_message(chat_id=event.chat.id, text=caption, reply_markup=keyboard)
             else:
                 raise
+
+async def show_skill_cards_list(event: CallbackQuery):
+    user_cards = get_skill_cards(event.from_user.id)
+    if not any(not name.startswith("_") for name in user_cards):
+        await safe_edit_message(
+            event.message,
+            "У тебя пока нет карточек 🙁",
+            reply_markup=get_back_menu_colletion_button(),
+        )
+        await event.answer()
+        return
+
+    sort_mode, page = parse_collection_list_callback(event.data or "")
+    owned_card_names = get_owned_skill_card_names(user_cards, sort_mode)
+    total_pages = max(1, (len(owned_card_names) + LIST_PAGE_SIZE - 1) // LIST_PAGE_SIZE)
+    page = min(page, total_pages - 1)
+    start = page * LIST_PAGE_SIZE
+    page_card_names = owned_card_names[start:start + LIST_PAGE_SIZE]
+
+    lines = [
+        format_skill_list_line(
+            start + offset + 1,
+            card_name,
+            user_cards.get(card_name, {}),
+            find_skill_card(card_name),
+        )
+        for offset, card_name in enumerate(page_card_names)
+    ]
+    text = (
+        "🃏 <b>Мои суперспособности</b>\n\n"
+        + "\n".join(lines)
+        + (
+            f"\n\nВсего карточек: <b>{len(owned_card_names)}</b>"
+            f"\nСтраница: <b>{page + 1}/{total_pages}</b>"
+            f"\nСортировка: <b>{SORT_LABELS[sort_mode]}</b>"
+        )
+    )
+    keyboard = get_collection_list_keyboard(
+        list_prefix="skill_cards_list",
+        cards_callback="my_skill_cards",
+        page=page,
+        total_pages=total_pages,
+        sort_mode=sort_mode,
+    )
+    await safe_edit_message(event.message, text, reply_markup=keyboard)
+    await event.answer()
+
 
 async def navigate_my_skill_cards(event: CallbackQuery):
     user_id = event.from_user.id
@@ -302,6 +437,12 @@ async def handle_draw_member_button(callback: CallbackQuery):
 @router.callback_query(F.data == "my_skill_cards")
 async def handle_my_skill_cards_button(callback: CallbackQuery):
     await show_my_cards(callback)
+
+
+@router.callback_query(F.data.startswith("skill_cards_list:"))
+async def handle_skill_cards_list(callback: CallbackQuery):
+    await show_skill_cards_list(callback)
+
 
 # Обработка команды
 @router.message(F.text == "📦 Мои суперспособности")
